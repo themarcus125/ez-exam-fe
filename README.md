@@ -1,4 +1,5 @@
 # EzExam Front-End
+EzExam Front-End project, created with Gatsby starter.
 
 ## 🚀 Quick start
 
