@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import { navigate } from "gatsby";
 import { handleLogin, isLoggedIn, isBrowser } from "../../utils/auth";
-import { EXAMINEE_ROLE } from "../../utils/roles";
 
-const Login = () => {
-  const role = EXAMINEE_ROLE;
-
+const Login = ({ role }) => {
   if (isBrowser && isLoggedIn(role)) {
-    navigate(`/${EXAMINEE_ROLE}`);
+    navigate(`/${role}`);
     return <></>;
   }
 
@@ -25,7 +22,7 @@ const Login = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     const isLoginSuccess = handleLogin({ email, password, role }, () => {
-      navigate(`/${EXAMINEE_ROLE}`);
+      navigate(`/${role}`);
     });
     if (!isLoginSuccess) {
       alert("Invalid login credentials");
