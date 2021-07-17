@@ -1,8 +1,16 @@
 import React, { useState } from "react";
-import mockData from "../../mockData/data.json";
-import { createSession } from "../../utils/session";
+import { navigate } from "gatsby";
+import { handleLogin, isLoggedIn, isBrowser } from "../../utils/auth";
+import { EXAMINEE_ROLE } from "../../utils/roles";
 
-const LoginPage = () => {
+const Login = () => {
+  const role = EXAMINEE_ROLE;
+
+  if (isBrowser && isLoggedIn(role)) {
+    navigate(`/${EXAMINEE_ROLE}`);
+    return <></>;
+  }
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -16,13 +24,10 @@ const LoginPage = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const userList = mockData["user"];
-    const userAvaiable = userList.find(
-      (user) => user.email === email && user.password === password,
-    );
-    if (userAvaiable) {
-      // createSession({ email, password });
-    } else {
+    const isLoginSuccess = handleLogin({ email, password, role }, () => {
+      navigate(`/${EXAMINEE_ROLE}`);
+    });
+    if (!isLoginSuccess) {
       alert("Invalid login credentials");
     }
   };
@@ -70,4 +75,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default Login;
