@@ -1,6 +1,11 @@
 import React from "react";
 import { Link } from "gatsby";
 import moment from "moment";
+
+// Component
+import NavBar from "../components/common/NavBar";
+
+// Data
 import mockData from "../mockData/data.json";
 
 const mainCoursePage = () => {
@@ -8,8 +13,11 @@ const mainCoursePage = () => {
 
   const renderTests = () => {
     return (
-      <div className="uk-padding">
+      <div className="uk-padding uk-height-1-1" style={{ overflowY: "auto" }}>
         {data.map((test) => {
+          const remainingTime = moment.duration(
+            moment(test.date).diff(moment()),
+          );
           return (
             <div
               key={test.id}
@@ -25,7 +33,9 @@ const mainCoursePage = () => {
                   <div className="uk-flex uk-flex-row uk-flex-between uk-flex-bottom">
                     <p className="uk-margin-remove-bottom">{`${moment(
                       test.date,
-                    ).format("MMMM Do YYYY, hh:mm a")} - Participants: ${
+                    ).format(
+                      "MMMM Do YYYY, hh:mm a",
+                    )} - Time remaining: ${remainingTime.days()} days ${remainingTime.hours()} hours - Participants: ${
                       test.numOfExaminees
                     }`}</p>
                     <Link className="uk-button uk-background-muted uk-text-primary">
@@ -42,8 +52,12 @@ const mainCoursePage = () => {
   };
 
   return (
-    <div className="uk-background-muted" style={{ height: "100vh" }}>
-      {renderTests()}
+    <div
+      className="uk-flex uk-flex-row"
+      style={{ height: "100vh", overflow: "hidden" }}
+    >
+      <NavBar />
+      <div className="uk-background-muted uk-width-4-5">{renderTests()}</div>
     </div>
   );
 };
