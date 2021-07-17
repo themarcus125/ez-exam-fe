@@ -8,6 +8,7 @@ const IndexPage = () => {
         <p>If you're a examinee</p>
         <Link to="/examinee">Go to examinee dashboard</Link>
       </div>
+      <br />
       <div>
         <p>If you're a examiner</p>
         <Link to="/examiner">Go to examiner dashboard</Link>

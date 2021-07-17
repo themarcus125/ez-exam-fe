@@ -24,11 +24,12 @@ const Login = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const isLoginSuccess = handleLogin({ email, password, role });
-    if (isLoginSuccess) {
-      return navigate(`/${EXAMINEE_ROLE}`);
+    const isLoginSuccess = handleLogin({ email, password, role }, () => {
+      navigate(`/${EXAMINEE_ROLE}`);
+    });
+    if (!isLoginSuccess) {
+      alert("Invalid login credentials");
     }
-    alert("Invalid login credentials");
   };
 
   return (

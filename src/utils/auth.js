@@ -11,7 +11,7 @@ export const getUser = () =>
 const setUser = (user) =>
   window.localStorage.setItem(USER_TYPE, JSON.stringify(user));
 
-export const handleLogin = ({ email, password, role }) => {
+export const handleLogin = ({ email, password, role }, callback) => {
   const loggedUser = mockData.user.find(
     (currentUser) =>
       currentUser.email === email &&
@@ -23,6 +23,9 @@ export const handleLogin = ({ email, password, role }) => {
       email: email,
       role: role,
     });
+    if (callback) {
+      callback();
+    }
     return true;
   }
   return false;
@@ -38,5 +41,7 @@ export const isLoggedIn = (role) => {
 
 export const logout = (callback) => {
   setUser({});
-  callback();
+  if (callback) {
+    callback();
+  }
 };

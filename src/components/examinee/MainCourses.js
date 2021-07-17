@@ -3,10 +3,10 @@ import { Link } from "gatsby";
 import moment from "moment";
 
 // Component
-import NavBar from "../components/common/NavBar";
+import NavBar from "../common/NavBar";
 
 // Data
-import mockData from "../mockData/data.json";
+import mockData from "../../mockData/data.json";
 
 const mainCoursePage = () => {
   const data = mockData["test"];
@@ -22,7 +22,7 @@ const mainCoursePage = () => {
             <div
               key={test.id}
               className="uk-card uk-card-default uk-grid-collapse uk-child-width-1-1 uk-margin uk-card-hover"
-              uk-grid
+              uk-grid=""
             >
               <div>
                 <div className="uk-card-body">
@@ -38,7 +38,10 @@ const mainCoursePage = () => {
                     )} - Time remaining: ${remainingTime.days()} days ${remainingTime.hours()} hours - Participants: ${
                       test.numOfExaminees
                     }`}</p>
-                    <Link className="uk-button uk-background-muted uk-text-primary">
+                    <Link
+                      className="uk-button uk-background-muted uk-text-primary"
+                      to="#"
+                    >
                       Go to Test
                     </Link>
                   </div>
