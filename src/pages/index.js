@@ -13,6 +13,11 @@ const IndexPage = () => {
         <p>If you're a examiner</p>
         <Link to="/examiner">Go to examiner dashboard</Link>
       </div>
+      <br />
+      <div>
+        <p>If you're a examiner</p>
+        <Link to="/examtaker">Go to examtaker test</Link>
+      </div>
     </div>
   );
 };
