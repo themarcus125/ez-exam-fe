@@ -1,0 +1,81 @@
+{
+    "examtest": [
+        {
+            "id": 1,
+            "stt": 1,
+            "question": "Câu hỏi số 1",
+            "answer": {
+                "A": "Đáp án 1",
+                "B": "Đáp án 2",
+                "C": "Đáp án 3",
+                "D": "Đáp án 4"
+            }
+        },
+        {
+            "id": 2,
+            "stt": 2,
+            "question": "Câu hỏi số 2",
+            "answer": {
+                "A": "Đáp án 1",
+                "B": "Đáp án 2",
+                "C": "Đáp án 3",
+                "D": "Đáp án 4"
+            }
+        },
+        {
+            "id": 3,
+            "stt": 3,
+            "question": "Câu hỏi số 3",
+            "answer": {
+                "A": "Đáp án 1",
+                "B": "Đáp án 2",
+                "C": "Đáp án 3",
+                "D": "Đáp án 4"
+            }
+        },
+        {
+            "id": 4,
+            "stt": 4,
+            "question": "Câu hỏi số 4",
+            "answer": {
+                "A": "Đáp án 1",
+                "B": "Đáp án 2",
+                "C": "Đáp án 3",
+                "D": "Đáp án 4"
+            }
+        },
+        {
+            "id": 5,
+            "stt": 5,
+            "question": "Câu hỏi số 5",
+            "answer": {
+                "A": "Đáp án 1",
+                "B": "Đáp án 2",
+                "C": "Đáp án 3",
+                "D": "Đáp án 4"
+            }
+        },
+        {
+            "id": 6,
+            "stt": 6,
+            "question": "Câu hỏi số 6",
+            "answer": {
+                "A": "Đáp án 1",
+                "B": "Đáp án 2",
+                "C": "Đáp án 3",
+                "D": "Đáp án 4"
+            }
+        },
+        {
+            "id": 7,
+            "stt": 7,
+            "question": "Câu hỏi số 7",
+            "answer": {
+                "A": "Đáp án 1",
+                "B": "Đáp án 2",
+                "C": "Đáp án 3",
+                "D": "Đáp án 4"
+            }
+        }
+    ]
+}
