@@ -1,6 +1,14 @@
 {
-    "user": {
-        "email": "admin@gmail.com",
-        "password": "admin"
-    }
+    "user": [
+        {
+            "email": "admin@gmail.com",
+            "password": "admin",
+            "role": "examiner"
+        },
+        {
+            "email": "student@gmail.com",
+            "password": "student",
+            "role": "examinee"
+        }
+    ]
 }

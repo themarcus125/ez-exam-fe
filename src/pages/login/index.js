@@ -16,8 +16,11 @@ const LoginPage = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const { email: adminEmail, password: adminPassword } = mockData["user"];
-    if (adminEmail === email && adminPassword === password) {
+    const userList = mockData["user"];
+    const userAvaiable = userList.find(
+      (user) => user.email === email && user.password === password,
+    );
+    if (userAvaiable) {
       // createSession({ email, password });
     } else {
       alert("Invalid login credentials");
