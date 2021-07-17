@@ -1,20 +1,28 @@
 import React from "react";
 import { Link } from "gatsby";
 import moment from "moment";
-import mockData from "../mockData/data.json";
+
+// Component
+import NavBar from "../common/NavBar";
+
+// Data
+import mockData from "../../mockData/data.json";
 
 const mainCoursePage = () => {
   const data = mockData["test"];
 
   const renderTests = () => {
     return (
-      <div className="uk-padding">
+      <div className="uk-padding uk-height-1-1" style={{ overflowY: "auto" }}>
         {data.map((test) => {
+          const remainingTime = moment.duration(
+            moment(test.date).diff(moment()),
+          );
           return (
             <div
               key={test.id}
               className="uk-card uk-card-default uk-grid-collapse uk-child-width-1-1 uk-margin uk-card-hover"
-              uk-grid
+              uk-grid=""
             >
               <div>
                 <div className="uk-card-body">
@@ -25,10 +33,15 @@ const mainCoursePage = () => {
                   <div className="uk-flex uk-flex-row uk-flex-between uk-flex-bottom">
                     <p className="uk-margin-remove-bottom">{`${moment(
                       test.date,
-                    ).format("MMMM Do YYYY, hh:mm a")} - Participants: ${
+                    ).format(
+                      "MMMM Do YYYY, hh:mm a",
+                    )} - Time remaining: ${remainingTime.days()} days ${remainingTime.hours()} hours - Participants: ${
                       test.numOfExaminees
                     }`}</p>
-                    <Link className="uk-button uk-background-muted uk-text-primary">
+                    <Link
+                      className="uk-button uk-background-muted uk-text-primary"
+                      to="#"
+                    >
                       Go to Test
                     </Link>
                   </div>
@@ -42,8 +55,12 @@ const mainCoursePage = () => {
   };
 
   return (
-    <div className="uk-background-muted" style={{ height: "100vh" }}>
-      {renderTests()}
+    <div
+      className="uk-flex uk-flex-row"
+      style={{ height: "100vh", overflow: "hidden" }}
+    >
+      <NavBar />
+      <div className="uk-background-muted uk-width-4-5">{renderTests()}</div>
     </div>
   );
 };
