@@ -10,5 +10,28 @@
             "password": "student",
             "role": "examinee"
         }
+    ],
+    "test": [
+        {
+            "id": 1,
+            "name": "Final exam for Calculus",
+            "date": "2021-08-12T12:00:00-06:30",
+            "numOfExaminees": 60,
+            "examiner": "Admin"
+        },
+        {
+            "id": 2,
+            "name": "Final exam for OOP",
+            "date": "2021-08-14T12:00:00-06:30",
+            "numOfExaminees": 60,
+            "examiner": "Admin"
+        },
+        {
+            "id": 3,
+            "name": "Final exam for AI",
+            "date": "2021-08-16T12:00:00-06:30",
+            "numOfExaminees": 60,
+            "examiner": "Admin"
+        }
     ]
 }
