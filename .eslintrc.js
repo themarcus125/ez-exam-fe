@@ -30,10 +30,7 @@ module.exports = {
     },
   },
   rules: {
-    "linebreak-style": [
-      "error",
-      process.platform === "win32" ? "windows" : "unix",
-    ],
+    "linebreak-style": "off",
     "prefer-const": "error",
     "no-var": "error",
     "no-console": ["warn", { allow: ["warn", "error"] }],
