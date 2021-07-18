@@ -14,7 +14,7 @@ const ExamineeDashboard = () => {
       <Router basepath={`/${role}`}>
         <Login path="/login" role={role} />
         <PrivateRoute role={role} path="/" component={MainCourses} />
-        <PrivateRoute role={role} path="/examtaker" component={ExamTaker} />
+        <PrivateRoute role={role} path="/exam-taker" component={ExamTaker} />
       </Router>
     </ExamineeLayout>
   );
