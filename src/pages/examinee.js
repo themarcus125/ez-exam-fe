@@ -4,7 +4,7 @@ import ExamineeLayout from "../layout/ExamineeLayout";
 import { EXAMINEE_ROLE } from "../utils/roles";
 import MainCourses from "../components/examinee/MainCourses";
 import ExamTaker from "../components/examinee/ExamTaker";
-import Login from "../components/examinee/Login";
+import Login from "../components/common/Login";
 import PrivateRoute from "../components/common/PrivateRoute";
 
 const ExamineeDashboard = () => {
@@ -12,7 +12,7 @@ const ExamineeDashboard = () => {
   return (
     <ExamineeLayout>
       <Router basepath={`/${role}`}>
-        <Login path="/login" />
+        <Login path="/login" role={role} />
         <PrivateRoute role={role} path="/" component={MainCourses} />
         <PrivateRoute role={role} path="/examtaker" component={ExamTaker} />
       </Router>

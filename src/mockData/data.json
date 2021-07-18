@@ -33,5 +33,52 @@
             "numOfExaminees": 60,
             "examiner": "Admin"
         }
+    ],
+    "quiz": [
+        {
+            "id": 1,
+            "question": "are you ok?",
+            "answer": ["no", "yes"],
+            "correctAnswerIndex": 0
+        },
+        {
+            "id": 2,
+            "question": "What programming does React use?",
+            "answer": ["Java", "Python", "Javascript", "C++"],
+            "correctAnswerIndex": 2
+        },
+        {
+            "id": 3,
+            "question": "Annie, are you ok?",
+            "answer": ["no", "yes"],
+            "correctAnswerIndex": 1
+        },
+        {
+            "id": 4,
+            "question": "Is the earth flat?",
+            "answer": ["yes", "no", "maybe", "don't know"],
+            "correctAnswerIndex": 0
+        },
+        {
+            "id": 5,
+            "question": "What does the fox say?",
+            "answer": ["Woof", "Meow", "Ding, ding, ding...", "Oof"],
+            "correctAnswerIndex": 2
+        },
+        {
+            "id": 6,
+            "question":
+                "This is just a test question, Why are you still reading? I said this is a test question. I repeat stop reading the test question. For god sake can you stop reading the test question?",
+            "answer": ["yes", "no", "maybe", "don't know"],
+            "correctAnswerIndex": 1
+        }
+    ],
+    "examineeAnswer": [
+        1,
+        2,
+        0,
+        0,
+        3,
+        0
     ]
 }
