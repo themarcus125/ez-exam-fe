@@ -1,4 +1,5 @@
 import React from "react";
+import { graphql, useStaticQuery } from "gatsby";
 
 // Component
 import NavBar from "../common/NavBar";
@@ -19,6 +20,19 @@ const Result = () => {
       studentAnswer,
     };
   });
+
+  const { allFile: publicVideoFile } = useStaticQuery(graphql`
+    query {
+      allFile {
+        edges {
+          node {
+            publicURL
+            name
+          }
+        }
+      }
+    }
+  `);
 
   const renderResult = () => {
     return (
@@ -87,8 +101,8 @@ const Result = () => {
             </div>
           );
         })}
-        {renderVideoPlayback()}
-        {renderAudioPlayback()}
+        {renderWebcamPlayback()}
+        {renderScreenRecordingPlayback()}
       </div>
     );
   };
@@ -97,12 +111,28 @@ const Result = () => {
     return <h3>{`Correct answer: ${numberOfCorrectAnswer}/${quiz.length}`}</h3>;
   };
 
-  const renderVideoPlayback = () => {
-    return <h3>Video playback</h3>;
+  const renderWebcamPlayback = () => {
+    const url = publicVideoFile.edges.find(
+      ({ node }) => node.name === "webcam-rec",
+    )?.node?.publicURL;
+    return (
+      <>
+        <h3>Camera + audio playback</h3>
+        <video src={url} controls playsinline uk-video></video>
+      </>
+    );
   };
 
-  const renderAudioPlayback = () => {
-    return <h3>Audio playback</h3>;
+  const renderScreenRecordingPlayback = () => {
+    const url = publicVideoFile.edges.find(
+      ({ node }) => node.name === "screen-rec",
+    )?.node?.publicURL;
+    return (
+      <>
+        <h3>Screen recording playback</h3>
+        <video src={url} controls playsinline uk-video></video>
+      </>
+    );
   };
 
   return (
