@@ -16,5 +16,13 @@ module.exports = {
       resolve: `gatsby-plugin-create-client-paths`,
       options: { prefixes: [`/examinee/*`, `/examiner/*`] },
     },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `data`,
+        path: `${__dirname}/publicVideos/`,
+        ignore: [`**/\.*`], // ignore files starting with a dot
+      },
+    },
   ],
 };
