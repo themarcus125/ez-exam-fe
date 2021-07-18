@@ -3,6 +3,8 @@ import { navigate } from "gatsby";
 import { useLocation } from "@reach/router";
 import queryString from "query-string";
 import { EXAMINEE_ROLE } from "../../utils/roles";
+import useWebcamRecorder from "../../hooks/useWebcamRecorder";
+import useScreenRecorder from "../../hooks/useScreenRecorder";
 // Component
 import NavBar from "../common/NavBar";
 
@@ -10,18 +12,39 @@ import NavBar from "../common/NavBar";
 import mockData from "../../mockData/examtest.json";
 
 const ExamTakerPage = () => {
+  const [isPermissionApproved, setIsPermissionApproved] = useState(false);
   const [data, setData] = useState(null);
   const location = useLocation();
+
+  const { isPermissionApproved: webcamApproved, webcamRecorderObject } =
+    useWebcamRecorder();
+  const { isPermissionApproved: screenRecApproved, screenRecorderObject } =
+    useScreenRecorder();
+
   useEffect(() => {
-    const queriedExamId = queryString.parse(location.search)?.id;
-    if (queriedExamId) {
-      // Set data by requesting questionaire with current test id from server
-      setData(mockData["examtest"]);
+    if (webcamApproved && screenRecApproved) {
+      setIsPermissionApproved(true);
     }
-    if (!queriedExamId) {
-      navigate(`/${EXAMINEE_ROLE}`);
+  }, [webcamApproved, screenRecApproved]);
+
+  useEffect(() => {
+    if (isPermissionApproved) {
+      const queriedExamId = queryString.parse(location.search)?.id;
+      if (queriedExamId) {
+        // Set data by requesting questionaire with current test id from server
+        setData(mockData["examtest"]);
+      }
+      if (!queriedExamId) {
+        navigate(`/${EXAMINEE_ROLE}`);
+      }
     }
-  }, []);
+  }, [isPermissionApproved]);
+
+  const onSubmit = () => {
+    webcamRecorderObject.stop();
+    screenRecorderObject.stop();
+    navigate(`/${EXAMINEE_ROLE}`);
+  };
 
   const renderExamTaker = () => {
     return (
@@ -76,7 +99,9 @@ const ExamTakerPage = () => {
             );
           })}
           <p className="uk-card-title uk-width-1-1 uk-text-center uk-margin-medium-bottom">
-            <button className="uk-button uk-button-primary">Nộp Bài</button>
+            <button className="uk-button uk-button-primary" onClick={onSubmit}>
+              Nộp Bài
+            </button>
           </p>
         </div>
       </div>
