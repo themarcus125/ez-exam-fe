@@ -40,7 +40,7 @@ const mainCoursePage = () => {
                     }`}</p>
                     <Link
                       className="uk-button uk-background-muted uk-text-primary"
-                      to="/examinee/examtaker"
+                      to={`/examinee/exam-taker?id=${test.id}`}
                     >
                       Go to Test
                     </Link>
