@@ -2,9 +2,6 @@ import React from "react";
 import { Link } from "gatsby";
 import moment from "moment";
 
-// Component
-import NavBar from "../common/NavBar";
-
 // Data
 import mockData from "../../mockData/data.json";
 
@@ -55,13 +52,7 @@ const mainCoursePage = () => {
   };
 
   return (
-    <div
-      className="uk-flex uk-flex-row"
-      style={{ height: "100vh", overflow: "hidden" }}
-    >
-      <NavBar />
-      <div className="uk-background-muted uk-width-4-5">{renderTests()}</div>
-    </div>
+    <div className="uk-height-1-1 uk-background-muted">{renderTests()}</div>
   );
 };
 
