@@ -1,27 +1,28 @@
-import mockData from "../mockData/data.json";
-const USER_TYPE = "currentUser";
+import { postAPIForm } from "../utils/api";
+const CURRENT_USER = "currentUser";
 
 export const isBrowser = () => typeof window !== "undefined";
 
 export const getUser = () =>
-  isBrowser() && window.localStorage.getItem(USER_TYPE)
-    ? JSON.parse(window.localStorage.getItem(USER_TYPE))
+  isBrowser() && window.localStorage.getItem(CURRENT_USER)
+    ? JSON.parse(window.localStorage.getItem(CURRENT_USER))
     : {};
 
 const setUser = (user) =>
-  window.localStorage.setItem(USER_TYPE, JSON.stringify(user));
+  window.localStorage.setItem(CURRENT_USER, JSON.stringify(user));
 
-export const handleLogin = ({ email, password, role }, callback) => {
-  const loggedUser = mockData.user.find(
-    (currentUser) =>
-      currentUser.email === email &&
-      currentUser.password === password &&
-      currentUser.role === role,
-  );
-  if (loggedUser) {
+export const handleLogin = async ({ email, password, role }, callback) => {
+  const response = await postAPIForm("/login", {
+    tenDangNhap: email,
+    matKhau: password,
+  });
+  if (response.status === 200) {
+    const { data } = await response.json();
     setUser({
-      email: email,
-      role: role,
+      email: data?.user?.email,
+      username: data?.user?.tenDangNhap,
+      role: data?.user?.phan_quyen?.[0]?.quyen,
+      tk: data?.token,
     });
     if (callback) {
       callback();
