@@ -1,4 +1,5 @@
 import { postAPIForm } from "../utils/api";
+import Config from '../tools/config';
 const CURRENT_USER = "currentUser";
 
 export const isBrowser = () => typeof window !== "undefined";
@@ -18,6 +19,7 @@ export const handleLogin = async ({ email, password, role }, callback) => {
   });
   if (response.status === 200) {
     const { data } = await response.json();
+    console.log("datauser", data);
     setUser({
       email: data?.user?.email,
       username: data?.user?.tenDangNhap,
@@ -34,7 +36,9 @@ export const handleLogin = async ({ email, password, role }, callback) => {
 
 export const isLoggedIn = (role) => {
   const user = getUser();
-  if (user.role === role) {
+  console.log("datauser", user);
+  if (user.role === Config.urlPath[role].role) {
+    console.log("url", Config.urlPath[role].role);
     return !!user.email;
   }
   return false;

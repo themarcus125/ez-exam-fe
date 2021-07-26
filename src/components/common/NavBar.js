@@ -7,7 +7,7 @@ const NavBar = () => {
   const userEmail = getUser()?.email;
 
   const onLogout = () => {
-    logout(() => navigate(`/${EXAMINEE_ROLE}/login`));
+    logout(() => navigate(`/`));
   };
 
   return (

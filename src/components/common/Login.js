@@ -69,7 +69,7 @@ const Login = ({ role }) => {
               <input
                 required
                 className="uk-input"
-                type="email"
+                type="text"
                 placeholder="Email"
                 value={email}
                 onChange={handleChangeEmail}
