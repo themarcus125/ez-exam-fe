@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { navigate } from "gatsby";
+import styled from "styled-components";
 import { handleLogin, isLoggedIn, isBrowser } from "../../utils/auth";
+import background_admin from "../../asset/images/background_admin.jpg";
+import background_examinee from "../../asset/images/background_examinee.jpg";
+import background_examiner from "../../asset/images/background_examiner.jpg";
 
 const Login = ({ role }) => {
   if (isBrowser && isLoggedIn(role)) {
@@ -29,21 +33,38 @@ const Login = ({ role }) => {
     }
   };
 
+  useEffect(() => {
+    const loginPageEl = document.querySelector("#login_page");
+    if (loginPageEl) {
+      let background = "";
+      if (role === "admin") {
+        background = background_admin;
+      }
+      if (role === "examinee") {
+        background = background_examinee;
+      }
+      if (role === "examiner") {
+        background = background_examiner;
+      }
+      loginPageEl.style.backgroundImage = `url(${background})`;
+    }
+  }, []);
+
   return (
     <div
-      className="uk-flex uk-flex-center uk-flex-middle"
+      id="login_page"
+      className="uk-flex uk-flex-center uk-flex-middle uk-background-cover"
       style={{
         height: "100%",
         width: "100%",
         position: "absolute",
         left: 0,
-        backgroundColor: "#D1D1D1",
       }}
     >
       <div className="uk-width-1-3 uk-background-default uk-border-rounded uk-padding">
         <form className="uk-form" onSubmit={onSubmit}>
           <fieldset className="uk-fieldset">
-            <legend className="uk-legend">Login</legend>
+            <legend className="uk-legend">Login for {role}</legend>
             <div className="uk-margin">
               <input
                 required
