@@ -1,9 +1,6 @@
 import React from "react";
 import { graphql, useStaticQuery } from "gatsby";
 
-// Component
-import NavBar from "../common/NavBar";
-
 // Data
 import MockData from "../../mockData/data.json";
 
@@ -136,13 +133,7 @@ const Result = () => {
   };
 
   return (
-    <div
-      className="uk-flex uk-flex-row"
-      style={{ height: "100vh", overflow: "hidden" }}
-    >
-      <NavBar />
-      <div className="uk-background-muted uk-width-4-5">{renderResult()}</div>
-    </div>
+    <div className="uk-height-1-1 uk-background-muted">{renderResult()}</div>
   );
 };
 

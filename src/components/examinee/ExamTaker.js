@@ -5,8 +5,6 @@ import queryString from "query-string";
 import { EXAMINEE_ROLE } from "../../utils/roles";
 import useWebcamRecorder from "../../hooks/useWebcamRecorder";
 import useScreenRecorder from "../../hooks/useScreenRecorder";
-// Component
-import NavBar from "../common/NavBar";
 
 // Data
 import mockData from "../../mockData/examtest.json";
@@ -109,14 +107,8 @@ const ExamTakerPage = () => {
   };
 
   return (
-    <div
-      className="uk-flex uk-flex-row"
-      style={{ height: "100vh", overflow: "hidden" }}
-    >
-      <NavBar />
-      <div className="uk-background-muted uk-width-4-5">
-        {data ? renderExamTaker() : <span uk-spinner="ratio: 4.5"></span>}
-      </div>
+    <div className="uk-height-1-1 uk-background-muted">
+      {data ? renderExamTaker() : <span uk-spinner="ratio: 4.5"></span>}
     </div>
   );
 };
