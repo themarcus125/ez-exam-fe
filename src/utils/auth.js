@@ -1,5 +1,5 @@
 import { postAPIForm } from "../utils/api";
-import Config from '../tools/config';
+import Config from "./config";
 const CURRENT_USER = "currentUser";
 
 export const isBrowser = () => typeof window !== "undefined";
@@ -12,25 +12,27 @@ export const getUser = () =>
 const setUser = (user) =>
   window.localStorage.setItem(CURRENT_USER, JSON.stringify(user));
 
-export const handleLogin = async ({ email, password }, callback) => {
+export const handleLogin = async (
+  { email, password },
+  onSuccess = () => {},
+  onFail = () => {},
+) => {
   const response = await postAPIForm("/login", {
     tenDangNhap: email,
     matKhau: password,
   });
   if (response.status === 200) {
     const { data } = await response.json();
+    const role = data?.user?.phan_quyen?.[0]?.quyen;
     setUser({
       email: data?.user?.email,
       username: data?.user?.tenDangNhap,
-      role: data?.user?.phan_quyen?.[0]?.quyen,
+      role,
       tk: data?.token,
     });
-    if (callback) {
-      callback(Config.urlPath[data?.user?.phan_quyen?.[0]?.quyen].url);
-    }
-    return true;
+    return onSuccess(Config.urlPath[role].url);
   }
-  return false;
+  return onFail();
 };
 
 export const isLoggedIn = (role) => {
@@ -39,6 +41,13 @@ export const isLoggedIn = (role) => {
     return !!user.username;
   }
   return false;
+};
+
+export const getMe = () => {
+  // Currently check user is logged in by `getUser` and returns the user's role
+  // In the future, it will be replaced by using `getMe` api for checking user's role
+  const role = Config?.[getUser()?.role]?.role;
+  return { role };
 };
 
 export const logout = (callback) => {
