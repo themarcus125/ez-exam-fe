@@ -27,7 +27,7 @@ export const handleLogin = async ({ email, password, role }, callback) => {
       tk: data?.token,
     });
     if (callback) {
-      callback();
+      callback(Config.urlPath[data?.user?.phan_quyen?.[0]?.quyen].url);
     }
     return true;
   }
@@ -37,9 +37,9 @@ export const handleLogin = async ({ email, password, role }, callback) => {
 export const isLoggedIn = (role) => {
   const user = getUser();
   console.log("datauser", user);
-  if (user.role === Config.urlPath[role].role) {
-    console.log("url", Config.urlPath[role].role);
-    return !!user.email;
+  if (Config.urlPath[user.role].role === role) {
+    console.log("url", Config.urlPath[user.role].role);
+    return !!user.username;
   }
   return false;
 };

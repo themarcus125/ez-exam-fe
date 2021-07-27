@@ -1,15 +1,20 @@
 module.exports = {
     urlPath: {
-        'examinee': {
+        'sinhvien': {
             name: "Examinee",
             url: '/examinee',
-            role: 'sinhvien',
+            role: 'examinee',
             title: "Sinh viên"
-        },'examiner': {
+        },'giaovien': {
             name: "Examiner",
             url: '/examiner',
-            role: 'giaovien',
+            role: 'examiner',
             title: "Giáo viên"
+        },'admin': {
+            name: "Admin",
+            url: '/admin',
+            role: 'admin',
+            title: "Admin"
         }
     }
 };

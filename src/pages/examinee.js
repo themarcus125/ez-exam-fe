@@ -12,7 +12,7 @@ const ExamineeDashboard = () => {
   return (
     <ExamineeLayout>
       <Router basepath={`/${role}`}>
-        <Login path="/login" role={role} />
+        {/* <Login path="/login" role={role} /> */}
         <PrivateRoute role={role} path="/" component={MainCourses} />
         <PrivateRoute role={role} path="/exam-taker" component={ExamTaker} />
       </Router>

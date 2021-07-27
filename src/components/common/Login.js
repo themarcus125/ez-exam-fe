@@ -5,12 +5,12 @@ import { handleLogin, isLoggedIn, isBrowser } from "../../utils/auth";
 import background_admin from "../../asset/images/background_admin.jpg";
 import background_examinee from "../../asset/images/background_examinee.jpg";
 import background_examiner from "../../asset/images/background_examiner.jpg";
-
-const Login = ({ role }) => {
-  if (isBrowser && isLoggedIn(role)) {
-    navigate(`/${role}`);
-    return <></>;
-  }
+let role = "";
+const Login = () => {
+  // if (isBrowser && isLoggedIn(role)) {
+  //   navigate(`/${role}`);
+  //   return <></>;
+  // }
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,8 +25,9 @@ const Login = ({ role }) => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const isLoginSuccess = handleLogin({ email, password, role }, () => {
-      navigate(`/${role}`);
+    const isLoginSuccess = handleLogin({ email, password }, (roleUser) => {
+      navigate(`${roleUser}`);
+      role = roleUser;
     });
     if (!isLoginSuccess) {
       alert("Invalid login credentials");
@@ -37,6 +38,7 @@ const Login = ({ role }) => {
     const loginPageEl = document.querySelector("#login_page");
     if (loginPageEl) {
       let background = "";
+      console.log("test", role);
       if (role === "admin") {
         background = background_admin;
       }
@@ -64,7 +66,7 @@ const Login = ({ role }) => {
       <div className="uk-width-1-3 uk-background-default uk-border-rounded uk-padding">
         <form className="uk-form" onSubmit={onSubmit}>
           <fieldset className="uk-fieldset">
-            <legend className="uk-legend">Login for {role}</legend>
+            <legend className="uk-legend">Login</legend>
             <div className="uk-margin">
               <input
                 required

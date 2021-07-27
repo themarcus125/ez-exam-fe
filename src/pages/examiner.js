@@ -11,7 +11,7 @@ const ExaminerDashboard = () => {
   return (
     <ExaminerLayout>
       <Router basepath={`/${role}`}>
-        <Login path="/login" role={role} />
+        {/* <Login path="/login" role={role} /> */}
         <PrivateRoute role={role} path="/" component={Result} />
       </Router>
     </ExaminerLayout>
