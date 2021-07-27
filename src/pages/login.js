@@ -1,17 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { navigate } from "gatsby";
-import styled from "styled-components";
-import { handleLogin, isLoggedIn, isBrowser } from "../../utils/auth";
-import background_admin from "../../asset/images/background_admin.jpg";
-import background_examinee from "../../asset/images/background_examinee.jpg";
-import background_examiner from "../../asset/images/background_examiner.jpg";
+import { handleLogin, getMe } from "../utils/auth";
+import background_examinee from "../asset/images/background_examinee.jpg";
 
-const Login = ({ role }) => {
-  if (isBrowser && isLoggedIn(role)) {
-    navigate(`/${role}`);
-    return <></>;
-  }
-
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -25,28 +17,21 @@ const Login = ({ role }) => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const isLoginSuccess = handleLogin({ email, password, role }, () => {
-      navigate(`/${role}`);
-    });
-    if (!isLoginSuccess) {
-      alert("Invalid login credentials");
-    }
+    handleLogin(
+      { email, password },
+      (role) => {
+        navigate(`${role}`);
+      },
+      () => {
+        alert("Invalid login credentials");
+      },
+    );
   };
 
   useEffect(() => {
-    const loginPageEl = document.querySelector("#login_page");
-    if (loginPageEl) {
-      let background = "";
-      if (role === "admin") {
-        background = background_admin;
-      }
-      if (role === "examinee") {
-        background = background_examinee;
-      }
-      if (role === "examiner") {
-        background = background_examiner;
-      }
-      loginPageEl.style.backgroundImage = `url(${background})`;
+    const { role } = getMe();
+    if (role) {
+      navigate(`${role}`);
     }
   }, []);
 
@@ -59,17 +44,18 @@ const Login = ({ role }) => {
         width: "100%",
         position: "absolute",
         left: 0,
+        backgroundImage: `url(${background_examinee})`,
       }}
     >
       <div className="uk-width-1-3 uk-background-default uk-border-rounded uk-padding">
         <form className="uk-form" onSubmit={onSubmit}>
           <fieldset className="uk-fieldset">
-            <legend className="uk-legend">Login for {role}</legend>
+            <legend className="uk-legend">Login</legend>
             <div className="uk-margin">
               <input
                 required
                 className="uk-input"
-                type="email"
+                type="text"
                 placeholder="Email"
                 value={email}
                 onChange={handleChangeEmail}

@@ -4,8 +4,8 @@ import { isLoggedIn } from "../../utils/auth";
 import NavBar from "./NavBar";
 
 const PrivateRoute = ({ component: Component, role, location, ...rest }) => {
-  if (!isLoggedIn(role) && location.pathname !== `/${role}/login`) {
-    navigate(`/${role}/login`);
+  if (!isLoggedIn(role) && location.pathname !== `/login`) {
+    navigate(`/login`);
     return null;
   }
   return (

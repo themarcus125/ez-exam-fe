@@ -15,7 +15,7 @@ const NavBar = ({ role }) => {
   }, []);
 
   const onLogout = () => {
-    logout(() => navigate(`/${role}/login`));
+    logout(() => navigate(`/`));
   };
 
   return (
