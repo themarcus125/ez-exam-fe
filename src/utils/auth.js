@@ -12,14 +12,13 @@ export const getUser = () =>
 const setUser = (user) =>
   window.localStorage.setItem(CURRENT_USER, JSON.stringify(user));
 
-export const handleLogin = async ({ email, password, role }, callback) => {
+export const handleLogin = async ({ email, password }, callback) => {
   const response = await postAPIForm("/login", {
     tenDangNhap: email,
     matKhau: password,
   });
   if (response.status === 200) {
     const { data } = await response.json();
-    console.log("datauser", data);
     setUser({
       email: data?.user?.email,
       username: data?.user?.tenDangNhap,
@@ -36,9 +35,7 @@ export const handleLogin = async ({ email, password, role }, callback) => {
 
 export const isLoggedIn = (role) => {
   const user = getUser();
-  console.log("datauser", user);
   if (Config.urlPath[user.role].role === role) {
-    console.log("url", Config.urlPath[user.role].role);
     return !!user.username;
   }
   return false;

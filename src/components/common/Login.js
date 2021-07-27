@@ -7,11 +7,6 @@ import background_examinee from "../../asset/images/background_examinee.jpg";
 import background_examiner from "../../asset/images/background_examiner.jpg";
 let role = "";
 const Login = () => {
-  // if (isBrowser && isLoggedIn(role)) {
-  //   navigate(`/${role}`);
-  //   return <></>;
-  // }
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -38,7 +33,6 @@ const Login = () => {
     const loginPageEl = document.querySelector("#login_page");
     if (loginPageEl) {
       let background = "";
-      console.log("test", role);
       if (role === "admin") {
         background = background_admin;
       }
