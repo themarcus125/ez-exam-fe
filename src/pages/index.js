@@ -26,10 +26,7 @@ const IndexPage = () => {
         <div class="uk-navbar-right uk-margin-small-right">
           <ul class="uk-navbar-nav">
             <li>
-              <Link to="/examiner">Dành cho giáo viên</Link>
-            </li>
-            <li>
-              <Link to="/examinee">Dành cho học viên</Link>
+              <Link to="/login">Đăng nhập</Link>
             </li>
           </ul>
         </div>
