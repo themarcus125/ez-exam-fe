@@ -56,7 +56,7 @@ const Login = () => {
                 required
                 className="uk-input"
                 type="text"
-                placeholder="Email"
+                placeholder="Tên đăng nhập"
                 value={email}
                 onChange={handleChangeEmail}
               />
@@ -66,12 +66,12 @@ const Login = () => {
                 required
                 className="uk-input"
                 type="password"
-                placeholder="Password"
+                placeholder="Mật khẩu"
                 value={password}
                 onChange={handleChangePassword}
               />
             </div>
-            <button className="uk-button">Login</button>
+            <button className="uk-button">Đăng nhập</button>
           </fieldset>
         </form>
       </div>

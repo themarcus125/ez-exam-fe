@@ -10,7 +10,7 @@ const PrivateRoute = ({ component: Component, role, location, ...rest }) => {
   }
   return (
     <div>
-      <NavBar role={role} />
+      <NavBar />
       <Component {...rest} />
     </div>
   );

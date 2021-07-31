@@ -14,7 +14,7 @@ module.exports = {
     },
     {
       resolve: `gatsby-plugin-create-client-paths`,
-      options: { prefixes: [`/examinee/*`, `/examiner/*`] },
+      options: { prefixes: [`/examinee/*`, `/examiner/*`, `/admin/*`] },
     },
     {
       resolve: `gatsby-source-filesystem`,

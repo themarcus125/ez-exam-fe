@@ -1,5 +1,5 @@
 export const navBarCategories = {
-  examiner: [
+  giaovien: [
     {
       title: "Ngân hàng câu hỏi",
       path: "/",
@@ -41,7 +41,7 @@ export const navBarCategories = {
       path: "/",
     },
   ],
-  examinee: [
+  sinhvien: [
     {
       title: "Thực hiệm kiểm tra",
       path: "/",
@@ -98,7 +98,13 @@ export const navBarCategories = {
     },
     {
       title: "Tài khoản",
-      path: "/",
+      path: "/accounts",
     },
   ],
+};
+
+export const userRoleToPath = {
+  giaovien: "examiner",
+  sinhvien: "examinee",
+  admin: "admin",
 };

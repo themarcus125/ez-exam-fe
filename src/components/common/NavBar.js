@@ -4,11 +4,12 @@ import { navigate, Link } from "gatsby";
 
 import { logout, getUser } from "../../utils/auth";
 import logo from "../../asset/images/logo.png";
-import { navBarCategories } from "../../utils/constants";
+import { navBarCategories, userRoleToPath } from "../../utils/constants";
 
-const NavBar = ({ role }) => {
-  const userEmail = getUser()?.email;
-  const categories = navBarCategories["admin"];
+const NavBar = () => {
+  const { email: userEmail, role: userRole } = getUser();
+  const rootPath = userRoleToPath[userRole] || "examinee";
+  const categories = navBarCategories[userRole] || navBarCategories["sinhvien"];
 
   useEffect(() => {
     UIKit.navbar("#navbar");
@@ -28,7 +29,7 @@ const NavBar = ({ role }) => {
       >
         <div class="uk-navbar-left uk-margin-small-left">
           <ul class="uk-navbar-nav">
-            <Link to="/examiner">
+            <Link to={`/${rootPath}`}>
               <img src={logo} alt="Logo" width="200" height="80" />
             </Link>
 
@@ -37,7 +38,9 @@ const NavBar = ({ role }) => {
                 <li class="uk-flex uk-flex-middle">
                   <Link
                     to={
-                      category?.subCategories ? "" : `/examiner${category.path}`
+                      category?.subCategories
+                        ? ""
+                        : `/${rootPath}${category.path}`
                     }
                   >
                     {category.title}
@@ -48,7 +51,9 @@ const NavBar = ({ role }) => {
                         {category.subCategories.map((subCategory) => {
                           return (
                             <li>
-                              <Link to={`/examiner${category.path}`}>
+                              <Link
+                                to={`/${rootPath}${category.path}${subCategory.path}`}
+                              >
                                 {subCategory.title}
                               </Link>
                             </li>
@@ -72,7 +77,7 @@ const NavBar = ({ role }) => {
               <div class="uk-navbar-dropdown">
                 <ul class="uk-nav uk-navbar-dropdown-nav">
                   <li>
-                    <Link to={`/examiner`}>Tài khoản</Link>
+                    <Link to={`/${rootPath}`}>Tài khoản</Link>
                   </li>
                   <li>
                     <a onClick={onLogout}>Đăng xuất</a>
