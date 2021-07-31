@@ -98,7 +98,7 @@ export const navBarCategories = {
     },
     {
       title: "Tài khoản",
-      path: "/accounts",
+      path: "/account",
     },
   ],
 };

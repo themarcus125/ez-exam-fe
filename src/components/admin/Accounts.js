@@ -3,7 +3,7 @@ import { Link, navigate } from "gatsby";
 
 const AdminAccounts = () => {
   const onAddNew = () => {
-    navigate("../accounts/add");
+    navigate("../account/add");
   };
 
   return (
