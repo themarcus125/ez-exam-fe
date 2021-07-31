@@ -1,11 +1,19 @@
 import React from "react";
 import { navigate } from "gatsby";
-import { isLoggedIn } from "../../utils/auth";
+import { isLoggedIn, getUser } from "../../utils/auth";
+import { userRoleToPath } from "../..//utils/constants";
 import NavBar from "./NavBar";
 
 const PrivateRoute = ({ component: Component, role, location, ...rest }) => {
-  if (!isLoggedIn(role) && location.pathname !== `/login`) {
+  const user = getUser();
+  if (!user.role && location.pathname !== `/login`) {
     navigate(`/login`);
+    return null;
+  }
+
+  const pathToReturn = userRoleToPath[user.role] ?? "examinee";
+  if (!isLoggedIn(role)) {
+    navigate(`/${pathToReturn}`);
     return null;
   }
   return (
