@@ -1,13 +1,25 @@
 import React, { useEffect } from "react";
-import { Link } from "gatsby";
+import { Link, navigate } from "gatsby";
 import UIKit from "uikit/dist/js/uikit.min.js";
 
 import logo from "../asset/images/logo.png";
+import { getUser } from "../utils/auth";
+import { userRoleToPath } from "../utils/constants";
 
 const IndexPage = () => {
   useEffect(() => {
     UIKit.navbar("#navbar");
   }, []);
+
+  const onLogin = () => {
+    const { role = "" } = getUser();
+    if (!role) {
+      return navigate("/login");
+    }
+
+    const path = userRoleToPath[role] || "examinee";
+    navigate(`/${path}`);
+  };
 
   return (
     <div className="uk-flex uk-flex-column" style={{ height: "100vh" }}>
@@ -26,7 +38,7 @@ const IndexPage = () => {
         <div class="uk-navbar-right uk-margin-small-right">
           <ul class="uk-navbar-nav">
             <li>
-              <Link to="/login">Đăng nhập</Link>
+              <a onClick={onLogin}>Đăng nhập</a>
             </li>
           </ul>
         </div>
