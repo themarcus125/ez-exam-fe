@@ -1,4 +1,4 @@
-import { postAPIForm } from "../utils/api";
+import { postAPIForm, postAPIWithToken } from "../utils/api";
 import Config from "./config";
 const CURRENT_USER = "currentUser";
 
@@ -50,8 +50,14 @@ export const getMe = () => {
   return { role };
 };
 
-export const logout = (callback) => {
-  setUser({});
+export const logout = async (callback) => {
+  const tokenLogout = getUser()?.tk;
+  const resLogout = await postAPIWithToken("/logout", null, tokenLogout);
+  if (resLogout.status === 200) {
+    setUser({});
+  }else {
+    alert("Logout failed !!!");
+  }
   if (callback) {
     callback();
   }
