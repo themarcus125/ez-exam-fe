@@ -48,3 +48,13 @@ export const postAPIForm = (endpoint, data, options = {}) =>
     body: data ? new URLSearchParams(data) : null,
     ...options,
   });
+
+export const postFileAPIWithToken = (endpoint, formData, token, options = {}) =>
+  fetch(`${API_URL}${endpoint}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+    ...options,
+  });
