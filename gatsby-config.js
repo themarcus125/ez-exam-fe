@@ -19,6 +19,14 @@ module.exports = {
     {
       resolve: `gatsby-source-filesystem`,
       options: {
+        name: `resources`,
+        path: `${__dirname}/resources/`,
+        ignore: [`**/\.*`], // ignore files starting with a dot
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
         name: `data`,
         path: `${__dirname}/publicVideos/`,
         ignore: [`**/\.*`], // ignore files starting with a dot

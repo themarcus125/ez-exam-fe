@@ -6,6 +6,7 @@ import Home from "../components/admin/Home";
 import Accounts from "../components/admin/Accounts";
 import AccountForm from "../components/admin/AccountForm";
 import PrivateRoute from "../components/common/PrivateRoute";
+import AccountFromFile from "../components/admin/AccountFromFile";
 
 const AdminDashboard = () => {
   const role = ADMIN_ROLE;
@@ -15,6 +16,11 @@ const AdminDashboard = () => {
         <PrivateRoute role={role} path="/" component={Home} />
         <PrivateRoute role={role} path="/account" component={Accounts} />
         <PrivateRoute role={role} path="/account/add" component={AccountForm} />
+        <PrivateRoute
+          role={role}
+          path="/account/add-from-file"
+          component={AccountFromFile}
+        />
         <PrivateRoute
           role={role}
           path="/account/:userId"

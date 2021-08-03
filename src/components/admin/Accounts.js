@@ -6,6 +6,9 @@ const AdminAccounts = () => {
     navigate("../account/add");
   };
 
+  const onAddFromFile = () => {
+    navigate("../account/add-from-file");
+  };
   return (
     <div
       className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
@@ -61,6 +64,7 @@ const AdminAccounts = () => {
             <button
               className="uk-button"
               style={{ ...myButton, ...activeText }}
+              onClick={onAddFromFile}
             >
               Thêm từ tập tin
             </button>
