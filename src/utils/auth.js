@@ -25,9 +25,7 @@ const setTokenToLocalStorage = async (token) => {
 
 const refreshToken = async (token) => {
   try {
-    const response = await postAPIForm("/refresh", {
-      token,
-    });
+    const response = await postAPIWithToken("/refresh", null, token);
     const { data } = await response.json();
     return data;
   } catch (err) {
