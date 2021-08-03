@@ -20,11 +20,11 @@ export const navBarCategories = {
     },
     {
       title: "Quản lý đề thi",
-      path: "/",
+      path: "",
       subCategories: [
         {
           title: "Danh sách đề thi",
-          path: "/",
+          path: "/exam",
         },
         {
           title: "Tạo đề thi",
@@ -72,11 +72,11 @@ export const navBarCategories = {
     },
     {
       title: "Quản lý đề thi",
-      path: "/",
+      path: "",
       subCategories: [
         {
           title: "Danh sách đề thi",
-          path: "/",
+          path: "/exam",
         },
         {
           title: "Tạo đề thi",
