@@ -10,7 +10,7 @@ const Exam = () => {
 
       <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
         <div className="uk-width-1-4@s uk-display-inline-block">
-          <span class="uk-display-inline-block uk-width-2-5">Môn học</span>
+          <span className="uk-display-inline-block uk-width-2-5">Môn học</span>
           <div className="uk-display-inline-block uk-width-3-5">
             <select
               className="uk-select uk-width-1-1"
@@ -25,7 +25,7 @@ const Exam = () => {
         </div>
 
         <div className="uk-width-1-4@s uk-display-inline-block">
-          <span class="uk-display-inline-block uk-width-1-5 uk-margin-right">
+          <span className="uk-display-inline-block uk-width-1-5 uk-margin-right">
             Năm học
           </span>
           <div className="uk-display-inline-block uk-width-3-5">
@@ -42,7 +42,7 @@ const Exam = () => {
         </div>
 
         <div className="uk-width-1-4@s uk-display-inline-block">
-          <span class="uk-display-inline-block uk-width-1-5 uk-margin-right">
+          <span className="uk-display-inline-block uk-width-1-5 uk-margin-right">
             Mức độ
           </span>
           <div className="uk-display-inline-block uk-width-3-5">
@@ -62,7 +62,7 @@ const Exam = () => {
       <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
         <div className="uk-width-3-5 uk-flex uk-flex-between">
           <input
-            class="uk-search-input uk-width-4-5"
+            className="uk-search-input uk-width-4-5"
             type="search"
             placeholder="Search"
             style={{
@@ -82,12 +82,14 @@ const Exam = () => {
           className="uk-button"
           style={{ backgroundColor: "#32d296", color: "#FFF" }}
         >
-          Thêm mới
+          <Link to="./add" style={{ color: "#FFFFFF", textDecoration: "none" }}>
+            Thêm mới
+          </Link>
         </button>
       </div>
 
       <div className="uk-margin-top" style={{ height: 400 }}>
-        <table class="uk-table uk-table-striped uk-table-middle">
+        <table className="uk-table uk-table-striped uk-table-middle">
           <thead>
             <tr>
               <th className="uk-width-large">Mã bộ đề</th>
@@ -110,18 +112,18 @@ const Exam = () => {
               <td>
                 <nav
                   id="navbar"
-                  class="uk-navbar-container"
+                  className="uk-navbar-container"
                   style={{ backgroundColor: "#FFFFFF" }}
                   uk-navbar
                 >
-                  <div class="uk-navbar-left uk-margin-small-left">
-                    <ul class="uk-navbar-nav">
-                      <li class="uk-flex uk-flex-middle">
+                  <div className="uk-navbar-left uk-margin-small-left">
+                    <ul className="uk-navbar-nav">
+                      <li className="uk-flex uk-flex-middle">
                         <a>
                           <span uk-icon="table"></span>
                         </a>
-                        <div class="uk-navbar-dropdown">
-                          <ul class="uk-nav uk-navbar-dropdown-nav">
+                        <div className="uk-navbar-dropdown">
+                          <ul className="uk-nav uk-navbar-dropdown-nav">
                             <li>
                               <a>Tạo bản sao</a>
                             </li>
@@ -140,15 +142,15 @@ const Exam = () => {
         </table>
       </div>
 
-      <ul class="uk-pagination uk-flex-center" uk-margin>
+      <ul className="uk-pagination uk-flex-center" uk-margin>
         <li>
-          <button class="uk-button uk-button-default uk-button-small">
-            <span class="uk-icon" uk-icon="icon: chevron-left"></span>
+          <button className="uk-button uk-button-default uk-button-small">
+            <span className="uk-icon" uk-icon="icon: chevron-left"></span>
           </button>
         </li>
-        <li class="uk-disabled">
+        <li className="uk-disabled">
           <button
-            class="uk-button uk-button-default uk-button-small"
+            className="uk-button uk-button-default uk-button-small"
             style={{
               width: 40,
               color: "#FFF",
@@ -160,7 +162,7 @@ const Exam = () => {
         </li>
         <li>
           <button
-            class="uk-button uk-button-default uk-button-small"
+            className="uk-button uk-button-default uk-button-small"
             style={{ width: 40 }}
           >
             2
@@ -168,15 +170,15 @@ const Exam = () => {
         </li>
         <li>
           <button
-            class="uk-button uk-button-default uk-button-small"
+            className="uk-button uk-button-default uk-button-small"
             style={{ width: 40 }}
           >
             3
           </button>
         </li>
         <li>
-          <button class="uk-button uk-button-default uk-button-small">
-            <span class="uk-icon" uk-icon="icon: chevron-right"></span>
+          <button className="uk-button uk-button-default uk-button-small">
+            <span className="uk-icon" uk-icon="icon: chevron-right"></span>
           </button>
         </li>
       </ul>

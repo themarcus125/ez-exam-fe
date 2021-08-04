@@ -28,7 +28,7 @@ export const navBarCategories = {
         },
         {
           title: "Tạo đề thi",
-          path: "/",
+          path: "/exam/add",
         },
       ],
     },
@@ -80,7 +80,7 @@ export const navBarCategories = {
         },
         {
           title: "Tạo đề thi",
-          path: "/",
+          path: "/exam/add",
         },
       ],
     },
