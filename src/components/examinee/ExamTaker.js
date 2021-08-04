@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { navigate } from "gatsby";
 import { useLocation } from "@reach/router";
 import queryString from "query-string";
+import { navigate } from "../../utils/common";
 import { EXAMINEE_ROLE } from "../../utils/roles";
 import useWebcamRecorder from "../../hooks/useWebcamRecorder";
 import useScreenRecorder from "../../hooks/useScreenRecorder";

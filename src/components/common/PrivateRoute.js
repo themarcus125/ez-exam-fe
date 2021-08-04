@@ -1,5 +1,5 @@
 import React from "react";
-import { navigate } from "gatsby";
+import { navigate } from "../../utils/common";
 import { isLoggedIn, getUser } from "../../utils/auth";
 import { userRoleToPath } from "../..//utils/constants";
 import NavBar from "./NavBar";

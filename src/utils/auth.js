@@ -1,8 +1,7 @@
 import { postAPIForm, postAPIWithToken } from "../utils/api";
 import Config from "./config";
+import { isBrowser } from "./common";
 const CURRENT_USER = "currentUser";
-
-export const isBrowser = () => typeof window !== "undefined";
 
 export const getUser = () =>
   isBrowser() && window.localStorage.getItem(CURRENT_USER)
