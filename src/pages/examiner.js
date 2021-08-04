@@ -20,6 +20,7 @@ const ExaminerDashboard = () => {
         <PrivateRoute role={role} path="/exam/add" component={ExamAdd} />
         <PrivateRoute role={role} path="/examroom" component={ExamRoom} />
         <PrivateRoute role={role} path="/examroom/add" component={ExamRoomAdd} />
+        
       </Router>
     </ExaminerLayout>
   );

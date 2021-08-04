@@ -24,6 +24,7 @@ const AdminDashboard = () => {
         <PrivateRoute role={role} path="/exam/add" component={ExamAdd} />
         <PrivateRoute role={role} path="/examroom" component={ExamRoom} />
         <PrivateRoute role={role} path="/examroom/add" component={ExamRoomAdd} />
+        
         <PrivateRoute
           role={role}
           path="/account/add-from-file"
