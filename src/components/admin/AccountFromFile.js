@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { navigate, graphql, useStaticQuery, Link } from "gatsby";
+import { graphql, useStaticQuery, Link } from "gatsby";
+
+import { navigate } from "../../utils/common"
 
 import { postFileAPIWithToken } from "../../utils/api";
 import { getToken } from "../../utils/auth";
@@ -25,6 +27,7 @@ const AccountFromFile = () => {
         const request = await postFileAPIWithToken("/import", formData, token);
         if (request.status === 200) {
           alert("Tập tin đã được tải lên.");
+          navigate("../");
         }
       } catch (err) {
         alert("Tải tập tin thất bại.");

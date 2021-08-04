@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { navigate } from "gatsby";
+import { navigate } from "../../utils/common";
 
 import { postAPIWithToken } from "../../utils/api";
 
