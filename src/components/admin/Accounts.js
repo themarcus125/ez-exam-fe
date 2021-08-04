@@ -6,6 +6,9 @@ const AdminAccounts = () => {
     navigate("../account/add");
   };
 
+  const onAddFromFile = () => {
+    navigate("../account/add-from-file");
+  };
   return (
     <div
       className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
@@ -16,7 +19,7 @@ const AdminAccounts = () => {
       </p>
       <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
         <div className="uk-width-1-4@s uk-display-inline-block">
-          <span class="uk-display-inline-block uk-width-2-5">
+          <span className="uk-display-inline-block uk-width-2-5">
             Loại tài khoản
           </span>
           <div className="uk-display-inline-block uk-width-3-5">
@@ -33,7 +36,7 @@ const AdminAccounts = () => {
         </div>
 
         <div className="uk-width-1-4@s uk-display-inline-block">
-          <span class="uk-display-inline-block uk-width-1-5 uk-margin-right">
+          <span className="uk-display-inline-block uk-width-1-5 uk-margin-right">
             Trạng thái
           </span>
           <div className="uk-display-inline-block uk-width-3-5">
@@ -61,6 +64,7 @@ const AdminAccounts = () => {
             <button
               className="uk-button"
               style={{ ...myButton, ...activeText }}
+              onClick={onAddFromFile}
             >
               Thêm từ tập tin
             </button>
@@ -70,7 +74,7 @@ const AdminAccounts = () => {
       <div className="uk-flex uk-flex-row uk-flex-center">
         <div className="uk-width-3-5 uk-flex uk-flex-between">
           <input
-            class="uk-search-input uk-width-4-5"
+            className="uk-search-input uk-width-4-5"
             type="search"
             placeholder="Search"
             style={{
@@ -83,7 +87,7 @@ const AdminAccounts = () => {
         </div>
       </div>
       <div className="uk-margin-top" style={{ height: 400 }}>
-        <table class="uk-table uk-table-striped uk-table-middle">
+        <table className="uk-table uk-table-striped uk-table-middle">
           <thead>
             <tr>
               <th className="uk-width-small">Mã tài khoản</th>
@@ -109,15 +113,15 @@ const AdminAccounts = () => {
           </tbody>
         </table>
       </div>
-      <ul class="uk-pagination uk-flex-center" uk-margin>
+      <ul className="uk-pagination uk-flex-center" uk-margin>
         <li>
-          <button class="uk-button uk-button-default uk-button-small">
-            <span class="uk-icon" uk-icon="icon: chevron-left"></span>
+          <button className="uk-button uk-button-default uk-button-small">
+            <span className="uk-icon" uk-icon="icon: chevron-left"></span>
           </button>
         </li>
-        <li class="uk-disabled">
+        <li className="uk-disabled">
           <button
-            class="uk-button uk-button-default uk-button-small"
+            className="uk-button uk-button-default uk-button-small"
             style={{
               ...paginationButton,
               ...activeText,
@@ -129,7 +133,7 @@ const AdminAccounts = () => {
         </li>
         <li>
           <button
-            class="uk-button uk-button-default uk-button-small"
+            className="uk-button uk-button-default uk-button-small"
             style={paginationButton}
           >
             2
@@ -137,15 +141,15 @@ const AdminAccounts = () => {
         </li>
         <li>
           <button
-            class="uk-button uk-button-default uk-button-small"
+            className="uk-button uk-button-default uk-button-small"
             style={paginationButton}
           >
             3
           </button>
         </li>
         <li>
-          <button class="uk-button uk-button-default uk-button-small">
-            <span class="uk-icon" uk-icon="icon: chevron-right"></span>
+          <button className="uk-button uk-button-default uk-button-small">
+            <span className="uk-icon" uk-icon="icon: chevron-right"></span>
           </button>
         </li>
       </ul>
