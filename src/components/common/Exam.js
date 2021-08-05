@@ -114,7 +114,7 @@ const Exam = () => {
                   id="navbar"
                   className="uk-navbar-container"
                   style={{ backgroundColor: "#FFFFFF" }}
-                  uk-navbar
+                  uk-navbar=""
                 >
                   <div className="uk-navbar-left uk-margin-small-left">
                     <ul className="uk-navbar-nav">

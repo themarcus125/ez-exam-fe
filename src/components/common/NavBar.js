@@ -16,7 +16,8 @@ const NavBar = () => {
     UIKit.navbar("#navbar");
   }, []);
 
-  const onLogout = () => {
+  const onLogout = (e) => {
+    e.preventDefault();
     logout(() => navigate(`/`));
   };
 
@@ -26,7 +27,7 @@ const NavBar = () => {
         id="navbar"
         className="uk-navbar-container"
         style={{ backgroundColor: "#FFFFFF" }}
-        uk-navbar
+        uk-navbar=""
       >
         <div className="uk-navbar-left uk-margin-small-left">
           <ul className="uk-navbar-nav">
@@ -34,13 +35,13 @@ const NavBar = () => {
               <img src={logo} alt="Logo" width="200" height="80" />
             </Link>
 
-            {categories.map((category) => {
+            {categories.map((category, index) => {
               return (
-                <li className="uk-flex uk-flex-middle">
+                <li key={index} className="uk-flex uk-flex-middle">
                   <Link
                     to={
                       category?.subCategories
-                        ? ""
+                        ? "#"
                         : `/${rootPath}${category.path}`
                     }
                   >
@@ -49,9 +50,9 @@ const NavBar = () => {
                   {category?.subCategories && (
                     <div className="uk-navbar-dropdown">
                       <ul className="uk-nav uk-navbar-dropdown-nav">
-                        {category.subCategories.map((subCategory) => {
+                        {category.subCategories.map((subCategory, index) => {
                           return (
-                            <li>
+                            <li key={index}>
                               <Link
                                 to={`/${rootPath}${category.path}${subCategory.path}`}
                               >
@@ -81,7 +82,9 @@ const NavBar = () => {
                     <Link to={`/${rootPath}`}>Tài khoản</Link>
                   </li>
                   <li>
-                    <a onClick={onLogout}>Đăng xuất</a>
+                    <a href="logout" onClick={onLogout}>
+                      Đăng xuất
+                    </a>
                   </li>
                 </ul>
               </div>

@@ -2,13 +2,6 @@ import React from "react";
 import { Link, navigate } from "gatsby";
 
 const AdminAccounts = () => {
-  const onAddNew = () => {
-    navigate("../account/add");
-  };
-
-  const onAddFromFile = () => {
-    navigate("../account/add-from-file");
-  };
   return (
     <div
       className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
@@ -54,20 +47,20 @@ const AdminAccounts = () => {
 
         <div className="uk-width-1-4@s uk-display-inline-block">
           <div className="uk-flex uk-flex-right uk-flex-middle uk-height-1-1">
-            <button
+            <Link
+              to="add"
               className="uk-button uk-margin-right"
               style={{ ...myButton, ...activeText }}
-              onClick={onAddNew}
             >
               Thêm mới
-            </button>
-            <button
+            </Link>
+            <Link
+              to="add-from-file"
               className="uk-button"
               style={{ ...myButton, ...activeText }}
-              onClick={onAddFromFile}
             >
               Thêm từ tập tin
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -105,15 +98,16 @@ const AdminAccounts = () => {
               <td>Đang hoạt động</td>
               <td>
                 <Link
-                  class="uk-icon-link uk-margin-small-right"
+                  className="uk-icon-link uk-margin-small-right"
                   uk-icon="file-edit"
+                  to="add"
                 ></Link>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-      <ul className="uk-pagination uk-flex-center" uk-margin>
+      <ul className="uk-pagination uk-flex-center" uk-margin="">
         <li>
           <button className="uk-button uk-button-default uk-button-small">
             <span className="uk-icon" uk-icon="icon: chevron-left"></span>
