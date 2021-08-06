@@ -1,17 +1,6 @@
 import React from "react";
-import { getAPIWithToken, postAPIWithToken } from "../utils/api";
-import { handleLogin, getUserRole } from "../utils/auth";
 const ExamRoomAdd = () => {
-    const [lstSubject, setLstSubject] = useState(null);
-
-    useEffect(() => {
-        console.log('useEffect has been called!');
-        let tmp_lstSubject = getAPIWithToken("/chuyende/monhocnguoidung");
-        console.log('tmp_lstSubject',tmp_lstSubject);
-        setLstSubject(tmp_lstSubject);
-        console.log('lstSubject',lstSubject);
-    }, []);
-
+    
     const onSubmit = async (e) => {
         e.preventDefault();
     };
