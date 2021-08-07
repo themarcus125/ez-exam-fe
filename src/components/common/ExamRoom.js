@@ -1,8 +1,51 @@
-import React from "react";
-import { Link } from "gatsby";
+import React, { useEffect, useState } from "react";
+import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
+import { getToken } from "../../utils/auth";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import moment from 'moment';
 
+// Data
+import mockData from "../../mockData/data.json";
 
 const ExamRoom = () => {
+    const [lstExamRoom, setLstExamRoom] = useState(null);
+    const [lstYear, setLstYear] = useState(null);
+    const [year, setYear] = useState("");
+    const [lstSubject, setLstSubject] = useState(null);
+    const [subject, setSubject] = useState("");
+    const [search, setSearch] = useState("");
+
+    useEffect(async () => {
+        const token = await getToken();
+
+        let tmp_lstSubject = await getAPIWithToken("/chuyende/monhocnguoidung", token);
+        setLstSubject(tmp_lstSubject.data);
+
+        setLstYear(mockData["lstYear"]);
+
+        let tmp_lstExamRoom = await getAPIWithToken(`/phongthi`, token);
+        setLstExamRoom(tmp_lstExamRoom.data);
+    }, []);
+
+    const handleChangeSubject = async (e) => {
+        setSubject(e.target.value);
+    };
+
+    const handleChangeYear = async (e) => {
+        setYear(e.target.value);
+    };
+    const handleChangeSearch = async (e) => {
+        setSearch(e.target.value);
+    };
+
+    const onSearch = async (e) => {
+        e.preventDefault();
+        const token = await getToken();
+        const tmp_Search = await getAPIWithToken(`/phongthi?timkiem=${search}&nam=${year}&mamonhoc=${subject}`, token);
+        setLstExamRoom(tmp_Search.data);
+    };
+
     return (
         <div
             className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
@@ -17,14 +60,16 @@ const ExamRoom = () => {
                         Môn học
                     </span>
                     <div className="uk-display-inline-block uk-width-3-5">
-                        <select
-                            className="uk-select uk-width-1-1"
+                        <select className="uk-select uk-width-1-1"
                             style={{
                                 border: "solid 0.5px #666",
                             }}
-                        >
-                            <option>Toán cao cấp B1</option>
-                            <option>Vật lý đại cương</option>
+                            onChange={handleChangeSubject}
+                            value={subject}>
+                            <option disabled></option>
+                            {lstSubject ? lstSubject.map((item) => (
+                                <option value={item.id}>{item.tenChuyenDe}</option>
+                            )) : null}
                         </select>
                     </div>
                 </div>
@@ -34,14 +79,16 @@ const ExamRoom = () => {
                         Năm học
                     </span>
                     <div className="uk-display-inline-block uk-width-3-5">
-                        <select
-                            className="uk-select uk-width-1-1"
+                        <select className="uk-select uk-width-1-1"
                             style={{
                                 border: "solid 0.5px #666",
                             }}
-                        >
-                            <option>2020</option>
-                            <option>2021</option>
+                            onChange={handleChangeYear}
+                            value={year}>
+                            <option disabled></option>
+                            {lstYear ? lstYear.map((item) => (
+                                <option value={item}>{item}</option>
+                            )) : null}
                         </select>
                     </div>
                 </div>
@@ -53,11 +100,13 @@ const ExamRoom = () => {
                         className="uk-search-input uk-width-4-5"
                         type="search"
                         placeholder="Search"
+                        value={search}
+                        onChange={handleChangeSearch}
                         style={{
                             border: "solid 0.5px #666",
                         }}
                     />
-                    <button className="uk-button" style={{ ...myButton, ...activeText }}>
+                    <button className="uk-button" style={{ ...myButton, ...activeText }} onClick={onSearch}>
                         Tìm kiếm
                     </button>
                 </div>
@@ -79,43 +128,45 @@ const ExamRoom = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>P01</td>
-                            <td>Toán cao cấp B1</td>
-                            <td>103</td>
-                            <td>200001</td>
-                            <td>200030</td>
-                            <td>30</td>
-                            <td>12/07/2021</td>
-                            <td>08:00</td>
-                            <td>10:00</td>
-                            <td>
-                                <nav
-                                    id="navbar"
-                                    className="uk-navbar-container"
-                                >
-                                    <div className="uk-navbar-left uk-margin-small-left">
-                                        <ul className="uk-navbar-nav">
-                                            <li className="uk-flex uk-flex-middle">
-                                                <a>
-                                                    <span uk-icon="table"></span>
-                                                </a>
-                                                <div className="uk-navbar-dropdown">
-                                                    <ul className="uk-nav uk-navbar-dropdown-nav">
-                                                        <li>
-                                                            <a>Xem báo cáo</a>
-                                                        </li>
-                                                        <li>
-                                                            <a>Xem chi tiết</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </nav>
-                            </td>
-                        </tr>
+                        {lstExamRoom ? lstExamRoom.map((item) => (
+                            <tr key={item.id}>
+                                <td value={item.maPhong}>{item.tenPhong}</td>
+                                <td value={item.maMonHoc}>{item.tenMonHoc}</td>
+                                <td value={item.maBoDe}>{item.tenBoDe}</td>
+                                <td>{item.nguoi_dung[0].tenDangNhap}</td>
+                                <td>{item.nguoi_dung[item.nguoi_dung.length - 1].tenDangNhap}</td>
+                                <td>{item.siSo}</td>
+                                <td>{moment(item.ngayThi).format("DD/MM/YYYY")}</td>
+                                <td>{item.thoiGianBatDauPhong}</td>
+                                <td>{item.thoiGianBatDauThi}</td>
+                                <td>
+                                    <nav
+                                        id="navbar"
+                                        className="uk-navbar-container"
+                                    >
+                                        <div className="uk-navbar-left uk-margin-small-left">
+                                            <ul className="uk-navbar-nav">
+                                                <li className="uk-flex uk-flex-middle">
+                                                    <a>
+                                                        <span uk-icon="table"></span>
+                                                    </a>
+                                                    <div className="uk-navbar-dropdown">
+                                                        <ul className="uk-nav uk-navbar-dropdown-nav">
+                                                            <li>
+                                                                <a>Xem báo cáo</a>
+                                                            </li>
+                                                            <li>
+                                                                <a>Xem chi tiết</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </nav>
+                                </td>
+                            </tr>
+                        )) : null}
                     </tbody>
                 </table>
             </div>
