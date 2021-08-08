@@ -114,7 +114,7 @@ export const logout = async (callback = () => {}) => {
     await postAPIWithToken("/logout", null, tokenLogout);
     setUser({});
   } catch (err) {
-    alert("Logout failed !!!");
+    alert("Đã có lỗi xảy ra khi logout !!!");
   } finally {
     callback();
   }
