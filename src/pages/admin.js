@@ -11,6 +11,9 @@ import ExamAdd from "../components/common/ExamAdd";
 import AccountFromFile from "../components/admin/AccountFromFile";
 import ExamRoom from "../components/common/ExamRoom";
 import ExamRoomAdd from "../components/common/ExamRoomAdd";
+import Question from "../components/common/Question";
+import QuestionAdd from "../components/common/QuestionAdd";
+import QuestionList from "../components/common/QuestionList";
 
 const AdminDashboard = () => {
   const role = ADMIN_ROLE;
@@ -23,8 +26,11 @@ const AdminDashboard = () => {
         <PrivateRoute role={role} path="/exam" component={Exam} />
         <PrivateRoute role={role} path="/exam/add" component={ExamAdd} />
         <PrivateRoute role={role} path="/examroom" component={ExamRoom} />
-        <PrivateRoute role={role} path="/examroom/add" component={ExamRoomAdd} />
-        
+        <PrivateRoute
+          role={role}
+          path="/examroom/add"
+          component={ExamRoomAdd}
+        />
         <PrivateRoute
           role={role}
           path="/account/add-from-file"
@@ -34,6 +40,17 @@ const AdminDashboard = () => {
           role={role}
           path="/account/:userId"
           component={AccountForm}
+        />
+        <PrivateRoute role={role} path="/questionaire" component={Question} />
+        <PrivateRoute
+          role={role}
+          path="/questionaire/add"
+          component={QuestionAdd}
+        />
+        <PrivateRoute
+          role={role}
+          path="/question-list"
+          component={QuestionList}
         />
       </Router>
     </AdminLayout>

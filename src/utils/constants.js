@@ -46,7 +46,7 @@ export const navBarCategories = {
         },
       ],
     },
-    
+
     {
       title: "Kiểm tra kết quả thi",
       path: "/",
@@ -137,4 +137,9 @@ export const userRoleToPath = {
   giaovien: "examiner",
   sinhvien: "examinee",
   admin: "admin",
+};
+
+export const questionType = {
+  multipleChoice: "MULTIPLE_CHOICE",
+  essay: "ESSAY",
 };
