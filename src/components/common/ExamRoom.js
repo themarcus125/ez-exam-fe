@@ -1,48 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
 import { getToken } from "../../utils/auth";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment';
-
-// Data
-import mockData from "../../mockData/data.json";
 
 const ExamRoom = () => {
     const [lstExamRoom, setLstExamRoom] = useState(null);
-    const [lstYear, setLstYear] = useState(null);
-    const [year, setYear] = useState("");
+    const [year, setYear] = useState(new Date());
     const [lstSubject, setLstSubject] = useState(null);
     const [subject, setSubject] = useState("");
     const [search, setSearch] = useState("");
 
     useEffect(async () => {
         const token = await getToken();
-
         let tmp_lstSubject = await getAPIWithToken("/chuyende/monhocnguoidung", token);
         setLstSubject(tmp_lstSubject.data);
-
-        setLstYear(mockData["lstYear"]);
-
         let tmp_lstExamRoom = await getAPIWithToken(`/phongthi`, token);
         setLstExamRoom(tmp_lstExamRoom.data);
     }, []);
 
-    const handleChangeSubject = async (e) => {
+    const handleChangeSubject = (e) => {
         setSubject(e.target.value);
     };
 
-    const handleChangeYear = async (e) => {
-        setYear(e.target.value);
+    const handleChangeYear = (date) => {
+        setYear(date);
     };
-    const handleChangeSearch = async (e) => {
+    const handleChangeSearch = (e) => {
         setSearch(e.target.value);
     };
 
     const onSearch = async (e) => {
         e.preventDefault();
         const token = await getToken();
-        const tmp_Search = await getAPIWithToken(`/phongthi?timkiem=${search}&nam=${year}&mamonhoc=${subject}`, token);
+        const tmp_Search = await getAPIWithToken(`/phongthi?timkiem=${search}&nam=${moment(year).year()}&mamonhoc=${subject}`, token);
         setLstExamRoom(tmp_Search.data);
     };
 
@@ -54,7 +46,7 @@ const ExamRoom = () => {
             <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
                 Danh sách phòng thi
             </p>
-            <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom" style={{ marginLeft: 200, marginRight: 200 }}>
+            <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom" style={{ marginLeft: 100, marginRight: 100 }}>
                 <div className="uk-width-1-3@s uk-display-inline-block">
                     <span className="uk-display-inline-block uk-width-2-5">
                         Môn học
@@ -79,22 +71,21 @@ const ExamRoom = () => {
                         Năm học
                     </span>
                     <div className="uk-display-inline-block uk-width-3-5">
-                        <select className="uk-select uk-width-1-1"
+                        <DatePicker className="uk-select uk-width-1-1"
                             style={{
-                                border: "solid 0.5px #666",
+                                border: "solid 0.5px #666"
                             }}
+                            selected={year}
                             onChange={handleChangeYear}
-                            value={year}>
-                            <option disabled></option>
-                            {lstYear ? lstYear.map((item) => (
-                                <option value={item}>{item}</option>
-                            )) : null}
-                        </select>
+                            showYearPicker
+                            dateFormat="yyyy"
+                        // yearItemNumber={9}
+                        />
                     </div>
                 </div>
             </div>
 
-            <div className="uk-flex uk-flex-row " style={{ marginLeft: 200 }}>
+            <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
                 <div className="uk-width-3-5 uk-flex uk-flex-between">
                     <input
                         className="uk-search-input uk-width-4-5"
@@ -110,6 +101,10 @@ const ExamRoom = () => {
                         Tìm kiếm
                     </button>
                 </div>
+
+                <button className="uk-button" style={{ ...myButton, ...activeText }}>
+                    Báo cáo tổng hợp
+                </button>
             </div>
             <div className="uk-margin-top uk-overflow-auto" style={{ height: 400 }}>
                 <table className="uk-table uk-table-striped uk-table-middle">

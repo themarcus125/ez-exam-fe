@@ -3,9 +3,13 @@ import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
 import { getToken } from "../../utils/auth";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import moment from 'moment';
 
 const ExamRoomAdd = () => {
-    const [dateExam, setDateExam] = useState("");
+    const [roomName, setRoomName] = useState("");
+    const [dateExam, setDateExam] = useState(new Date());
     const [hourExamRoom, setHourExamRoom] = useState("");
     const [hourStartExam, setHourStartExam] = useState("");
     const [lstSubject, setLstSubject] = useState(null);
@@ -26,7 +30,7 @@ const ExamRoomAdd = () => {
         setLstCodeExam(tmp_lstCodeExam.data.dsDeThi);
     }, []);
 
-    const handleChangeSubject = async (e) => {
+    const handleChangeSubject = (e) => {
         setSubject(e.target.value);
         const tmp_subject = lstSubject.find(element => element.id = e.target.value);
         if (tmp_subject) {
@@ -41,25 +45,30 @@ const ExamRoomAdd = () => {
             setAmount(0);
         }
     };
-    const handleChangeDateExam = async (e) => {
-        setDateExam(e.target.value);
+
+    const handleChangeRoomName = (e) => {
+        setRoomName(e.target.value);
     };
-    const handleChangeHourExamRoom = async (e) => {
+    const handleChangeDateExam = (date) => {
+        console.log("sdf0", date)
+        setDateExam(date);
+    };
+    const handleChangeHourExamRoom = (e) => {
         setHourExamRoom(e.target.value);
     };
-    const handleChangeHourStartExam = async (e) => {
+    const handleChangeHourStartExam = (e) => {
         setHourStartExam(e.target.value);
     };
-    const handleChangeCodeExam = async (e) => {
+    const handleChangeCodeExam = (e) => {
         setCodeExam(e.target.value);
     };
-    const handleChangeFromStudent = async (e) => {
+    const handleChangeFromStudent = (e) => {
         setFromStudent(e.target.value);
     };
-    const handleChangeToStudent = async (e) => {
+    const handleChangeToStudent = (e) => {
         setToStudent(e.target.value);
     };
-    const handleChangeAmount = async (e) => {
+    const handleChangeAmount = (e) => {
         setAmount(e.target.value);
     };
 
@@ -68,17 +77,20 @@ const ExamRoomAdd = () => {
         const token = await getToken();
         try {
             const res = await postAPIWithToken("/phongthi", {
-                tenPhong: "Phòng 99",
-                ngayThi: dateExam,
+                tenPhong: roomName,
+                ngayThi: moment(dateExam).format("YYYY-MM-DD"),
                 thoiGianBatDauPhong: hourExamRoom,
                 thoiGianBatDauThi: hourStartExam,
                 maBoDe: codeExam,
                 maMonHoc: subject,
-                tuMaND: fromStudent,
+                tuMaND: fromStudent.tenDangNhap,
                 denMaND: toStudent
             }, token);
-            if (res.status === 200) {
+            const { resData } = await res.json();
+            if (res.status === 200 & resData) {
                 toast.success("Tạo phòng thành công !!!");
+            } else {
+                toast.error("Tạo phòng thất bại !!!");
             }
         } catch (err) {
             toast.error("Đã có lỗi xảy ra khi lưu !!!");
@@ -103,20 +115,35 @@ const ExamRoomAdd = () => {
                         <div class="uk-width-1-2 uk-margin-bottom">
                             <div className="uk-margin">
                                 <label className="uk-form-label" for="form-horizontal-text">
-                                    Chọn ngày
+                                    Tên phòng thi
                                 </label>
                                 <div className="uk-form-controls">
                                     <input
-                                        className="uk-input uk-form-width-medium"
-                                        type="date"
-                                        format="DD-MM-YYYY"
-                                        value={dateExam}
-                                        onChange={handleChangeDateExam}
+                                        className="uk-input"
+                                        type="text"
+                                        value={roomName}
+                                        onChange={handleChangeRoomName}
+                                        required
                                     />
                                 </div>
                             </div>
                         </div>
                         <div class="uk-width-1-2 uk-margin-bottom">
+                            <div className="uk-margin">
+                                <label className="uk-form-label" for="form-horizontal-text">
+                                    Chọn ngày
+                                </label>
+                                <div className="uk-form-controls">
+                                    <DatePicker
+                                        className="uk-input uk-form-width-medium"
+                                        selected={dateExam}
+                                        onChange={handleChangeDateExam}
+                                        closeOnScroll={true}
+                                        dateFormat="dd/MM/yyyy"
+                                        required
+                                    />
+                                </div>
+                            </div>
                         </div>
                         <div class="uk-width-1-2 uk-margin-bottom">
                             <div className="uk-margin">
@@ -129,6 +156,7 @@ const ExamRoomAdd = () => {
                                         type="time"
                                         value={hourExamRoom}
                                         onChange={handleChangeHourExamRoom}
+                                        required
                                     />
                                 </div>
                             </div>
@@ -144,6 +172,7 @@ const ExamRoomAdd = () => {
                                         type="time"
                                         value={hourStartExam}
                                         onChange={handleChangeHourStartExam}
+                                        required
                                     />
                                 </div>
                             </div>
@@ -154,7 +183,7 @@ const ExamRoomAdd = () => {
                                     Môn học
                                 </label>
                                 <div className="uk-form-controls">
-                                    <select className="uk-select" onChange={handleChangeSubject} value={subject}>
+                                    <select className="uk-select" onChange={handleChangeSubject} value={subject} required>
                                         <option disabled></option>
                                         {lstSubject ? lstSubject.map((item) => (
                                             <option value={item.id}>{item.tenChuyenDe}</option>
@@ -169,7 +198,7 @@ const ExamRoomAdd = () => {
                                     Mã bộ đề
                                 </label>
                                 <div className="uk-form-controls">
-                                    <select className="uk-select" onChange={handleChangeCodeExam} value={codeExam}>
+                                    <select className="uk-select" onChange={handleChangeCodeExam} value={codeExam} required>
                                         <option disabled></option>
                                         {lstCodeExam ? lstCodeExam.map((item) => (
                                             <option value={item.maBoDe}>{item.maDe}</option>
@@ -184,7 +213,7 @@ const ExamRoomAdd = () => {
                                     Từ sinh viên
                                 </label>
                                 <div className="uk-form-controls">
-                                    <select className="uk-select" onChange={handleChangeFromStudent} value={fromStudent}>
+                                    <select className="uk-select" onChange={handleChangeFromStudent} value={fromStudent} required>
                                         {lstStudent ? lstStudent.map((item) => (
                                             <option value={item.id}>{item.tenDangNhap} - {item.tenNguoiDung}</option>
                                         )) : null}
@@ -198,7 +227,7 @@ const ExamRoomAdd = () => {
                                     Đến sinh viên
                                 </label>
                                 <div className="uk-form-controls">
-                                    <select className="uk-select" onChange={handleChangeToStudent} value={toStudent}>
+                                    <select className="uk-select" onChange={handleChangeToStudent} value={toStudent} required>
                                         {lstStudent ? lstStudent.map((item) => (
                                             <option value={item.id}>{item.tenDangNhap} - {item.tenNguoiDung}</option>
                                         )) : null}
@@ -218,6 +247,7 @@ const ExamRoomAdd = () => {
                                         placeholder="0"
                                         value={amount}
                                         onChange={handleChangeAmount}
+                                        required
                                         disabled />
                                 </div>
                             </div>
