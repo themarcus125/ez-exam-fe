@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { navigate } from "gatsby";
+import { Helmet } from "react-helmet";
 import { handleLogin, getUserRole } from "../utils/auth";
 import background_examinee from "../asset/images/background_examinee.jpg";
 import LoadingOverlay from "../components/common/LoadingOverlay";
@@ -45,6 +46,8 @@ const Login = () => {
 
   return (
     <>
+      <Helmet title="Đăng nhập - EzExam" defer={false} />
+
       <div
         id="login_page"
         className="uk-flex uk-flex-center uk-flex-middle uk-background-cover"
