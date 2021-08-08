@@ -1,30 +1,64 @@
 import React, { useState, useEffect } from "react";
-import { navigate } from "../../utils/common";
+import UIKit from "uikit/dist/js/uikit.min.js";
 
-import { postAPIFormWithToken } from "../../utils/api";
+import { navigate } from "../../utils/common";
+import {
+  postAPIFormWithToken,
+  getAPIWithToken,
+  putAPIWithToken,
+} from "../../utils/api";
 import { getToken } from "../../utils/auth";
+import { userStatus } from "../../utils/constants";
 
 const AdminAccountForm = ({ userId }) => {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState(0);
-  const [status, setStatus] = useState(0);
+  const [role, setRole] = useState(2);
+  const [status, setStatus] = useState(userStatus.ACTIVE);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // TODO: Get user info
     if (userId) {
+      getUser();
     }
   }, []);
 
+  const getUser = async () => {
+    setLoading(true);
+    const token = await getToken();
+    const response = await getAPIWithToken(`/users/${userId}`, token);
+    const parsedData = await response.json();
+    setName(parsedData.data.tenNguoiDung);
+    setStatus(parsedData.data.trangThai);
+    // Set the role for current user (waiting for BE)
+    setLoading(false);
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Integrate API
+    const token = await getToken();
+
     if (userId) {
       //Update
+      try {
+        await putAPIWithToken(
+          `/users/${userId}`,
+          {
+            tenNguoiDung: name,
+            trangThai: status,
+            loai: role,
+            ...(password && { matKhau: password }),
+          },
+          token,
+        );
+        alert("Chỉnh sửa tài khoản thành công");
+      } catch (error) {
+        alert("Đã xảy ra lỗi không thể chỉnh sửa tài khoản");
+      }
     } else {
       // Add
       try {
-        const token = await getToken();
         await postAPIFormWithToken(
           "/register",
           {
@@ -81,7 +115,7 @@ const AdminAccountForm = ({ userId }) => {
                 value={password}
                 type="password"
                 onChange={(e) => setPassword(e.target.value)}
-                required
+                required={userId ? false : true}
               />
             </div>
           </div>
@@ -96,8 +130,8 @@ const AdminAccountForm = ({ userId }) => {
             <div className="uk-form-controls uk-display-inline-block uk-width-4-5">
               <select
                 className="uk-select"
-                defaultValue={role}
-                onBlur={(e) => setRole(e.target.value)}
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
               >
                 <option value={3}>Học sinh</option>
                 <option value={2}>Giáo viên</option>
@@ -115,8 +149,8 @@ const AdminAccountForm = ({ userId }) => {
             <div className="uk-form-controls uk-display-inline-block uk-width-4-5">
               <select
                 className="uk-select"
-                defaultValue={status}
-                onBlur={(e) => setStatus(e.target.value)}
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
               >
                 <option value={0}>Đang hoạt động</option>
                 <option value={1}>Ngừng hoạt động</option>
@@ -126,7 +160,9 @@ const AdminAccountForm = ({ userId }) => {
 
           <div className="uk-flex uk-flex-center">
             <button
-              className="uk-button uk-margin-top"
+              className={`uk-button uk-margin-top ${
+                loading ? "uk-disabled" : ""
+              }`}
               style={{ backgroundColor: "#32d296", color: "#FFF" }}
             >
               Lưu
