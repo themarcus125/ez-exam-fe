@@ -15,12 +15,36 @@ const ExaminerDashboard = () => {
   return (
     <ExaminerLayout>
       <Router basepath={`/${role}`}>
-        <PrivateRoute role={role} path="/" component={Result} />
-        <PrivateRoute role={role} path="/exam" component={Exam} />
-        <PrivateRoute role={role} path="/exam/add" component={ExamAdd} />
-        <PrivateRoute role={role} path="/examroom" component={ExamRoom} />
-        <PrivateRoute role={role} path="/examroom/add" component={ExamRoomAdd} />
-        
+        <PrivateRoute
+          role={role}
+          path="/"
+          component={Result}
+          title="Trang chủ"
+        />
+        <PrivateRoute
+          role={role}
+          path="/exam"
+          component={Exam}
+          title="Đề thi"
+        />
+        <PrivateRoute
+          role={role}
+          path="/exam/add"
+          component={ExamAdd}
+          title="Thêm đề thi"
+        />
+        <PrivateRoute
+          role={role}
+          path="/examroom"
+          component={ExamRoom}
+          title="Phòng thi"
+        />
+        <PrivateRoute
+          role={role}
+          path="/examroom/add"
+          component={ExamRoomAdd}
+          title="Thêm phòng thi"
+        />
       </Router>
     </ExaminerLayout>
   );

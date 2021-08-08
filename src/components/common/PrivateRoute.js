@@ -1,10 +1,17 @@
 import React from "react";
+import { Helmet } from "react-helmet";
 import { navigate } from "../../utils/common";
 import { isLoggedIn, getUser } from "../../utils/auth";
 import { userRoleToPath } from "../..//utils/constants";
 import NavBar from "./NavBar";
 
-const PrivateRoute = ({ component: Component, role, location, ...rest }) => {
+const PrivateRoute = ({
+  component: Component,
+  role,
+  location,
+  title,
+  ...rest
+}) => {
   const user = getUser();
   if (!user.role && location.pathname !== `/login`) {
     navigate(`/login`);
@@ -18,6 +25,8 @@ const PrivateRoute = ({ component: Component, role, location, ...rest }) => {
   }
   return (
     <div>
+      <Helmet title={`${title} - EzExam`} defer={false} />
+
       <NavBar />
       <Component {...rest} />
     </div>
