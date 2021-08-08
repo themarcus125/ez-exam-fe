@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import UIKit from "uikit/dist/js/uikit.min.js";
+const DEFAULT_PW = process.env.DEFAULT_PW;
 
 import { navigate } from "../../utils/common";
 import {
@@ -12,7 +13,7 @@ import { userStatus } from "../../utils/constants";
 
 const AdminAccountForm = ({ userId }) => {
   const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState(DEFAULT_PW);
   const [role, setRole] = useState(2);
   const [status, setStatus] = useState(userStatus.ACTIVE);
   const [loading, setLoading] = useState(false);
@@ -48,7 +49,6 @@ const AdminAccountForm = ({ userId }) => {
             tenNguoiDung: name,
             trangThai: status,
             loai: role,
-            ...(password && { matKhau: password }),
           },
           token,
         );
@@ -77,6 +77,22 @@ const AdminAccountForm = ({ userId }) => {
     navigate("../");
   };
 
+  const onResetPassword = async () => {
+    try {
+      // Currently doesn't work. Not sure why, will ask BE team later
+      await putAPIWithToken(
+        `/users/${userId}`,
+        {
+          matKhau: DEFAULT_PW,
+        },
+        token,
+      );
+      alert("Reset mật khẩu thành công");
+    } catch (error) {
+      alert("Đã xảy ra lỗi không thể reset mật khẩu");
+    }
+  };
+
   return (
     <div className="uk-flex uk-margin-top uk-flex-center">
       <div className="uk-width-1-2 uk-background-default uk-border-rounded uk-padding">
@@ -86,12 +102,12 @@ const AdminAccountForm = ({ userId }) => {
           </p>
           <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
             <label
-              className="uk-form-label uk-width-1-5"
+              className="uk-form-label uk-width-2-5"
               htmlFor="form-stacked-text"
             >
               Họ tên
             </label>
-            <div className="uk-form-controls uk-display-inline-block uk-width-4-5">
+            <div className="uk-form-controls uk-display-inline-block uk-width-3-5">
               <input
                 className="uk-input"
                 value={name}
@@ -102,32 +118,33 @@ const AdminAccountForm = ({ userId }) => {
             </div>
           </div>
 
-          <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
-            <label
-              className="uk-form-label uk-width-1-5"
-              htmlFor="form-stacked-text"
-            >
-              Mật khẩu
-            </label>
-            <div className="uk-form-controls uk-display-inline-block uk-width-4-5">
-              <input
-                className="uk-input"
-                value={password}
-                type="password"
-                onChange={(e) => setPassword(e.target.value)}
-                required={userId ? false : true}
-              />
+          {!userId && (
+            <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
+              <label
+                className="uk-form-label uk-width-2-5"
+                htmlFor="form-stacked-text"
+              >
+                Mật khẩu <b>{`(Mặc định là ${DEFAULT_PW})`}</b>
+              </label>
+              <div className="uk-form-controls uk-display-inline-block uk-width-3-5">
+                <input
+                  className="uk-input"
+                  value={password}
+                  type="password"
+                  readOnly
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
             <label
-              className="uk-form-label uk-width-1-5"
+              className="uk-form-label uk-width-2-5"
               htmlFor="form-stacked-select"
             >
               Loại tài khoản
             </label>
-            <div className="uk-form-controls uk-display-inline-block uk-width-4-5">
+            <div className="uk-form-controls uk-display-inline-block uk-width-3-5">
               <select
                 className="uk-select"
                 value={role}
@@ -141,12 +158,12 @@ const AdminAccountForm = ({ userId }) => {
 
           <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
             <label
-              className="uk-form-label uk-width-1-5"
+              className="uk-form-label uk-width-2-5"
               htmlFor="form-stacked-select"
             >
               Trạng thái
             </label>
-            <div className="uk-form-controls uk-display-inline-block uk-width-4-5">
+            <div className="uk-form-controls uk-display-inline-block uk-width-3-5">
               <select
                 className="uk-select"
                 value={status}
@@ -159,7 +176,18 @@ const AdminAccountForm = ({ userId }) => {
           </div>
 
           <div className="uk-flex uk-flex-center">
+            {userId && (
+              <button
+                type="button"
+                className="uk-button uk-margin-top uk-margin-right"
+                style={{ backgroundColor: "#32d296", color: "#FFF" }}
+                onClick={onResetPassword}
+              >
+                Reset mật khẩu
+              </button>
+            )}
             <button
+              type="submit"
               className={`uk-button uk-margin-top ${
                 loading ? "uk-disabled" : ""
               }`}
