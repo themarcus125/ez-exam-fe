@@ -7,7 +7,8 @@ import moment from 'moment';
 
 const ExamRoom = () => {
     const [lstExamRoom, setLstExamRoom] = useState(null);
-    const [year, setYear] = useState(new Date());
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
     const [lstSubject, setLstSubject] = useState(null);
     const [subject, setSubject] = useState("");
     const [search, setSearch] = useState("");
@@ -19,22 +20,22 @@ const ExamRoom = () => {
         let tmp_lstExamRoom = await getAPIWithToken(`/phongthi`, token);
         setLstExamRoom(tmp_lstExamRoom.data);
     }, []);
-
     const handleChangeSubject = (e) => {
         setSubject(e.target.value);
     };
-
-    const handleChangeYear = (date) => {
-        setYear(date);
+    const handleChangeStartDate = (date) => {
+        setStartDate(date);
+    };
+    const handleChangeEndDate = (date) => {
+        setEndDate(date);
     };
     const handleChangeSearch = (e) => {
         setSearch(e.target.value);
     };
-
     const onSearch = async (e) => {
         e.preventDefault();
         const token = await getToken();
-        const tmp_Search = await getAPIWithToken(`/phongthi?timkiem=${search}&nam=${moment(year).year()}&mamonhoc=${subject}`, token);
+        const tmp_Search = await getAPIWithToken(`/phongthi?timkiem=${search}&mamonhoc=${subject}&tungay=${moment(startDate).format("YYYY-MM-DD")}&denngay=${moment(endDate).format("YYYY-MM-DD")}`, token);
         setLstExamRoom(tmp_Search.data);
     };
 
@@ -46,8 +47,8 @@ const ExamRoom = () => {
             <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
                 Danh sách phòng thi
             </p>
-            <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom" style={{ marginLeft: 100, marginRight: 100 }}>
-                <div className="uk-width-1-3@s uk-display-inline-block">
+            <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom" style={{ marginLeft: 50, marginRight: 50 }}>
+                <div className="uk-width-1-4@s uk-display-inline-block">
                     <span className="uk-display-inline-block uk-width-2-5">
                         Môn học
                     </span>
@@ -66,20 +67,40 @@ const ExamRoom = () => {
                     </div>
                 </div>
 
-                <div className="uk-width-1-3@s uk-display-inline-block">
+                <div className="uk-width-1-4@s uk-display-inline-block">
                     <span className="uk-display-inline-block uk-width-2-5">
-                        Năm học
+                        Từ ngày
                     </span>
                     <div className="uk-display-inline-block uk-width-3-5">
                         <DatePicker className="uk-select uk-width-1-1"
                             style={{
                                 border: "solid 0.5px #666"
                             }}
-                            selected={year}
-                            onChange={handleChangeYear}
-                            showYearPicker
-                            dateFormat="yyyy"
-                        // yearItemNumber={9}
+                            selected={startDate}
+                            onChange={handleChangeStartDate}
+                            selectsStart
+                            startDate={startDate}
+                            endDate={endDate}
+                            dateFormat="dd/MM/yyyy"
+                        />
+                    </div>
+                </div>
+                <div className="uk-width-1-4@s uk-display-inline-block">
+                    <span className="uk-display-inline-block uk-width-2-5">
+                        Đến ngày
+                    </span>
+                    <div className="uk-display-inline-block uk-width-3-5">
+                        <DatePicker className="uk-select uk-width-1-1"
+                            style={{
+                                border: "solid 0.5px #666"
+                            }}
+                            selected={endDate}
+                            onChange={handleChangeEndDate}
+                            selectsEnd
+                            startDate={startDate}
+                            endDate={endDate}
+                            minDate={startDate}
+                            dateFormat="dd/MM/yyyy"
                         />
                     </div>
                 </div>
@@ -113,8 +134,6 @@ const ExamRoom = () => {
                             <th className="uk-width-small">Mã phòng</th>
                             <th className="uk-width-large">Môn học</th>
                             <th className="uk-width-small">Mã bộ đề</th>
-                            <th className="uk-width-medium">Từ sinh viên</th>
-                            <th className="uk-width-medium">Đến sinh  viên</th>
                             <th className="uk-width-small">Số lượng</th>
                             <th className="uk-width-medium">Ngày thi</th>
                             <th className="uk-width-medium">Thời gian bắt đầu phòng</th>
@@ -128,8 +147,6 @@ const ExamRoom = () => {
                                 <td value={item.maPhong}>{item.tenPhong}</td>
                                 <td value={item.maMonHoc}>{item.tenMonHoc}</td>
                                 <td value={item.maBoDe}>{item.tenBoDe}</td>
-                                <td>{item.nguoi_dung[0].tenDangNhap}</td>
-                                <td>{item.nguoi_dung[item.nguoi_dung.length - 1].tenDangNhap}</td>
                                 <td>{item.siSo}</td>
                                 <td>{moment(item.ngayThi).format("DD/MM/YYYY")}</td>
                                 <td>{item.thoiGianBatDauPhong}</td>

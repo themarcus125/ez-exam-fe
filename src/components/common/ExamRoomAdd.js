@@ -16,10 +16,6 @@ const ExamRoomAdd = () => {
     const [subject, setSubject] = useState("");
     const [lstCodeExam, setLstCodeExam] = useState(null);
     const [codeExam, setCodeExam] = useState("");
-    const [lstStudent, setLstStudent] = useState(null);
-    const [fromStudent, setFromStudent] = useState("");
-    const [toStudent, setToStudent] = useState("");
-    const [amount, setAmount] = useState("");
 
     useEffect(async () => {
         const token = await getToken();
@@ -32,25 +28,12 @@ const ExamRoomAdd = () => {
 
     const handleChangeSubject = (e) => {
         setSubject(e.target.value);
-        const tmp_subject = lstSubject.find(element => element.id = e.target.value);
-        if (tmp_subject) {
-            setLstStudent(tmp_subject.nguoi_dung);
-            setFromStudent(tmp_subject.nguoi_dung[0]);
-            setToStudent(tmp_subject.nguoi_dung[tmp_subject.nguoi_dung.length - 1]);
-            setAmount(tmp_subject.nguoi_dung.length);
-        } else {
-            setLstStudent([]);
-            setFromStudent(null);
-            setToStudent(null);
-            setAmount(0);
-        }
     };
 
     const handleChangeRoomName = (e) => {
         setRoomName(e.target.value);
     };
     const handleChangeDateExam = (date) => {
-        console.log("sdf0", date)
         setDateExam(date);
     };
     const handleChangeHourExamRoom = (e) => {
@@ -61,15 +44,6 @@ const ExamRoomAdd = () => {
     };
     const handleChangeCodeExam = (e) => {
         setCodeExam(e.target.value);
-    };
-    const handleChangeFromStudent = (e) => {
-        setFromStudent(e.target.value);
-    };
-    const handleChangeToStudent = (e) => {
-        setToStudent(e.target.value);
-    };
-    const handleChangeAmount = (e) => {
-        setAmount(e.target.value);
     };
 
     const onSubmit = async (e) => {
@@ -82,12 +56,10 @@ const ExamRoomAdd = () => {
                 thoiGianBatDauPhong: hourExamRoom,
                 thoiGianBatDauThi: hourStartExam,
                 maBoDe: codeExam,
-                maMonHoc: subject,
-                tuMaND: fromStudent.tenDangNhap,
-                denMaND: toStudent
+                maMonHoc: subject
             }, token);
-            const { resData } = await res.json();
-            if (res.status === 200 & resData) {
+            const { data } = await res.json();
+            if (res.status === 200 & data !== undefined) {
                 toast.success("Tạo phòng thành công !!!");
             } else {
                 toast.error("Tạo phòng thất bại !!!");
@@ -204,51 +176,6 @@ const ExamRoomAdd = () => {
                                             <option value={item.maBoDe}>{item.maDe}</option>
                                         )) : null}
                                     </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="uk-width-1-2 uk-margin-bottom">
-                            <div className="uk-margin">
-                                <label className="uk-form-label" for="form-horizontal-text">
-                                    Từ sinh viên
-                                </label>
-                                <div className="uk-form-controls">
-                                    <select className="uk-select" onChange={handleChangeFromStudent} value={fromStudent} required>
-                                        {lstStudent ? lstStudent.map((item) => (
-                                            <option value={item.id}>{item.tenDangNhap} - {item.tenNguoiDung}</option>
-                                        )) : null}
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="uk-width-1-2 uk-margin-bottom">
-                            <div className="uk-margin">
-                                <label className="uk-form-label" for="form-horizontal-text">
-                                    Đến sinh viên
-                                </label>
-                                <div className="uk-form-controls">
-                                    <select className="uk-select" onChange={handleChangeToStudent} value={toStudent} required>
-                                        {lstStudent ? lstStudent.map((item) => (
-                                            <option value={item.id}>{item.tenDangNhap} - {item.tenNguoiDung}</option>
-                                        )) : null}
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="uk-width-1-2 uk-margin-bottom">
-                            <div className="uk-margin">
-                                <label className="uk-form-label" for="form-horizontal-text">
-                                    Số lượng
-                                </label>
-                                <div className="uk-form-controls">
-                                    <input className="uk-input uk-form-width-small"
-                                        type="number"
-                                        min="0"
-                                        placeholder="0"
-                                        value={amount}
-                                        onChange={handleChangeAmount}
-                                        required
-                                        disabled />
                                 </div>
                             </div>
                         </div>
