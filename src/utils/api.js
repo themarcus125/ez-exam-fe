@@ -81,16 +81,6 @@ export const postFileAPIWithToken = (endpoint, formData, token, options = {}) =>
     ...options,
   });
 
-export const getAPIWithToken = (endpoint, token, options = {}) =>
-  fetch(`${API_URL}${endpoint}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    ...options,
-  });
-
 export const putAPIWithToken = (endpoint, data, token, options = {}) =>
   fetch(`${API_URL}${endpoint}`, {
     method: "PUT",
