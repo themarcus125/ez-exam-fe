@@ -3,6 +3,15 @@ const API_URL = process.env.GATSBY_API_URL;
 export const getAPI = (endpoint, options = {}) =>
   fetch(`${API_URL}${endpoint}`, options);
 
+export const getAPIWithToken = (endpoint, token, options = {}) =>
+  fetch(`${API_URL}${endpoint}`, {
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    ...options,
+  }).then((response) => response.json());
+
 export const putAPI = (endpoint, options = {}) =>
   fetch(`${API_URL}${endpoint}`, {
     method: "PUT",
@@ -32,6 +41,7 @@ export const postAPIWithToken = (endpoint, data, token, options = {}) =>
   fetch(`${API_URL}${endpoint}`, {
     method: "POST",
     headers: {
+      Accept: "application/json",
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
@@ -67,5 +77,16 @@ export const postFileAPIWithToken = (endpoint, formData, token, options = {}) =>
       Authorization: `Bearer ${token}`,
     },
     body: formData,
+    ...options,
+  });
+
+export const putAPIWithToken = (endpoint, data, token, options = {}) =>
+  fetch(`${API_URL}${endpoint}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: data ? JSON.stringify(data) : null,
     ...options,
   });

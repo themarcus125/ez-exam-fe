@@ -143,3 +143,14 @@ export const questionType = {
   multipleChoice: "MULTIPLE_CHOICE",
   essay: "ESSAY",
 };
+
+export const userType = {
+  SINHVIEN: "sinhvien",
+  GIAOVIEN: "giaovien",
+  ADMIN: "admin",
+};
+
+export const userStatus = {
+  ACTIVE: 0,
+  INACTIVE: 1,
+};
