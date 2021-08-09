@@ -1,16 +1,47 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { getAPIWithToken } from "../../utils/api";
 import { getToken } from "../../utils/auth";
 import DatePicker from "react-datepicker";
 import moment from "moment";
 
+const USER_PER_PAGE = 5;
 const ExamRoom = () => {
-  const [lstExamRoom, setLstExamRoom] = useState(null);
+  const [lstExamRoom, setLstExamRoom] = useState([]);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [lstSubject, setLstSubject] = useState(null);
   const [subject, setSubject] = useState("");
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const numOfPage = useRef(1);
+
+  const getData = async () => {
+    try {
+      const token = await getToken();
+      if (token) {
+        setLoading(true);
+        const response = await getAPIWithToken(
+          `/phongthi?timkiem=${search}&mamonhoc=${subject}&tungay=${moment(
+            startDate,
+          ).format("YYYY-MM-DD")}&denngay=${moment(endDate).format("YYYY-MM-DD")}`,
+          token
+        );
+        numOfPage.current =
+          Math.ceil(response.data.length / USER_PER_PAGE) || 1;
+        const chunks = Array(numOfPage.current)
+          .fill()
+          .map((_, index) => index * USER_PER_PAGE)
+          .map((begin) => response.data.slice(begin, begin + USER_PER_PAGE));
+        setLstExamRoom(chunks);
+        setCurrentPage(1);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log("err", error);
+      alert("Đã có lỗi xảy ra trong quá trình lấy danh sách phòng thi.");
+    }
+  };
 
   useEffect(async () => {
     const token = await getToken();
@@ -19,9 +50,24 @@ const ExamRoom = () => {
       token,
     );
     setLstSubject(tmp_lstSubject.data);
-    const tmp_lstExamRoom = await getAPIWithToken(`/phongthi`, token);
-    setLstExamRoom(tmp_lstExamRoom.data);
+    getData();
   }, []);
+
+  const onChangePage = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const onNext = () => {
+    if (currentPage < numOfPage.current) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const onPrev = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
   const handleChangeSubject = (e) => {
     setSubject(e.target.value);
   };
@@ -40,14 +86,7 @@ const ExamRoom = () => {
   };
   const onSearch = async (e) => {
     e.preventDefault();
-    const token = await getToken();
-    const tmp_Search = await getAPIWithToken(
-      `/phongthi?timkiem=${search}&mamonhoc=${subject}&tungay=${moment(
-        startDate,
-      ).format("YYYY-MM-DD")}&denngay=${moment(endDate).format("YYYY-MM-DD")}`,
-      token,
-    );
-    setLstExamRoom(tmp_Search.data);
+    getData();
   };
 
   return (
@@ -163,8 +202,9 @@ const ExamRoom = () => {
             </tr>
           </thead>
           <tbody>
-            {lstExamRoom
-              ? lstExamRoom.map((item) => (
+          {!loading &&
+              lstExamRoom[currentPage - 1]?.map((item) => {
+                return (
                 <tr key={item.id}>
                   <td value={item.maPhong}>{item.tenPhong}</td>
                   <td value={item.maMonHoc}>{item.tenMonHoc}</td>
@@ -185,47 +225,54 @@ const ExamRoom = () => {
                     </ul>
                   </td>
                 </tr>
-              ))
-              : null}
+              );
+            })}
           </tbody>
         </table>
+        {loading && (
+          <div className="uk-flex uk-flex-center" uk-spinner=""></div>
+        )}
       </div>
-      <ul className="uk-pagination uk-flex-center" uk-margin>
-        <li>
-          <button className="uk-button uk-button-default uk-button-small">
+      <ul className="uk-pagination uk-flex-center" uk-margin="">
+        <li className={`${currentPage === 1 ? "uk-disabled" : ""}`}>
+          <button
+            className="uk-button uk-button-default uk-button-small"
+            onClick={onPrev}
+          >
             <span className="uk-icon" uk-icon="icon: chevron-left"></span>
           </button>
         </li>
-        <li className="uk-disabled">
+        {Array.from({ length: numOfPage.current }, (_, i) => i + 1).map(
+          (num) => {
+            const isActiveButton = currentPage === num;
+            return (
+              <li
+                key={num}
+                className={`${isActiveButton ? "uk-disabled" : ""}`}
+              >
+                <button
+                  className="uk-button uk-button-default uk-button-small"
+                  style={{
+                    ...paginationButton,
+                    ...(isActiveButton && activeButton),
+                  }}
+                  onClick={() => onChangePage(num)}
+                >
+                  {num}
+                </button>
+              </li>
+            );
+          },
+        )}
+        <li
+          className={`${
+            currentPage === numOfPage.current ? "uk-disabled" : ""
+          }`}
+        >
           <button
             className="uk-button uk-button-default uk-button-small"
-            style={{
-              ...paginationButton,
-              ...activeText,
-              ...myButton,
-            }}
+            onClick={onNext}
           >
-            1
-          </button>
-        </li>
-        <li>
-          <button
-            className="uk-button uk-button-default uk-button-small"
-            style={paginationButton}
-          >
-            2
-          </button>
-        </li>
-        <li>
-          <button
-            className="uk-button uk-button-default uk-button-small"
-            style={paginationButton}
-          >
-            3
-          </button>
-        </li>
-        <li>
-          <button className="uk-button uk-button-default uk-button-small">
             <span className="uk-icon" uk-icon="icon: chevron-right"></span>
           </button>
         </li>
@@ -245,5 +292,10 @@ const activeText = {
 };
 
 const myButton = {
+  backgroundColor: "#32d296",
+};
+
+const activeButton = {
+  color: "#FFF",
   backgroundColor: "#32d296",
 };
