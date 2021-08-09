@@ -6,3 +6,7 @@
   background: #fff;
   border-bottom: 1px solid #e5e5e5;
 }
+
+.react-datepicker-popper {
+  z-index: 20 !important;
+}
