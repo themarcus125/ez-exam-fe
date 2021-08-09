@@ -6,21 +6,7 @@ import { getToken } from "../../utils/auth";
 const Exam = () => {
   const [monHocs, setMonhocs] = useState([]);
   const [deThis, setdeThis] = useState([]);
-
-  const doKho = [
-    {
-      id: 1,
-      ten: "Dễ",
-    },
-    {
-      id: 2,
-      ten: "Trung bình",
-    },
-    {
-      id: 3,
-      ten: "Khó",
-    },
-  ];
+  const [doKhos, setdoKhos] = useState([]);
 
   const limit = 10;
   let page = 1;
@@ -33,6 +19,12 @@ const Exam = () => {
     const token = await getToken();
     const lstMonHoc = await getAPIWithToken("/chuyende/monhocnguoidung", token);
     setMonhocs(lstMonHoc.data);
+  };
+
+  const getDoKho = async () => {
+    const token = await getToken();
+    const lstDoKho = await getAPIWithToken("/dokho/layTatCaDoKho", token);
+    setdoKhos(lstDoKho.data);
   };
 
   const getDeThi = async () => {
@@ -51,6 +43,7 @@ const Exam = () => {
 
   useEffect(() => {
     getMonHoc();
+    getDoKho();
     getDeThi();
   }, []);
 
@@ -126,7 +119,7 @@ const Exam = () => {
                 border: "solid 0.5px #666",
               }}
             >
-              {doKho.map((item) => (
+              {doKhos.map((item) => (
                 <option value={item.id}>{item.ten}</option>
               ))}
             </select>
@@ -192,7 +185,7 @@ const Exam = () => {
                   <td>{item.tieuDe}</td>
                   <td>{item.tenBoDe}</td>
                   <td>Ngay tao</td>
-                  <td>{doKho.find((x) => x.id == item.doKho)?.ten}</td>
+                  <td>{doKhos.find((x) => x.id == item.doKho)?.ten}</td>
                   <td>
                     <nav
                       id="navbar"
