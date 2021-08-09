@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Link } from "gatsby";
 import { getAPIWithToken } from "../../utils/api";
 import { getToken } from "../../utils/auth";
+import moment from "moment";
 
 const Exam = () => {
   const [monHocs, setMonhocs] = useState([]);
   const [deThis, setdeThis] = useState([]);
   const [doKhos, setdoKhos] = useState([]);
 
-  const limit = 10;
+  const limit = 10000;
   let page = 1;
   let maMonHoc = "";
   let tuNgay = "";
@@ -186,7 +187,7 @@ const Exam = () => {
                   <td>{item.maDe}</td>
                   <td>{item.tieuDe}</td>
                   <td>{item.tenBoDe}</td>
-                  <td>Ngay tao</td>
+                  <td>{moment(item.ngayTao).format("DD/MM/YYYY")}</td>
                   <td>{doKhos.find((x) => x.id == item.doKho)?.ten}</td>
                   <td>
                     <nav

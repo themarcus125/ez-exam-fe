@@ -2,20 +2,22 @@ import React, { useState, useEffect } from "react";
 import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
 import { getToken } from "../../utils/auth";
 
+let tenDeThi = "";
+let maChuyenDe = 0;
+let maDeThi = "ma de thi";
+let thoiGianLam = 0;
+let moTaDeThi = "";
+let doKho = 1;
+let tenBoDe = "";
+let soDe = 1;
+let danhSachCauHoi = [];
+let maCauHoi = 1;
+let maDapAn = 0;
+
 const ExamAdd = () => {
   const [monHocs, setMonhocs] = useState([]);
   const [doKhos, setdoKhos] = useState([]);
   const [taoBoDe, setTaoBoDe] = useState(false);
-
-  let tenDeThi = "";
-  let maChuyenDe = null;
-  let maDeThi = "";
-  let thoiGianLam = null;
-  let moTaDeThi = "";
-  let doKho = 1;
-  let tenBoDe = "";
-  let soDe = null;
-  let danhSachCauHoi = [];
 
   const getMonHoc = async () => {
     const token = await getToken();
@@ -34,38 +36,16 @@ const ExamAdd = () => {
     const response = await postAPIWithToken(
       "/dethi/themDeThi",
       {
-        tenDeThi: "TEN DE THI 5555",
-        maChuyenDe: 1,
-        maDeThi: "55TT",
-        thoiGianLam: 120,
-        moTaDeThi: "DAY LA MO TA DE THI 5555",
-        doKho: 1,
-        taoBoDe: true,
-        tenBoDe: "BO DE SO 555",
-        soDe: 2,
-        danhSachCauHoi: [
-          {
-            maCauHoi: 1,
-            dsDapAn: [
-              {
-                maDapAn: 1,
-                loaiDapAn: 0,
-              },
-              {
-                maDapAn: 2,
-                loaiDapAn: 0,
-              },
-              {
-                maDapAn: 3,
-                loaiDapAn: 0,
-              },
-              {
-                maDapAn: 4,
-                loaiDapAn: 1,
-              },
-            ],
-          },
-        ],
+        tenDeThi: tenDeThi,
+        maChuyenDe: maChuyenDe,
+        maDeThi: maDeThi,
+        thoiGianLam: thoiGianLam,
+        moTaDeThi: moTaDeThi,
+        doKho: doKho,
+        taoBoDe: taoBoDe,
+        tenBoDe: tenBoDe,
+        soDe: soDe,
+        danhSachCauHoi: danhSachCauHoi,
       },
       token,
     );
@@ -75,6 +55,76 @@ const ExamAdd = () => {
     } else {
       alert("Đã xảy ra lỗi. Tạo đề thi thất bại.");
     }
+  };
+
+  const themCauHoi = (e) => {
+    e.preventDefault();
+    const cauHois = document.getElementById("cauHois");
+    cauHois.insertAdjacentHTML(
+      "beforeend",
+      `<tr>
+        <td>${maCauHoi}</td>
+        <td><input
+        className="uk-input"
+        type="text"
+      /></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>A</td>
+        <td><input
+        className="uk-input"
+        type="text"
+      /></td>
+        <td><input class="uk-checkbox" type="checkbox"/>Đáp án</td>
+      </tr>
+      <tr>
+        <td>B</td>
+        <td><input
+        className="uk-input"
+        type="text"
+      /></td>
+        <td><input class="uk-checkbox" type="checkbox"/>Đáp án</td>
+      </tr>
+      <tr>
+        <td>C</td>
+        <td><input
+        className="uk-input"
+        type="text"
+      /></td>
+        <td><input class="uk-checkbox" type="checkbox"/>Đáp án</td>
+      </tr>
+      <tr>
+        <td>D</td>
+        <td><input
+        className="uk-input"
+        type="text"
+      /></td>
+        <td><input class="uk-checkbox" type="checkbox"/>Đáp án</td>
+      </tr>`,
+    );
+
+    danhSachCauHoi.push({
+      maCauHoi: maCauHoi++,
+      dsDapAn: [
+        {
+          maDapAn: ++maDapAn,
+          loaiDapAn: 0,
+        },
+        {
+          maDapAn: ++maDapAn,
+          loaiDapAn: 0,
+        },
+        {
+          maDapAn: ++maDapAn,
+          loaiDapAn: 0,
+        },
+        {
+          maDapAn: ++maDapAn,
+          loaiDapAn: 0,
+        },
+      ],
+    });
   };
 
   useEffect(() => {
@@ -116,6 +166,7 @@ const ExamAdd = () => {
                   maChuyenDe = e.target.value;
                 }}
               >
+                <option></option>
                 {monHocs &&
                   monHocs.map((item, index) => (
                     <option value={item.id} key={index}>
@@ -177,11 +228,27 @@ const ExamAdd = () => {
             ></textarea>
           </div>
 
+          <div className="uk-margin-top">
+            <table className="uk-table uk-table-middle">
+              <thead>
+                <tr>
+                  <th className="uk-table-shrink"></th>
+                  <th className="uk-table-expand"></th>
+                  <th className="uk-width-small"></th>
+                </tr>
+              </thead>
+              <tbody id="cauHois"></tbody>
+            </table>
+          </div>
+
           <div className="uk-flex uk-flex-center">
             <div className="uk-card-body">
               <button
                 className="uk-button"
                 style={{ backgroundColor: "#32d296", color: "#FFF" }}
+                onClick={(e) => {
+                  themCauHoi(e);
+                }}
               >
                 Thêm mới câu hỏi
               </button>
@@ -197,6 +264,86 @@ const ExamAdd = () => {
             </div>
           </div>
 
+          <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
+            <div className="uk-width-1-4@s uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-3-5">
+                Số câu hỏi trắc nghiệm
+              </span>
+              <div
+                className="uk-display-inline-block uk-width-1-5"
+                style={{ marginLeft: "10px" }}
+              >
+                <span className="uk-display-inline-block uk-width-1-5">0</span>
+              </div>
+            </div>
+
+            <div className="uk-width-1-4@s uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-2-5">
+                Nhập điểm
+              </span>
+              <div className="uk-display-inline-block uk-width-2-5">
+                <input
+                  className="uk-input uk-form-width-small"
+                  type="number"
+                  min="0"
+                  placeholder="0"
+                />
+              </div>
+            </div>
+
+            <div className="uk-width-1-4@s uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-3-5">
+                Điểm từng câu
+              </span>
+              <div
+                className="uk-display-inline-block uk-width-1-5"
+                style={{ marginLeft: "-50px" }}
+              >
+                <span className="uk-display-inline-block ">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
+            <div className="uk-width-1-4@s uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-3-5">
+                Số câu hỏi tự luận
+              </span>
+              <div
+                className="uk-display-inline-block uk-width-1-5"
+                style={{ marginLeft: "10px" }}
+              >
+                <span className="uk-display-inline-block uk-width-1-5">0</span>
+              </div>
+            </div>
+
+            <div className="uk-width-1-4@s uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-2-5">
+                Nhập điểm
+              </span>
+              <div className="uk-display-inline-block uk-width-2-5">
+                <input
+                  className="uk-input uk-form-width-small"
+                  type="number"
+                  min="0"
+                  placeholder="0"
+                />
+              </div>
+            </div>
+
+            <div className="uk-width-1-4@s uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-3-5">
+                Điểm từng câu
+              </span>
+              <div
+                className="uk-display-inline-block uk-width-1-5"
+                style={{ marginLeft: "-50px" }}
+              >
+                <span className="uk-display-inline-block ">0</span>
+              </div>
+            </div>
+          </div>
+
           <div className="uk-margin uk-grid-small uk-child-width-auto uk-grid">
             <label>
               <input
@@ -206,22 +353,6 @@ const ExamAdd = () => {
               />{" "}
               Có tạo bộ đề không?
             </label>
-          </div>
-
-          <div className="uk-margin">
-            <label className="uk-form-label" for="form-horizontal-text">
-              Nhập mã bộ đề
-            </label>
-            <div className="uk-form-controls">
-              <input
-                className="uk-input"
-                type="text"
-                disabled={!taoBoDe}
-                onChange={(e) => {
-                  tenBoDe = e.target.value;
-                }}
-              />
-            </div>
           </div>
 
           <div className="uk-margin">
