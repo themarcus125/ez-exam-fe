@@ -133,7 +133,7 @@ const ExamRoom = () => {
                         <tr>
                             <th className="uk-width-small">Mã phòng</th>
                             <th className="uk-width-large">Môn học</th>
-                            <th className="uk-width-small">Mã bộ đề</th>
+                            <th className="uk-width-medium">Mã bộ đề</th>
                             <th className="uk-width-small">Số lượng</th>
                             <th className="uk-width-medium">Ngày thi</th>
                             <th className="uk-width-medium">Thời gian bắt đầu phòng</th>
@@ -152,30 +152,15 @@ const ExamRoom = () => {
                                 <td>{item.thoiGianBatDauPhong}</td>
                                 <td>{item.thoiGianBatDauThi}</td>
                                 <td>
-                                    <nav
-                                        id="navbar"
-                                        className="uk-navbar-container"
-                                    >
-                                        <div className="uk-navbar-left uk-margin-small-left">
-                                            <ul className="uk-navbar-nav">
-                                                <li className="uk-flex uk-flex-middle">
-                                                    <a>
-                                                        <span uk-icon="table"></span>
-                                                    </a>
-                                                    <div className="uk-navbar-dropdown">
-                                                        <ul className="uk-nav uk-navbar-dropdown-nav">
-                                                            <li>
-                                                                <a>Xem báo cáo</a>
-                                                            </li>
-                                                            <li>
-                                                                <a>Xem chi tiết</a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </li>
+                                    <ul class="uk-subnav-pill">
+                                        <a style={{ activeText }}><span uk-icon="table"></span></a>
+                                        <div uk-dropdown="mode: click">
+                                            <ul class="uk-nav uk-dropdown-nav">
+                                                <li><a href="#">Xem báo cáo</a></li>
+                                                <li><a href="#">Xem chi tiết</a></li>
                                             </ul>
                                         </div>
-                                    </nav>
+                                    </ul>
                                 </td>
                             </tr>
                         )) : null}
