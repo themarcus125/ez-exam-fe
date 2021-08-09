@@ -1,0 +1,10 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /var/www/html/fe-qlqtpm-20
+hooks:
+  AfterInstall:
+    - location: script.sh
+      timeout: 3600
+      runas: ec2-user
