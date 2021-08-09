@@ -1,7 +1,86 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
+import { getToken } from "../../utils/auth";
 
 const ExamAdd = () => {
-  const [createQuestionaire, setCreateQuestionaire] = useState(false);
+  const [monHocs, setMonhocs] = useState([]);
+  const [doKhos, setdoKhos] = useState([]);
+  const [taoBoDe, setTaoBoDe] = useState(false);
+
+  let tenDeThi = "";
+  let maChuyenDe = null;
+  let maDeThi = "";
+  let thoiGianLam = null;
+  let moTaDeThi = "";
+  let doKho = 1;
+  let tenBoDe = "";
+  let soDe = null;
+  let danhSachCauHoi = [];
+
+  const getMonHoc = async () => {
+    const token = await getToken();
+    const lstMonHoc = await getAPIWithToken("/chuyende/monhocnguoidung", token);
+    setMonhocs(lstMonHoc.data);
+  };
+
+  const getDoKho = async () => {
+    const token = await getToken();
+    const lstDoKho = await getAPIWithToken("/dokho/layTatCaDoKho", token);
+    setdoKhos(lstDoKho.data);
+  };
+
+  const taoDeThi = async () => {
+    const token = await getToken();
+    const response = await postAPIWithToken(
+      "/dethi/themDeThi",
+      {
+        tenDeThi: "TEN DE THI 5555",
+        maChuyenDe: 1,
+        maDeThi: "55TT",
+        thoiGianLam: 120,
+        moTaDeThi: "DAY LA MO TA DE THI 5555",
+        doKho: 1,
+        taoBoDe: true,
+        tenBoDe: "BO DE SO 555",
+        soDe: 2,
+        danhSachCauHoi: [
+          {
+            maCauHoi: 1,
+            dsDapAn: [
+              {
+                maDapAn: 1,
+                loaiDapAn: 0,
+              },
+              {
+                maDapAn: 2,
+                loaiDapAn: 0,
+              },
+              {
+                maDapAn: 3,
+                loaiDapAn: 0,
+              },
+              {
+                maDapAn: 4,
+                loaiDapAn: 1,
+              },
+            ],
+          },
+        ],
+      },
+      token,
+    );
+
+    if (response?.status === 200) {
+      alert("Tạo đề thi thành công.");
+    } else {
+      alert("Đã xảy ra lỗi. Tạo đề thi thất bại.");
+    }
+  };
+
+  useEffect(() => {
+    getMonHoc();
+    getDoKho();
+  }, []);
 
   return (
     <div className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1">
@@ -16,7 +95,13 @@ const ExamAdd = () => {
               Tên đề thi
             </label>
             <div className="uk-form-controls">
-              <input className="uk-input" type="text" />
+              <input
+                className="uk-input"
+                type="text"
+                onChange={(e) => {
+                  tenDeThi = e.target.value;
+                }}
+              />
             </div>
           </div>
 
@@ -25,9 +110,18 @@ const ExamAdd = () => {
               Môn học
             </label>
             <div className="uk-form-controls">
-              <select className="uk-select">
-                <option>Môn học A</option>
-                <option>Môn học B</option>
+              <select
+                className="uk-select"
+                onChange={(e) => {
+                  maChuyenDe = e.target.value;
+                }}
+              >
+                {monHocs &&
+                  monHocs.map((item, index) => (
+                    <option value={item.id} key={index}>
+                      {item.tenChuyenDe}
+                    </option>
+                  ))}
               </select>
             </div>
           </div>
@@ -37,9 +131,17 @@ const ExamAdd = () => {
               Mức độ
             </label>
             <div className="uk-form-controls">
-              <select className="uk-select">
-                <option>Dễ</option>
-                <option>Trung bình</option>
+              <select
+                className="uk-select"
+                onChange={(e) => {
+                  doKho = e.target.value;
+                }}
+              >
+                {doKhos.map((item, index) => (
+                  <option value={item.id} key={index}>
+                    {item.ten}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -53,6 +155,9 @@ const ExamAdd = () => {
                 className="uk-input uk-form-width-small"
                 type="number"
                 min="1"
+                onChange={(e) => {
+                  thoiGianLam = e.target.value;
+                }}
               />
               <span>phút</span>
             </div>
@@ -66,6 +171,9 @@ const ExamAdd = () => {
               className="uk-textarea"
               rows="5"
               placeholder="Textarea"
+              onChange={(e) => {
+                moTaDeThi = e.target.value;
+              }}
             ></textarea>
           </div>
 
@@ -94,7 +202,7 @@ const ExamAdd = () => {
               <input
                 className="uk-checkbox"
                 type="checkbox"
-                onChange={(e) => setCreateQuestionaire(e.target.checked)}
+                onChange={(e) => setTaoBoDe(e.target.checked)}
               />{" "}
               Có tạo bộ đề không?
             </label>
@@ -108,7 +216,10 @@ const ExamAdd = () => {
               <input
                 className="uk-input"
                 type="text"
-                disabled={!createQuestionaire}
+                disabled={!taoBoDe}
+                onChange={(e) => {
+                  tenBoDe = e.target.value;
+                }}
               />
             </div>
           </div>
@@ -123,7 +234,10 @@ const ExamAdd = () => {
                 type="number"
                 min="1"
                 placeholder="1"
-                disabled={!createQuestionaire}
+                disabled={!taoBoDe}
+                onChange={(e) => {
+                  soDe = e.target.value;
+                }}
               />
             </div>
           </div>
@@ -133,6 +247,10 @@ const ExamAdd = () => {
               <button
                 className="uk-button"
                 style={{ backgroundColor: "#32d296", color: "#FFF" }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  taoDeThi();
+                }}
               >
                 Lưu
               </button>

@@ -119,8 +119,10 @@ const Exam = () => {
                 border: "solid 0.5px #666",
               }}
             >
-              {doKhos.map((item) => (
-                <option value={item.id}>{item.ten}</option>
+              {doKhos.map((item, index) => (
+                <option value={item.id} key={index}>
+                  {item.ten}
+                </option>
               ))}
             </select>
           </div>
