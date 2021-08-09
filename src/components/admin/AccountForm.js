@@ -13,7 +13,7 @@ import { userStatus } from "../../utils/constants";
 
 const AdminAccountForm = ({ userId }) => {
   const [name, setName] = useState("");
-  const [password, setPassword] = useState(DEFAULT_PW);
+  const [username, setUsername] = useState();
   const [role, setRole] = useState(2);
   const [status, setStatus] = useState(userStatus.ACTIVE);
   const [loading, setLoading] = useState(false);
@@ -29,10 +29,10 @@ const AdminAccountForm = ({ userId }) => {
     setLoading(true);
     const token = await getToken();
     const response = await getAPIWithToken(`/users/${userId}`, token);
-    const parsedData = await response.json();
-    setName(parsedData.data.tenNguoiDung);
-    setStatus(parsedData.data.trangThai);
-    // Set the role for current user (waiting for BE)
+    setUsername(response.data.tenDangNhap);
+    setName(response.data.tenNguoiDung);
+    setStatus(response.data.trangThai);
+    setRole(response.data.phan_quyen?.[0]?.id ?? 2);
     setLoading(false);
   };
 
@@ -48,7 +48,6 @@ const AdminAccountForm = ({ userId }) => {
           {
             tenNguoiDung: name,
             trangThai: status,
-            loai: role,
           },
           token,
         );
@@ -63,7 +62,7 @@ const AdminAccountForm = ({ userId }) => {
           "/register",
           {
             tenNguoiDung: name,
-            matKhau: password,
+            matKhau: DEFAULT_PW,
             trangThai: status,
             loai: role,
           },
@@ -80,13 +79,13 @@ const AdminAccountForm = ({ userId }) => {
   const onResetPassword = async () => {
     try {
       // Currently doesn't work. Not sure why, will ask BE team later
-      await putAPIWithToken(
-        `/users/${userId}`,
-        {
-          matKhau: DEFAULT_PW,
-        },
-        token,
-      );
+      // await putAPIWithToken(
+      //   `/users/${userId}`,
+      //   {
+      //     matKhau: DEFAULT_PW,
+      //   },
+      //   token,
+      // );
       alert("Reset mật khẩu thành công");
     } catch (error) {
       alert("Đã xảy ra lỗi không thể reset mật khẩu");
@@ -100,14 +99,34 @@ const AdminAccountForm = ({ userId }) => {
           <p className="uk-text-large uk-text-bold uk-text-center uk-text-success">
             {`${userId ? "Sửa thông tin" : "Tạo"} tài khoản`}
           </p>
+
+          {userId && (
+            <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
+              <label
+                className="uk-form-label uk-width-1-5"
+                htmlFor="form-stacked-text"
+              >
+                Mã tài khoản
+              </label>
+              <div className="uk-form-controls uk-display-inline-block uk-width-4-5">
+                <input
+                  className="uk-input"
+                  value={username}
+                  type="text"
+                  disabled
+                />
+              </div>
+            </div>
+          )}
+
           <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
             <label
-              className="uk-form-label uk-width-2-5"
+              className="uk-form-label uk-width-1-5"
               htmlFor="form-stacked-text"
             >
               Họ tên
             </label>
-            <div className="uk-form-controls uk-display-inline-block uk-width-3-5">
+            <div className="uk-form-controls uk-display-inline-block uk-width-4-5">
               <input
                 className="uk-input"
                 value={name}
@@ -118,37 +137,19 @@ const AdminAccountForm = ({ userId }) => {
             </div>
           </div>
 
-          {!userId && (
-            <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
-              <label
-                className="uk-form-label uk-width-2-5"
-                htmlFor="form-stacked-text"
-              >
-                Mật khẩu <b>{`(Mặc định là ${DEFAULT_PW})`}</b>
-              </label>
-              <div className="uk-form-controls uk-display-inline-block uk-width-3-5">
-                <input
-                  className="uk-input"
-                  value={password}
-                  type="password"
-                  readOnly
-                />
-              </div>
-            </div>
-          )}
-
           <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
             <label
-              className="uk-form-label uk-width-2-5"
+              className="uk-form-label uk-width-1-5"
               htmlFor="form-stacked-select"
             >
               Loại tài khoản
             </label>
-            <div className="uk-form-controls uk-display-inline-block uk-width-3-5">
+            <div className="uk-form-controls uk-display-inline-block uk-width-4-5">
               <select
                 className="uk-select"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
+                disabled={!!userId}
               >
                 <option value={3}>Học sinh</option>
                 <option value={2}>Giáo viên</option>
@@ -158,12 +159,12 @@ const AdminAccountForm = ({ userId }) => {
 
           <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
             <label
-              className="uk-form-label uk-width-2-5"
+              className="uk-form-label uk-width-1-5"
               htmlFor="form-stacked-select"
             >
               Trạng thái
             </label>
-            <div className="uk-form-controls uk-display-inline-block uk-width-3-5">
+            <div className="uk-form-controls uk-display-inline-block uk-width-4-5">
               <select
                 className="uk-select"
                 value={status}
@@ -174,6 +175,16 @@ const AdminAccountForm = ({ userId }) => {
               </select>
             </div>
           </div>
+
+          {!userId && (
+            <div className="uk-flex uk-flex-center uk-text-center uk-margin-bottom uk-text-primary">
+              <small>
+                {`Lưu ý: Mật khẩu mặc định là ${DEFAULT_PW}`}
+                <br />
+                Hãy đổi mật khẩu ở lần đăng nhập đầu tiên
+              </small>
+            </div>
+          )}
 
           <div className="uk-flex uk-flex-center">
             {userId && (
