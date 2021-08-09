@@ -17,25 +17,26 @@ const AdminAccounts = () => {
   const numOfPage = useRef(1);
 
   const getData = async () => {
-    const token = getUser()?.tk ?? "";
-    if (token) {
-      setLoading(true);
-      const response = await getAPIWithToken(
-        `/nguoidung?quyen=${type}&&trangthai=${status}&&timkiem=${searchString}`,
-        token,
-      );
-      const parsedResponse = await response.json();
-      numOfPage.current =
-        Math.ceil(parsedResponse.data.length / USER_PER_PAGE) || 1;
-      const chunks = Array(numOfPage.current)
-        .fill()
-        .map((_, index) => index * USER_PER_PAGE)
-        .map((begin) =>
-          parsedResponse.data.slice(begin, begin + USER_PER_PAGE),
+    try {
+      const token = getUser()?.tk ?? "";
+      if (token) {
+        setLoading(true);
+        const response = await getAPIWithToken(
+          `/nguoidung?quyen=${type}&&trangthai=${status}&&timkiem=${searchString}`,
+          token,
         );
-      setUsers(chunks);
-      setCurrentPage(1);
-      setLoading(false);
+        numOfPage.current =
+          Math.ceil(response.data.length / USER_PER_PAGE) || 1;
+        const chunks = Array(numOfPage.current)
+          .fill()
+          .map((_, index) => index * USER_PER_PAGE)
+          .map((begin) => response.data.slice(begin, begin + USER_PER_PAGE));
+        setUsers(chunks);
+        setCurrentPage(1);
+        setLoading(false);
+      }
+    } catch (error) {
+      alert("Đã có lỗi xảy ra trong quá trình lấy danh sách tài khoản.");
     }
   };
 
