@@ -44,7 +44,7 @@ const IndexPage = () => {
             <ul className="uk-navbar-nav">
               <li>
                 <a href="login" onClick={onLogin}>
-                  Đăng nhập
+                  Đăng nhập.
                 </a>
               </li>
             </ul>
