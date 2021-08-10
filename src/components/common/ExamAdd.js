@@ -8,9 +8,9 @@ let maDeThi = "";
 let thoiGianLam = 0;
 let moTaDeThi = "";
 let doKho = 1;
-let tenBoDe = "";
+const tenBoDe = "";
 let soDe = 1;
-let danhSachCauHoi = [];
+const danhSachCauHoi = [];
 let maCauHoi = 1;
 let maDapAn = 0;
 
@@ -138,10 +138,10 @@ const ExamAdd = () => {
         Tạo đề thi
       </p>
 
-      <form class="uk-form-horizontal uk-margin-large">
+      <form className="uk-form-horizontal uk-margin-large">
         <fieldset className="uk-fieldset">
           <div className="uk-margin">
-            <label className="uk-form-label" for="form-horizontal-text">
+            <label className="uk-form-label" htmlFor="form-horizontal-text">
               Tên đề thi
             </label>
             <div className="uk-form-controls">
@@ -156,7 +156,7 @@ const ExamAdd = () => {
           </div>
 
           <div className="uk-margin">
-            <label className="uk-form-label" for="form-horizontal-text">
+            <label className="uk-form-label" htmlFor="form-horizontal-text">
               Môn học
             </label>
             <div className="uk-form-controls">
@@ -165,6 +165,7 @@ const ExamAdd = () => {
                 onChange={(e) => {
                   maChuyenDe = e.target.value;
                 }}
+                onBlur={() => {}}
               >
                 <option></option>
                 {monHocs &&
@@ -178,7 +179,7 @@ const ExamAdd = () => {
           </div>
 
           <div className="uk-margin">
-            <label className="uk-form-label" for="form-horizontal-text">
+            <label className="uk-form-label" htmlFor="form-horizontal-text">
               Mức độ
             </label>
             <div className="uk-form-controls">
@@ -187,6 +188,7 @@ const ExamAdd = () => {
                 onChange={(e) => {
                   doKho = e.target.value;
                 }}
+                onBlur={() => {}}
               >
                 {doKhos.map((item, index) => (
                   <option value={item.id} key={index}>
@@ -198,7 +200,7 @@ const ExamAdd = () => {
           </div>
 
           <div className="uk-margin">
-            <label className="uk-form-label" for="form-horizontal-text">
+            <label className="uk-form-label" htmlFor="form-horizontal-text">
               Thời gian làm bài
             </label>
             <div className="uk-form-controls">
@@ -215,7 +217,7 @@ const ExamAdd = () => {
           </div>
 
           <div className="uk-margin">
-            <label className="uk-form-label" for="form-horizontal-text">
+            <label className="uk-form-label" htmlFor="form-horizontal-text">
               Ghi chú
             </label>
             <textarea
@@ -356,7 +358,7 @@ const ExamAdd = () => {
           </div>
 
           <div className="uk-margin">
-            <label className="uk-form-label" for="form-horizontal-text">
+            <label className="uk-form-label" htmlFor="form-horizontal-text">
               Nhập mã bộ đề
             </label>
             <div className="uk-form-controls">
@@ -372,7 +374,7 @@ const ExamAdd = () => {
           </div>
 
           <div className="uk-margin">
-            <label className="uk-form-label" for="form-horizontal-text">
+            <label className="uk-form-label" htmlFor="form-horizontal-text">
               Số lượng
             </label>
             <div className="uk-form-controls">
