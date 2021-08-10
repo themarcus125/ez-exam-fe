@@ -92,6 +92,7 @@ const ExamRoom = () => {
   };
   const onSearch = async (e) => {
     e.preventDefault();
+    setLoading(true);
     getData();
   };
 
