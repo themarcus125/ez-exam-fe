@@ -4,18 +4,18 @@ import { getAPIWithToken } from "../../utils/api";
 import { getToken } from "../../utils/auth";
 import moment from "moment";
 
+const limit = 10;
+
 const Exam = () => {
   const [monHocs, setMonhocs] = useState([]);
   const [deThis, setdeThis] = useState([]);
-  const [doKhos, setdoKhos] = useState([]);
-  const [page, setPage] = useState(1);
   const [meta, setMeta] = useState(null);
-
-  const limit = 10;
-  let maMonHoc = "";
-  let tuNgay = "";
-  let denNgay = "";
-  let key = "";
+  const [doKhos, setdoKhos] = useState([]);
+  const [maMonHoc, setMaMonHoc] = useState("");
+  const [tuNgay, setTuNgay] = useState("");
+  const [denNgay, setDenNgay] = useState("");
+  const [key, setKey] = useState("");
+  const [loading, setLoading] = useState(false);
   let lstPage = [];
 
   const getMonHoc = async () => {
@@ -30,10 +30,11 @@ const Exam = () => {
     setdoKhos(lstDoKho.data);
   };
 
-  const getDeThi = async () => {
+  const getDeThi = async (crPage) => {
+    setLoading(true);
     const token = await getToken();
     const lstDeThi = await getAPIWithToken(
-      `/dethi/layDanhSachBoDeThi?limit=${limit}&page=${page}&maChuyenDe=${
+      `/dethi/layDanhSachBoDeThi?limit=${limit}&page=${crPage}&maChuyenDe=${
         maMonHoc && maMonHoc
       }&tuNgay=${tuNgay && tuNgay}&denNgay=${
         denNgay && denNgay
@@ -43,12 +44,13 @@ const Exam = () => {
 
     setdeThis(lstDeThi.data?.dsDeThi);
     setMeta(lstDeThi.data?.meta);
+    setLoading(false);
   };
 
   useEffect(() => {
     getMonHoc();
     getDoKho();
-    getDeThi();
+    getDeThi(1);
   }, []);
 
   for (let i = 1; i <= meta?.lastPage; i++) {
@@ -73,10 +75,12 @@ const Exam = () => {
               style={{
                 border: "solid 0.5px #666",
               }}
+              value={maMonHoc}
               onChange={(e) => {
-                maMonHoc = e.target.value;
+                setMaMonHoc(e.target.value);
               }}
             >
+              <option disabled></option>
               {monHocs &&
                 monHocs.map((item, index) => (
                   <option value={item.id} key={index}>
@@ -95,7 +99,7 @@ const Exam = () => {
               type="date"
               format="YYYY-MM-DD"
               onChange={(e) => {
-                tuNgay = e.target.value;
+                setTuNgay(e.target.value);
               }}
             />
           </div>
@@ -112,7 +116,7 @@ const Exam = () => {
               type="date"
               format="YYYY-MM-DD"
               onChange={(e) => {
-                denNgay = e.target.value;
+                setDenNgay(e.target.value);
               }}
             />
           </div>
@@ -147,12 +151,12 @@ const Exam = () => {
               border: "solid 0.5px #666",
             }}
             onChange={(e) => {
-              key = e.target.value;
+              setKey(e.target.value);
             }}
           />
 
           <button
-            className="uk-button"
+            className={`uk-button ${loading ? "uk-disabled" : ""}`}
             style={{ backgroundColor: "#32d296", color: "#FFF" }}
             onClick={async () => {
               await getDeThi();
@@ -186,7 +190,8 @@ const Exam = () => {
             </tr>
           </thead>
           <tbody>
-            {deThis &&
+            {!loading &&
+              deThis &&
               deThis.length > 0 &&
               deThis.map((item, index) => (
                 <tr key={index}>
@@ -197,46 +202,41 @@ const Exam = () => {
                   <td>{moment(item.ngayTao).format("DD/MM/YYYY")}</td>
                   <td>{doKhos.find((x) => x.id == item.doKho)?.ten}</td>
                   <td>
-                    <nav
-                      id="navbar"
-                      className="uk-navbar-container"
-                      style={{ backgroundColor: "#FFFFFF" }}
-                      uk-navbar=""
-                    >
-                      <div className="uk-navbar-left uk-margin-small-left">
-                        <ul className="uk-navbar-nav">
-                          <li className="uk-flex uk-flex-middle">
-                            <a>
-                              <span uk-icon="table"></span>
-                            </a>
-                            <div className="uk-navbar-dropdown">
-                              <ul className="uk-nav uk-navbar-dropdown-nav">
-                                <li>
-                                  <a>Tạo bản sao</a>
-                                </li>
-                                <li>
-                                  <a>Xem chi tiết</a>
-                                </li>
-                              </ul>
-                            </div>
+                    <ul class="uk-subnav-pill">
+                      <a
+                        style={{
+                          color: "#FFF",
+                        }}
+                      >
+                        <span uk-icon="table"></span>
+                      </a>
+                      <div uk-dropdown="mode: click">
+                        <ul class="uk-nav uk-dropdown-nav">
+                          <li>
+                            <a>Tạo bản sao</a>
+                          </li>
+                          <li>
+                            <a>Xem chi tiết</a>
                           </li>
                         </ul>
                       </div>
-                    </nav>
+                    </ul>
                   </td>
                 </tr>
               ))}
           </tbody>
         </table>
+        {loading && (
+          <div className="uk-flex uk-flex-center" uk-spinner=""></div>
+        )}
       </div>
 
       <ul className="uk-pagination uk-flex-center" uk-margin>
         <li
           className={meta?.currentPage === 1 ? "uk-disabled" : ""}
           onClick={() => {
-            let p = meta?.currentPage;
-            setPage(p--);
-            getDeThi();
+            const page = meta?.currentPage - 1;
+            getDeThi(page);
           }}
         >
           <button className="uk-button uk-button-default uk-button-small">
@@ -246,16 +246,15 @@ const Exam = () => {
         {lstPage.map((item, index) => (
           <li
             key={index}
-            className={item === meta.currentPage ? "uk-disabled" : ""}
+            className={item === meta?.currentPage ? "uk-disabled" : ""}
             onClick={() => {
-              setPage(item);
-              getDeThi();
+              getDeThi(item);
             }}
           >
             <button
               className="uk-button uk-button-default uk-button-small"
               style={
-                item === meta.currentPage
+                item === meta?.currentPage
                   ? {
                       width: 40,
                       color: "#FFF",
@@ -271,9 +270,8 @@ const Exam = () => {
         <li
           className={meta?.currentPage === meta?.lastPage ? "uk-disabled" : ""}
           onClick={() => {
-            let p = meta?.currentPage;
-            setPage(p++);
-            getDeThi();
+            const page = meta?.currentPage + 1;
+            getDeThi(page);
           }}
         >
           <button className="uk-button uk-button-default uk-button-small">
