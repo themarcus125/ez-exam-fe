@@ -9,6 +9,7 @@ import Exam from "../components/common/Exam";
 import ExamAdd from "../components/common/ExamAdd";
 import ExamRoom from "../components/common/ExamRoom";
 import ExamRoomAdd from "../components/common/ExamRoomAdd";
+import ExaminerHome from "../components/examiner/ExaminerHome";
 
 const ExaminerDashboard = () => {
   const role = EXAMINER_ROLE;
@@ -18,7 +19,7 @@ const ExaminerDashboard = () => {
         <PrivateRoute
           role={role}
           path="/"
-          component={Result}
+          component={ExaminerHome}
           title="Trang chủ"
         />
         <PrivateRoute

@@ -5,6 +5,7 @@ import { EXAMINEE_ROLE } from "../utils/roles";
 import MainCourses from "../components/examinee/MainCourses";
 import ExamTaker from "../components/examinee/ExamTaker";
 import PrivateRoute from "../components/common/PrivateRoute";
+import ExamineeHome from "../components/examinee/ExamineeHome";
 
 const ExamineeDashboard = () => {
   const role = EXAMINEE_ROLE;
@@ -14,7 +15,7 @@ const ExamineeDashboard = () => {
         <PrivateRoute
           role={role}
           path="/"
-          component={MainCourses}
+          component={ExamineeHome}
           title="Trang chủ"
         />
         <PrivateRoute

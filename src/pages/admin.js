@@ -2,7 +2,7 @@ import React from "react";
 import { Router } from "@reach/router";
 import AdminLayout from "../layout/AdminLayout";
 import { ADMIN_ROLE, EXAMINER_ROLE } from "../utils/roles";
-import Home from "../components/admin/Home";
+import AdminHome from "../components/admin/AdminHome";
 import Accounts from "../components/admin/Accounts";
 import AccountForm from "../components/admin/AccountForm";
 import PrivateRoute from "../components/common/PrivateRoute";
@@ -17,7 +17,12 @@ const AdminDashboard = () => {
   return (
     <AdminLayout>
       <Router basepath={`/${role}`}>
-        <PrivateRoute role={role} path="/" component={Home} title="Trang chủ" />
+        <PrivateRoute
+          role={role}
+          path="/"
+          component={AdminHome}
+          title="Trang chủ"
+        />
         <PrivateRoute
           role={role}
           path="/account"
@@ -72,7 +77,11 @@ const AdminDashboard = () => {
           component={ExamRoomAdd}
           title="Cập nhật phòng thi"
         />
-        <PrivateRoute role={role} path="/examroom/:roomId" component={ExamRoomAdd} />
+        <PrivateRoute
+          role={role}
+          path="/examroom/:roomId"
+          component={ExamRoomAdd}
+        />
       </Router>
     </AdminLayout>
   );
