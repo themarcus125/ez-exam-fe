@@ -46,7 +46,7 @@ export const navBarCategories = {
         },
       ],
     },
-    
+
     {
       title: "Kiểm tra kết quả thi",
       path: "/",
@@ -137,4 +137,15 @@ export const userRoleToPath = {
   giaovien: "examiner",
   sinhvien: "examinee",
   admin: "admin",
+};
+
+export const userType = {
+  SINHVIEN: "sinhvien",
+  GIAOVIEN: "giaovien",
+  ADMIN: "admin",
+};
+
+export const userStatus = {
+  ACTIVE: 0,
+  INACTIVE: 1,
 };
