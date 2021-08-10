@@ -8,13 +8,15 @@ const Exam = () => {
   const [monHocs, setMonhocs] = useState([]);
   const [deThis, setdeThis] = useState([]);
   const [doKhos, setdoKhos] = useState([]);
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState(null);
 
-  const limit = 10000;
-  let page = 1;
+  const limit = 10;
   let maMonHoc = "";
   let tuNgay = "";
   let denNgay = "";
   let key = "";
+  let lstPage = [];
 
   const getMonHoc = async () => {
     const token = await getToken();
@@ -40,6 +42,7 @@ const Exam = () => {
     );
 
     setdeThis(lstDeThi.data?.dsDeThi);
+    setMeta(lstDeThi.data?.meta);
   };
 
   useEffect(() => {
@@ -47,6 +50,10 @@ const Exam = () => {
     getDoKho();
     getDeThi();
   }, []);
+
+  for (let i = 1; i <= meta?.lastPage; i++) {
+    lstPage.push(i);
+  }
 
   return (
     <div className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1">
@@ -224,40 +231,51 @@ const Exam = () => {
       </div>
 
       <ul className="uk-pagination uk-flex-center" uk-margin>
-        <li>
+        <li
+          className={meta?.currentPage === 1 ? "uk-disabled" : ""}
+          onClick={() => {
+            let p = meta?.currentPage;
+            setPage(p--);
+            getDeThi();
+          }}
+        >
           <button className="uk-button uk-button-default uk-button-small">
             <span className="uk-icon" uk-icon="icon: chevron-left"></span>
           </button>
         </li>
-        <li className="uk-disabled">
-          <button
-            className="uk-button uk-button-default uk-button-small"
-            style={{
-              width: 40,
-              color: "#FFF",
-              backgroundColor: "#32d296",
+        {lstPage.map((item, index) => (
+          <li
+            key={index}
+            className={item === meta.currentPage ? "uk-disabled" : ""}
+            onClick={() => {
+              setPage(item);
+              getDeThi();
             }}
           >
-            1
-          </button>
-        </li>
-        <li>
-          <button
-            className="uk-button uk-button-default uk-button-small"
-            style={{ width: 40 }}
-          >
-            2
-          </button>
-        </li>
-        <li>
-          <button
-            className="uk-button uk-button-default uk-button-small"
-            style={{ width: 40 }}
-          >
-            3
-          </button>
-        </li>
-        <li>
+            <button
+              className="uk-button uk-button-default uk-button-small"
+              style={
+                item === meta.currentPage
+                  ? {
+                      width: 40,
+                      color: "#FFF",
+                      backgroundColor: "#32d296",
+                    }
+                  : { width: 40 }
+              }
+            >
+              {item}
+            </button>
+          </li>
+        ))}
+        <li
+          className={meta?.currentPage === meta?.lastPage ? "uk-disabled" : ""}
+          onClick={() => {
+            let p = meta?.currentPage;
+            setPage(p++);
+            getDeThi();
+          }}
+        >
           <button className="uk-button uk-button-default uk-button-small">
             <span className="uk-icon" uk-icon="icon: chevron-right"></span>
           </button>

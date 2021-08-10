@@ -4,7 +4,7 @@ import { getToken } from "../../utils/auth";
 
 let tenDeThi = "";
 let maChuyenDe = 0;
-let maDeThi = "ma de thi";
+let maDeThi = "";
 let thoiGianLam = 0;
 let moTaDeThi = "";
 let doKho = 1;
@@ -353,6 +353,22 @@ const ExamAdd = () => {
               />{" "}
               Có tạo bộ đề không?
             </label>
+          </div>
+
+          <div className="uk-margin">
+            <label className="uk-form-label" for="form-horizontal-text">
+              Nhập mã bộ đề
+            </label>
+            <div className="uk-form-controls">
+              <input
+                className="uk-input"
+                type="text"
+                disabled={!taoBoDe}
+                onChange={(e) => {
+                  maDeThi = e.target.value;
+                }}
+              />
+            </div>
           </div>
 
           <div className="uk-margin">
