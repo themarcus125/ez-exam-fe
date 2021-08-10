@@ -10,19 +10,22 @@ import {
 } from "../../utils/api";
 import { getToken } from "../../utils/auth";
 import { userStatus } from "../../utils/constants";
+import LoadingOverlay from "../common/LoadingOverlay";
 
 const AdminAccountForm = ({ userId }) => {
+  const [isLoading, setisLoading] = useState(true);
   const [name, setName] = useState("");
   const [username, setUsername] = useState();
   const [role, setRole] = useState(2);
   const [status, setStatus] = useState(userStatus.ACTIVE);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  useEffect(async () => {
     // TODO: Get user info
     if (userId) {
-      getUser();
+      await getUser();
     }
+    setisLoading(false);
   }, []);
 
   const getUser = async () => {
@@ -209,6 +212,7 @@ const AdminAccountForm = ({ userId }) => {
           </div>
         </form>
       </div>
+      <LoadingOverlay isLoading={isLoading} />
     </div>
   );
 };

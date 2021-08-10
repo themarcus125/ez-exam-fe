@@ -1,20 +1,23 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Link } from "gatsby";
+import DatePicker from "react-datepicker";
+import moment from "moment";
 import { getAPIWithToken } from "../../utils/api";
 import { getToken, getUser } from "../../utils/auth";
 import Config from "../../utils/config";
-import DatePicker from "react-datepicker";
-import moment from "moment";
 
 const USER_PER_PAGE = 5;
 const ExamRoom = () => {
   const [lstExamRoom, setLstExamRoom] = useState([]);
-  const [startDate, setStartDate] = useState(new Date(moment().startOf('month')));
+  const [startDate, setStartDate] = useState(
+    new Date(moment().startOf("month")),
+  );
   const [endDate, setEndDate] = useState(new Date());
   const [lstSubject, setLstSubject] = useState(null);
   const [subject, setSubject] = useState("");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const numOfPage = useRef(1);
   const role = getUser()?.role ?? "";
   const url = Config.urlPath[role]?.url;
@@ -23,12 +26,13 @@ const ExamRoom = () => {
     try {
       const token = await getToken();
       if (token) {
-        setLoading(true);
         const response = await getAPIWithToken(
           `/phongthi?timkiem=${search}&mamonhoc=${subject}&tungay=${moment(
             startDate,
-          ).format("YYYY-MM-DD")}&denngay=${moment(endDate).format("YYYY-MM-DD")}`,
-          token
+          ).format("YYYY-MM-DD")}&denngay=${moment(endDate).format(
+            "YYYY-MM-DD",
+          )}`,
+          token,
         );
         numOfPage.current =
           Math.ceil(response.data.length / USER_PER_PAGE) || 1;
@@ -88,6 +92,7 @@ const ExamRoom = () => {
   };
   const onSearch = async (e) => {
     e.preventDefault();
+    setLoading(true);
     getData();
   };
 
@@ -113,15 +118,15 @@ const ExamRoom = () => {
               }}
               onChange={handleChangeSubject}
               value={subject}
-              onBlur={() => { }}
+              onBlur={() => {}}
             >
               <option disabled></option>
               {lstSubject
                 ? lstSubject.map((item, key) => (
-                  <option key={key} value={item.id}>
-                    {item.tenChuyenDe}
-                  </option>
-                ))
+                    <option key={key} value={item.id}>
+                      {item.tenChuyenDe}
+                    </option>
+                  ))
                 : null}
             </select>
           </div>
@@ -177,9 +182,7 @@ const ExamRoom = () => {
             }}
           />
           <button
-            className={`uk-button ${
-              loading ? "uk-disabled" : ""
-            }`}
+            className={`uk-button ${loading ? "uk-disabled" : ""}`}
             style={{ ...myButton, ...activeText }}
             onClick={onSearch}
           >
@@ -218,12 +221,20 @@ const ExamRoom = () => {
                     <td>{item.thoiGianBatDauPhong}</td>
                     <td>{item.thoiGianBatDauThi}</td>
                     <td>
-                      <ul class="uk-subnav-pill">
-                        <a style={{ activeText }}><span uk-icon="table"></span></a>
+                      <ul className="uk-subnav-pill">
+                        <a style={{ activeText }}>
+                          <span uk-icon="table"></span>
+                        </a>
                         <div uk-dropdown="mode: click">
-                          <ul class="uk-nav uk-dropdown-nav">
-                            <li><a>Xem báo cáo</a></li>
-                            <li><a href={`${url}/examroom/${item.id}`}>Xem chi tiết</a></li>
+                          <ul className="uk-nav uk-dropdown-nav">
+                            <li>
+                              <a>Xem báo cáo</a>
+                            </li>
+                            <li>
+                              <Link to={`${url}/examroom/${item.id}`}>
+                                Xem chi tiết
+                              </Link>
+                            </li>
                           </ul>
                         </div>
                       </ul>
@@ -269,8 +280,9 @@ const ExamRoom = () => {
           },
         )}
         <li
-          className={`${currentPage === numOfPage.current ? "uk-disabled" : ""
-            }`}
+          className={`${
+            currentPage === numOfPage.current ? "uk-disabled" : ""
+          }`}
         >
           <button
             className="uk-button uk-button-default uk-button-small"

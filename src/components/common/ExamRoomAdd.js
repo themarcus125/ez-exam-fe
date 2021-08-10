@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { getAPIWithToken, postAPIWithToken, putAPIWithToken } from "../../utils/api";
+import {
+  getAPIWithToken,
+  postAPIWithToken,
+  putAPIWithToken,
+} from "../../utils/api";
 import { getToken } from "../../utils/auth";
 import { ToastContainer, toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import moment from "moment";
+import LoadingOverlay from "./LoadingOverlay";
 
 const ExamRoomAdd = ({ roomId }) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [roomName, setRoomName] = useState("");
   const [dateExam, setDateExam] = useState(new Date());
   const [hourExamRoom, setHourExamRoom] = useState("");
@@ -30,16 +35,18 @@ const ExamRoomAdd = ({ roomId }) => {
     setLstCodeExam(tmp_lstCodeExam.data.dsDeThi);
     //load update
     if (roomId) {
-      getExamRoom();
+      await getExamRoom();
     }
-
+    setLoading(false);
   }, []);
 
   const getExamRoom = async () => {
-    setLoading(true);
     const token = await getToken();
     if (token) {
-      const tmp_lstExamRoom = await getAPIWithToken(`/phongthi?id=${roomId}`, token);
+      const tmp_lstExamRoom = await getAPIWithToken(
+        `/phongthi?id=${roomId}`,
+        token,
+      );
       const lstExamRoom = tmp_lstExamRoom?.data[0] ?? {};
       if (lstExamRoom) {
         setRoomName(lstExamRoom.maPhong);
@@ -50,7 +57,6 @@ const ExamRoomAdd = ({ roomId }) => {
         setCodeExam(lstExamRoom.maBoDe);
       }
     }
-    setLoading(false);
   };
 
   const handleChangeSubject = (e) => {
@@ -86,7 +92,7 @@ const ExamRoomAdd = ({ roomId }) => {
             thoiGianBatDauPhong: hourExamRoom,
             thoiGianBatDauThi: hourStartExam,
             maBoDe: codeExam,
-            maMonHoc: subject
+            maMonHoc: subject,
           },
           token,
         );
@@ -99,8 +105,7 @@ const ExamRoomAdd = ({ roomId }) => {
       } catch (err) {
         toast.error("Đã có lỗi xảy ra khi lưu !!!");
       }
-    }
-    else {
+    } else {
       try {
         const res = await postAPIWithToken(
           "/phongthi",
@@ -110,7 +115,7 @@ const ExamRoomAdd = ({ roomId }) => {
             thoiGianBatDauPhong: hourExamRoom,
             thoiGianBatDauThi: hourStartExam,
             maBoDe: codeExam,
-            maMonHoc: subject
+            maMonHoc: subject,
           },
           token,
         );
@@ -126,150 +131,173 @@ const ExamRoomAdd = ({ roomId }) => {
     }
   };
   return (
-    <div
-      className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
-      style={{ overflowY: "auto" }}
-    >
-      <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
-        Tạo phòng thi
-      </p>
+    <>
+      <div
+        className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
+        style={{ overflowY: "auto" }}
+      >
+        <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
+          {roomId ? "Chỉnh sửa phòng thi" : "Tạo phòng thi"}
+        </p>
 
-      <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
+        <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
 
-      <form className="uk-form-horizontal uk-margin-small" onSubmit={onSubmit}>
-        <fieldset className="uk-fieldset">
-          <div className="uk-grid">
-            <div className="uk-width-1-2 uk-margin-bottom">
-              <div className="uk-margin">
-                <label className="uk-form-label" htmlFor="form-horizontal-text">
-                  Tên phòng thi
-                </label>
-                <div className="uk-form-controls">
-                  <input
-                    className="uk-input"
-                    type="text"
-                    value={roomName}
-                    onChange={handleChangeRoomName}
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="uk-width-1-2 uk-margin-bottom">
-              <div className="uk-margin">
-                <label className="uk-form-label" htmlFor="form-horizontal-text">
-                  Chọn ngày
-                </label>
-                <div className="uk-form-controls">
-                  <DatePicker
-                    wrapperClassName="uk-input"
-                    className="uk-input"
-                    selected={dateExam}
-                    onChange={handleChangeDateExam}
-                    closeOnScroll={true}
-                    dateFormat="dd/MM/yyyy"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="uk-width-1-2 uk-margin-bottom">
-              <div className="uk-margin">
-                <label className="uk-form-label" htmlFor="form-horizontal-text">
-                  Thời gian bắt đầu phòng
-                </label>
-                <div className="uk-form-controls">
-                  <input
-                    className="uk-input uk-form-width-small"
-                    type="time"
-                    value={hourExamRoom}
-                    onChange={handleChangeHourExamRoom}
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="uk-width-1-2 uk-margin-bottom">
-              <div className="uk-margin">
-                <label className="uk-form-label" htmlFor="form-horizontal-text">
-                  Thời gian bắt đầu thi
-                </label>
-                <div className="uk-form-controls">
-                  <input
-                    className="uk-input uk-form-width-small"
-                    type="time"
-                    value={hourStartExam}
-                    onChange={handleChangeHourStartExam}
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="uk-width-1-2 uk-margin-bottom">
-              <div className="uk-margin">
-                <label className="uk-form-label" htmlFor="form-horizontal-text">
-                  Môn học
-                </label>
-                <div className="uk-form-controls">
-                  <select
-                    className="uk-select"
-                    onChange={handleChangeSubject}
-                    value={subject}
-                    required
-                    onBlur={() => { }}
+        <form
+          className="uk-form-horizontal uk-margin-small"
+          onSubmit={onSubmit}
+        >
+          <fieldset className="uk-fieldset">
+            <div className="uk-grid">
+              <div className="uk-width-1-2 uk-margin-bottom">
+                <div className="uk-margin">
+                  <label
+                    className="uk-form-label"
+                    htmlFor="form-horizontal-text"
                   >
-                    <option disabled></option>
-                    {lstSubject
-                      ? lstSubject.map((item, key) => (
-                        <option key={key} value={item.id}>
-                          {item.tenChuyenDe}
-                        </option>
-                      ))
-                      : null}
-                  </select>
+                    Tên phòng thi
+                  </label>
+                  <div className="uk-form-controls">
+                    <input
+                      className="uk-input"
+                      type="text"
+                      value={roomName}
+                      onChange={handleChangeRoomName}
+                      required
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="uk-width-1-2 uk-margin-bottom">
-              <div className="uk-margin">
-                <label className="uk-form-label" htmlFor="form-horizontal-text">
-                  Mã bộ đề
-                </label>
-                <div className="uk-form-controls">
-                  <select
-                    className="uk-select"
-                    onChange={handleChangeCodeExam}
-                    value={codeExam}
-                    required
-                    onBlur={() => { }}
+              <div className="uk-width-1-2 uk-margin-bottom">
+                <div className="uk-margin">
+                  <label
+                    className="uk-form-label"
+                    htmlFor="form-horizontal-text"
                   >
-                    <option disabled></option>
-                    {lstCodeExam
-                      ? lstCodeExam.map((item, key) => (
-                        <option key={key} value={item.maBoDe}>
-                          {item.maDe}
-                        </option>
-                      ))
-                      : null}
-                  </select>
+                    Chọn ngày
+                  </label>
+                  <div className="uk-form-controls">
+                    <DatePicker
+                      wrapperClassName="uk-input"
+                      className="uk-input"
+                      selected={dateExam}
+                      onChange={handleChangeDateExam}
+                      closeOnScroll={true}
+                      dateFormat="dd/MM/yyyy"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="uk-width-1-2 uk-margin-bottom">
+                <div className="uk-margin">
+                  <label
+                    className="uk-form-label"
+                    htmlFor="form-horizontal-text"
+                  >
+                    Thời gian bắt đầu phòng
+                  </label>
+                  <div className="uk-form-controls">
+                    <input
+                      className="uk-input uk-form-width-small"
+                      type="time"
+                      value={hourExamRoom}
+                      onChange={handleChangeHourExamRoom}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="uk-width-1-2 uk-margin-bottom">
+                <div className="uk-margin">
+                  <label
+                    className="uk-form-label"
+                    htmlFor="form-horizontal-text"
+                  >
+                    Thời gian bắt đầu thi
+                  </label>
+                  <div className="uk-form-controls">
+                    <input
+                      className="uk-input uk-form-width-small"
+                      type="time"
+                      value={hourStartExam}
+                      onChange={handleChangeHourStartExam}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="uk-width-1-2 uk-margin-bottom">
+                <div className="uk-margin">
+                  <label
+                    className="uk-form-label"
+                    htmlFor="form-horizontal-text"
+                  >
+                    Môn học
+                  </label>
+                  <div className="uk-form-controls">
+                    <select
+                      className="uk-select"
+                      onChange={handleChangeSubject}
+                      value={subject}
+                      required
+                      onBlur={() => {}}
+                    >
+                      <option disabled></option>
+                      {lstSubject
+                        ? lstSubject.map((item, key) => (
+                            <option key={key} value={item.id}>
+                              {item.tenChuyenDe}
+                            </option>
+                          ))
+                        : null}
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div className="uk-width-1-2 uk-margin-bottom">
+                <div className="uk-margin">
+                  <label
+                    className="uk-form-label"
+                    htmlFor="form-horizontal-text"
+                  >
+                    Mã bộ đề
+                  </label>
+                  <div className="uk-form-controls">
+                    <select
+                      className="uk-select"
+                      onChange={handleChangeCodeExam}
+                      value={codeExam}
+                      required
+                      onBlur={() => {}}
+                    >
+                      <option disabled></option>
+                      {lstCodeExam
+                        ? lstCodeExam.map((item, key) => (
+                            <option key={key} value={item.maBoDe}>
+                              {item.maDe}
+                            </option>
+                          ))
+                        : null}
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="uk-flex uk-flex-center">
-            <div className="uk-card-body">
-              <button
-                className={`uk-button ${loading ? "uk-disabled" : ""
-                  }`}
-                style={{ backgroundColor: "#32d296", color: "#FFF" }}
-              >
-                Lưu
-              </button>
+            <div className="uk-flex uk-flex-center">
+              <div className="uk-card-body">
+                <button
+                  className={`uk-button`}
+                  style={{ backgroundColor: "#32d296", color: "#FFF" }}
+                >
+                  Lưu
+                </button>
+              </div>
             </div>
-          </div>
-        </fieldset>
-      </form>
-    </div>
+          </fieldset>
+        </form>
+      </div>
+      <LoadingOverlay isLoading={loading} />
+    </>
   );
 };
 
