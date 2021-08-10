@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import { getAPIWithToken } from "../../utils/api";
-import { getToken } from "../../utils/auth";
+import { getToken, getUser } from "../../utils/auth";
+import Config from "../../utils/config";
 import DatePicker from "react-datepicker";
 import moment from "moment";
 
 const USER_PER_PAGE = 5;
 const ExamRoom = () => {
   const [lstExamRoom, setLstExamRoom] = useState([]);
-  const [startDate, setStartDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(new Date(moment().startOf('month')));
   const [endDate, setEndDate] = useState(new Date());
   const [lstSubject, setLstSubject] = useState(null);
   const [subject, setSubject] = useState("");
@@ -15,6 +16,8 @@ const ExamRoom = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const numOfPage = useRef(1);
+  const role = getUser()?.role ?? "";
+  const url = Config.urlPath[role]?.url;
 
   const getData = async () => {
     try {
@@ -38,7 +41,6 @@ const ExamRoom = () => {
         setLoading(false);
       }
     } catch (error) {
-      console.log("err", error);
       alert("Đã có lỗi xảy ra trong quá trình lấy danh sách phòng thi.");
     }
   };
@@ -175,7 +177,9 @@ const ExamRoom = () => {
             }}
           />
           <button
-            className="uk-button"
+            className={`uk-button ${
+              loading ? "uk-disabled" : ""
+            }`}
             style={{ ...myButton, ...activeText }}
             onClick={onSearch}
           >
@@ -202,31 +206,31 @@ const ExamRoom = () => {
             </tr>
           </thead>
           <tbody>
-          {!loading &&
+            {!loading &&
               lstExamRoom[currentPage - 1]?.map((item) => {
                 return (
-                <tr key={item.id}>
-                  <td value={item.maPhong}>{item.tenPhong}</td>
-                  <td value={item.maMonHoc}>{item.tenMonHoc}</td>
-                  <td value={item.maBoDe}>{item.tenBoDe}</td>
-                  <td>{item.siSo}</td>
-                  <td>{moment(item.ngayThi).format("DD/MM/YYYY")}</td>
-                  <td>{item.thoiGianBatDauPhong}</td>
-                  <td>{item.thoiGianBatDauThi}</td>
-                  <td>
-                    <ul class="uk-subnav-pill">
-                      <a style={{ activeText }}><span uk-icon="table"></span></a>
-                      <div uk-dropdown="mode: click">
-                        <ul class="uk-nav uk-dropdown-nav">
-                          <li><a href="#">Xem báo cáo</a></li>
-                          <li><a href="#">Xem chi tiết</a></li>
-                        </ul>
-                      </div>
-                    </ul>
-                  </td>
-                </tr>
-              );
-            })}
+                  <tr key={item.id}>
+                    <td value={item.maPhong}>{item.tenPhong}</td>
+                    <td value={item.maMonHoc}>{item.tenMonHoc}</td>
+                    <td value={item.maBoDe}>{item.tenBoDe}</td>
+                    <td>{item.siSo}</td>
+                    <td>{moment(item.ngayThi).format("DD/MM/YYYY")}</td>
+                    <td>{item.thoiGianBatDauPhong}</td>
+                    <td>{item.thoiGianBatDauThi}</td>
+                    <td>
+                      <ul class="uk-subnav-pill">
+                        <a style={{ activeText }}><span uk-icon="table"></span></a>
+                        <div uk-dropdown="mode: click">
+                          <ul class="uk-nav uk-dropdown-nav">
+                            <li><a>Xem báo cáo</a></li>
+                            <li><a href={`${url}/examroom/${item.id}`}>Xem chi tiết</a></li>
+                          </ul>
+                        </div>
+                      </ul>
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </table>
         {loading && (
@@ -265,9 +269,8 @@ const ExamRoom = () => {
           },
         )}
         <li
-          className={`${
-            currentPage === numOfPage.current ? "uk-disabled" : ""
-          }`}
+          className={`${currentPage === numOfPage.current ? "uk-disabled" : ""
+            }`}
         >
           <button
             className="uk-button uk-button-default uk-button-small"
