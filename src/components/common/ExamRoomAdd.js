@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
+import { getAPIWithToken, postAPIWithToken, putAPIWithToken } from "../../utils/api";
 import { getToken } from "../../utils/auth";
 import { ToastContainer, toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import moment from "moment";
 
-const ExamRoomAdd = () => {
+const ExamRoomAdd = ({ roomId }) => {
+  const [loading, setLoading] = useState(false);
   const [roomName, setRoomName] = useState("");
   const [dateExam, setDateExam] = useState(new Date());
   const [hourExamRoom, setHourExamRoom] = useState("");
@@ -22,13 +23,35 @@ const ExamRoomAdd = () => {
       token,
     );
     setLstSubject(tmp_lstSubject.data);
-
     const tmp_lstCodeExam = await getAPIWithToken(
       "/dethi/layDanhSachBoDeThi",
       token,
     );
     setLstCodeExam(tmp_lstCodeExam.data.dsDeThi);
+    //load update
+    if (roomId) {
+      getExamRoom();
+    }
+
   }, []);
+
+  const getExamRoom = async () => {
+    setLoading(true);
+    const token = await getToken();
+    if (token) {
+      const tmp_lstExamRoom = await getAPIWithToken(`/phongthi?id=${roomId}`, token);
+      const lstExamRoom = tmp_lstExamRoom?.data[0] ?? {};
+      if (lstExamRoom) {
+        setRoomName(lstExamRoom.maPhong);
+        setDateExam(new Date(lstExamRoom.ngayThi));
+        setSubject(lstExamRoom.maMonHoc);
+        setHourExamRoom(lstExamRoom.thoiGianBatDauPhong);
+        setHourStartExam(lstExamRoom.thoiGianBatDauThi);
+        setCodeExam(lstExamRoom.maBoDe);
+      }
+    }
+    setLoading(false);
+  };
 
   const handleChangeSubject = (e) => {
     setSubject(e.target.value);
@@ -53,27 +76,53 @@ const ExamRoomAdd = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     const token = await getToken();
-    try {
-      const res = await postAPIWithToken(
-        "/phongthi",
-        {
-          tenPhong: roomName,
-          ngayThi: moment(dateExam).format("YYYY-MM-DD"),
-          thoiGianBatDauPhong: hourExamRoom,
-          thoiGianBatDauThi: hourStartExam,
-          maBoDe: codeExam,
-          maMonHoc: subject,
-        },
-        token,
-      );
-      const { data } = await res.json();
-      if ((res.status === 200) & (data !== undefined)) {
-        toast.success("Tạo phòng thành công !!!");
-      } else {
-        toast.error("Tạo phòng thất bại !!!");
+    if (roomId) {
+      try {
+        const res = await putAPIWithToken(
+          `/phongthi/${roomId}`,
+          {
+            tenPhong: roomName,
+            ngayThi: moment(dateExam).format("YYYY-MM-DD"),
+            thoiGianBatDauPhong: hourExamRoom,
+            thoiGianBatDauThi: hourStartExam,
+            maBoDe: codeExam,
+            maMonHoc: subject
+          },
+          token,
+        );
+        const { data } = await res.json();
+        if ((res.status === 200) & (data !== undefined)) {
+          toast.success("Cập nhật phòng thành công !!!");
+        } else {
+          toast.error("Cập nhật phòng thất bại !!!");
+        }
+      } catch (err) {
+        toast.error("Đã có lỗi xảy ra khi lưu !!!");
       }
-    } catch (err) {
-      toast.error("Đã có lỗi xảy ra khi lưu !!!");
+    }
+    else {
+      try {
+        const res = await postAPIWithToken(
+          "/phongthi",
+          {
+            tenPhong: roomName,
+            ngayThi: moment(dateExam).format("YYYY-MM-DD"),
+            thoiGianBatDauPhong: hourExamRoom,
+            thoiGianBatDauThi: hourStartExam,
+            maBoDe: codeExam,
+            maMonHoc: subject
+          },
+          token,
+        );
+        const { data } = await res.json();
+        if ((res.status === 200) & (data !== undefined)) {
+          toast.success("Tạo phòng thành công !!!");
+        } else {
+          toast.error("Tạo phòng thất bại !!!");
+        }
+      } catch (err) {
+        toast.error("Đã có lỗi xảy ra khi lưu !!!");
+      }
     }
   };
   return (
@@ -131,7 +180,7 @@ const ExamRoomAdd = () => {
                 </label>
                 <div className="uk-form-controls">
                   <input
-                    className="uk-input"
+                    className="uk-input uk-form-width-small"
                     type="time"
                     value={hourExamRoom}
                     onChange={handleChangeHourExamRoom}
@@ -147,7 +196,7 @@ const ExamRoomAdd = () => {
                 </label>
                 <div className="uk-form-controls">
                   <input
-                    className="uk-input"
+                    className="uk-input uk-form-width-small"
                     type="time"
                     value={hourStartExam}
                     onChange={handleChangeHourStartExam}
@@ -167,15 +216,15 @@ const ExamRoomAdd = () => {
                     onChange={handleChangeSubject}
                     value={subject}
                     required
-                    onBlur={() => {}}
+                    onBlur={() => { }}
                   >
                     <option disabled></option>
                     {lstSubject
                       ? lstSubject.map((item, key) => (
-                          <option key={key} value={item.id}>
-                            {item.tenChuyenDe}
-                          </option>
-                        ))
+                        <option key={key} value={item.id}>
+                          {item.tenChuyenDe}
+                        </option>
+                      ))
                       : null}
                   </select>
                 </div>
@@ -192,15 +241,15 @@ const ExamRoomAdd = () => {
                     onChange={handleChangeCodeExam}
                     value={codeExam}
                     required
-                    onBlur={() => {}}
+                    onBlur={() => { }}
                   >
                     <option disabled></option>
                     {lstCodeExam
                       ? lstCodeExam.map((item, key) => (
-                          <option key={key} value={item.maBoDe}>
-                            {item.maDe}
-                          </option>
-                        ))
+                        <option key={key} value={item.maBoDe}>
+                          {item.maDe}
+                        </option>
+                      ))
                       : null}
                   </select>
                 </div>
@@ -210,7 +259,8 @@ const ExamRoomAdd = () => {
           <div className="uk-flex uk-flex-center">
             <div className="uk-card-body">
               <button
-                className="uk-button"
+                className={`uk-button ${loading ? "uk-disabled" : ""
+                  }`}
                 style={{ backgroundColor: "#32d296", color: "#FFF" }}
               >
                 Lưu

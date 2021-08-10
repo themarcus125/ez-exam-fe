@@ -21,6 +21,18 @@ export const putAPI = (endpoint, options = {}) =>
     ...options,
   });
 
+export const putAPIWithToken = (endpoint, data, token, options = {}) =>
+  fetch(`${API_URL}${endpoint}`, {
+    method: "PUT",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: data ? JSON.stringify(data) : null,
+    ...options,
+  });
+
 export const deleteAPI = (endpoint, options = {}) =>
   fetch(`${API_URL}${endpoint}`, {
     method: "DELETE",

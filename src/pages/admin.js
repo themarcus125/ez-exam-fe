@@ -54,7 +54,6 @@ const AdminDashboard = () => {
           component={ExamRoomAdd}
           title="Thêm phòng thi"
         />
-
         <PrivateRoute
           role={role}
           path="/account/add-from-file"
@@ -67,6 +66,13 @@ const AdminDashboard = () => {
           component={AccountForm}
           title="Chỉnh sửa tài khoản"
         />
+        <PrivateRoute
+          role={role}
+          path="/examroom/:roomId"
+          component={ExamRoomAdd}
+          title="Cập nhật phòng thi"
+        />
+        <PrivateRoute role={role} path="/examroom/:roomId" component={ExamRoomAdd} />
       </Router>
     </AdminLayout>
   );
