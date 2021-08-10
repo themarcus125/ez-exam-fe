@@ -1,7 +1,81 @@
-import React from "react";
-import { Link, navigate } from "gatsby";
+import React, { useEffect, useState, useRef } from "react";
+import { Link } from "gatsby";
+
+import { getUser } from "../../utils/auth";
+import { getAPIWithToken } from "../../utils/api";
+import { userType, userStatus } from "../../utils/constants";
+
+const USER_PER_PAGE = 6;
 
 const AdminAccounts = () => {
+  const [users, setUsers] = useState([]);
+  const [type, setType] = useState(userType.GIAOVIEN);
+  const [status, setStatus] = useState(userStatus.ACTIVE);
+  const [searchString, setSearchString] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const numOfPage = useRef(1);
+
+  const getData = async () => {
+    try {
+      const token = getUser()?.tk ?? "";
+      if (token) {
+        setLoading(true);
+        const response = await getAPIWithToken(
+          `/nguoidung?quyen=${type}&&trangthai=${status}&&timkiem=${searchString}`,
+          token,
+        );
+        numOfPage.current =
+          Math.ceil(response.data.length / USER_PER_PAGE) || 1;
+        const chunks = Array(numOfPage.current)
+          .fill()
+          .map((_, index) => index * USER_PER_PAGE)
+          .map((begin) => response.data.slice(begin, begin + USER_PER_PAGE));
+        setUsers(chunks);
+        setCurrentPage(1);
+        setLoading(false);
+      }
+    } catch (error) {
+      alert("Đã có lỗi xảy ra trong quá trình lấy danh sách tài khoản.");
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, [type, status]);
+
+  const onChangePage = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const onNext = () => {
+    if (currentPage < numOfPage.current) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const onPrev = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const onChangeType = (e) => {
+    setType(e.target.value);
+  };
+
+  const onChangeStatus = (e) => {
+    setStatus(e.target.value);
+  };
+
+  const onChangeSearch = (e) => {
+    setSearchString(e.target.value);
+  };
+
+  const onSearch = () => {
+    getData();
+  };
+
   return (
     <div
       className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
@@ -21,9 +95,11 @@ const AdminAccounts = () => {
               style={{
                 border: "solid 0.5px #666",
               }}
+              onChange={onChangeType}
+              value={type}
             >
-              <option>Giáo viên</option>
-              <option>Học sinh</option>
+              <option value={userType.GIAOVIEN}>Giáo viên</option>
+              <option value={userType.SINHVIEN}>Học sinh</option>
             </select>
           </div>
         </div>
@@ -38,9 +114,11 @@ const AdminAccounts = () => {
               style={{
                 border: "solid 0.5px #666",
               }}
+              onChange={onChangeStatus}
+              value={status}
             >
-              <option>Đang hoạt động</option>
-              <option>Ngừng hoạt động</option>
+              <option value={userStatus.ACTIVE}>Đang hoạt động</option>
+              <option value={userStatus.INACTIVE}>Ngừng hoạt động</option>
             </select>
           </div>
         </div>
@@ -50,15 +128,11 @@ const AdminAccounts = () => {
             <Link
               to="add"
               className="uk-button uk-margin-right"
-              style={{ ...myButton, ...activeText }}
+              style={activeButton}
             >
               Thêm mới
             </Link>
-            <Link
-              to="add-from-file"
-              className="uk-button"
-              style={{ ...myButton, ...activeText }}
-            >
+            <Link to="add-from-file" className="uk-button" style={activeButton}>
               Thêm từ tập tin
             </Link>
           </div>
@@ -69,12 +143,15 @@ const AdminAccounts = () => {
           <input
             className="uk-search-input uk-width-4-5"
             type="search"
-            placeholder="Search"
+            placeholder="Tìm kiếm (Mã tài khoản hoặc họ tên)"
             style={{
               border: "solid 0.5px #666",
+              padding: 10,
             }}
+            value={searchString}
+            onChange={onChangeSearch}
           />
-          <button className="uk-button" style={{ ...myButton, ...activeText }}>
+          <button className="uk-button" style={activeButton} onClick={onSearch}>
             Tìm kiếm
           </button>
         </div>
@@ -91,58 +168,76 @@ const AdminAccounts = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>GV057567</td>
-              <td>Phạm Mai Anh</td>
-              <td>Giáo viên</td>
-              <td>Đang hoạt động</td>
-              <td>
-                <Link
-                  className="uk-icon-link uk-margin-small-right"
-                  uk-icon="file-edit"
-                  to="add"
-                ></Link>
-              </td>
-            </tr>
+            {!loading &&
+              users[currentPage - 1]?.map((user) => {
+                const role = user.phan_quyen?.[0]?.quyen;
+                return (
+                  <tr key={user.tenDangNhap}>
+                    <td>{user.tenDangNhap}</td>
+                    <td>{user.tenNguoiDung}</td>
+                    <td>
+                      {role === userType.GIAOVIEN ? "Giáo viên" : "Học sinh"}
+                    </td>
+                    <td>{`${
+                      user.trangThai === 0 ? "Đang" : "Ngừng"
+                    } hoạt động`}</td>
+                    <td>
+                      <Link
+                        title="Chỉnh sửa"
+                        className="uk-icon-link uk-margin-small-right"
+                        uk-icon="file-edit"
+                        to={`/admin/account/${user.id}`}
+                      ></Link>
+                    </td>
+                  </tr>
+                );
+              })}
           </tbody>
         </table>
+        {loading && (
+          <div className="uk-flex uk-flex-center" uk-spinner=""></div>
+        )}
       </div>
       <ul className="uk-pagination uk-flex-center" uk-margin="">
-        <li>
-          <button className="uk-button uk-button-default uk-button-small">
+        <li className={`${currentPage === 1 ? "uk-disabled" : ""}`}>
+          <button
+            className="uk-button uk-button-default uk-button-small"
+            onClick={onPrev}
+          >
             <span className="uk-icon" uk-icon="icon: chevron-left"></span>
           </button>
         </li>
-        <li className="uk-disabled">
+        {Array.from({ length: numOfPage.current }, (_, i) => i + 1).map(
+          (num) => {
+            const isActiveButton = currentPage === num;
+            return (
+              <li
+                key={num}
+                className={`${isActiveButton ? "uk-disabled" : ""}`}
+              >
+                <button
+                  className="uk-button uk-button-default uk-button-small"
+                  style={{
+                    ...paginationButton,
+                    ...(isActiveButton && activeButton),
+                  }}
+                  onClick={() => onChangePage(num)}
+                >
+                  {num}
+                </button>
+              </li>
+            );
+          },
+        )}
+        <li
+          className={`${
+            currentPage === numOfPage.current ? "uk-disabled" : ""
+          }`}
+        >
           <button
             className="uk-button uk-button-default uk-button-small"
-            style={{
-              ...paginationButton,
-              ...activeText,
-              ...myButton,
-            }}
+            onClick={onNext}
           >
-            1
-          </button>
-        </li>
-        <li>
-          <button
-            className="uk-button uk-button-default uk-button-small"
-            style={paginationButton}
-          >
-            2
-          </button>
-        </li>
-        <li>
-          <button
-            className="uk-button uk-button-default uk-button-small"
-            style={paginationButton}
-          >
-            3
-          </button>
-        </li>
-        <li>
-          <button className="uk-button uk-button-default uk-button-small">
             <span className="uk-icon" uk-icon="icon: chevron-right"></span>
           </button>
         </li>
@@ -157,10 +252,7 @@ const paginationButton = {
   width: 40,
 };
 
-const activeText = {
+const activeButton = {
   color: "#FFF",
-};
-
-const myButton = {
   backgroundColor: "#32d296",
 };

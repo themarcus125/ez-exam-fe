@@ -8,7 +8,7 @@ import logo from "../../asset/images/logo.png";
 import { navBarCategories, userRoleToPath } from "../../utils/constants";
 
 const NavBar = () => {
-  const { email: userEmail, role: userRole } = getUser();
+  const { username: userName, role: userRole } = getUser();
   const rootPath = userRoleToPath[userRole] || "examinee";
   const categories = navBarCategories[userRole] || navBarCategories["sinhvien"];
 
@@ -41,7 +41,7 @@ const NavBar = () => {
                   <Link
                     to={
                       category?.subCategories
-                        ? "#"
+                        ? `/${rootPath}${category?.subCategories[0]?.path}`
                         : `/${rootPath}${category.path}`
                     }
                   >
@@ -73,7 +73,7 @@ const NavBar = () => {
           <ul className="uk-navbar-nav">
             <li>
               <span>
-                {userEmail}
+                {userName}
                 <span className="uk-icon" uk-icon="icon: triangle-down"></span>
               </span>
               <div className="uk-navbar-dropdown">
