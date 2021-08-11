@@ -2,22 +2,20 @@ import React, { useState, useEffect } from "react";
 import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
 import { getToken } from "../../utils/auth";
 
-let tenDeThi = "";
-let maChuyenDe = 0;
-let maDeThi = "";
-let thoiGianLam = 0;
-let moTaDeThi = "";
-let doKho = 1;
-const tenBoDe = "";
-let soDe = 1;
-const danhSachCauHoi = [];
-let maCauHoi = 1;
-let maDapAn = 0;
-
 const ExamAdd = () => {
   const [monHocs, setMonhocs] = useState([]);
   const [doKhos, setdoKhos] = useState([]);
+  const [tenDeThi, setTenDeThi] = useState("");
+  const [maChuyenDe, setMaChuyenDe] = useState("");
+  const [maDeThi, setMaDeThi] = useState("");
+  const [thoiGianLam, setThoiGianLam] = useState(0);
+  const [moTaDeThi, setMoTaDeThi] = useState("");
+  const [doKho, setDoKho] = useState("");
   const [taoBoDe, setTaoBoDe] = useState(false);
+  const [tenBoDe, setTenBoDe] = useState("");
+  const [soDe, setSoDe] = useState(1);
+  const [danhSachCauHoi, setDanhSachCauHoi] = useState([]);
+  let maCauHoi = 1;
 
   const getMonHoc = async () => {
     const token = await getToken();
@@ -32,6 +30,30 @@ const ExamAdd = () => {
   };
 
   const taoDeThi = async () => {
+    const els = document.getElementById("cauhoi").children;
+    let maDapAn = 1;
+    for (const el of els) {
+      const cauHoi = {
+        maCauHoi: 0,
+        dsDapAn: [],
+      };
+      const el1 = el.children;
+      const arr = Array.from(el1);
+      const ch = arr.shift();
+      cauHoi.maCauHoi = Number(ch.children[0].textContent);
+      // console.log(ch.children[1].value);
+      for (const da of arr) {
+        cauHoi.dsDapAn.push({
+          maDapAn: maDapAn,
+          loaiDapAn: Number(da.children[0].checked),
+        });
+        // console.log(da.children[1].value);
+        maDapAn++;
+      }
+
+      danhSachCauHoi.push(cauHoi);
+    }
+
     const token = await getToken();
     const response = await postAPIWithToken(
       "/dethi/themDeThi",
@@ -49,7 +71,6 @@ const ExamAdd = () => {
       },
       token,
     );
-
     if (response?.status === 200) {
       alert("Tạo đề thi thành công.");
     } else {
@@ -59,72 +80,33 @@ const ExamAdd = () => {
 
   const themCauHoi = (e) => {
     e.preventDefault();
-    const cauHois = document.getElementById("cauHois");
-    cauHois.insertAdjacentHTML(
+    const el = document.getElementById("cauhoi");
+    el.insertAdjacentHTML(
       "beforeend",
-      `<tr>
-        <td>${maCauHoi}</td>
-        <td><input
-        className="uk-input"
-        type="text"
-      /></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>A</td>
-        <td><input
-        className="uk-input"
-        type="text"
-      /></td>
-        <td><input class="uk-checkbox" type="checkbox"/>Đáp án</td>
-      </tr>
-      <tr>
-        <td>B</td>
-        <td><input
-        className="uk-input"
-        type="text"
-      /></td>
-        <td><input class="uk-checkbox" type="checkbox"/>Đáp án</td>
-      </tr>
-      <tr>
-        <td>C</td>
-        <td><input
-        className="uk-input"
-        type="text"
-      /></td>
-        <td><input class="uk-checkbox" type="checkbox"/>Đáp án</td>
-      </tr>
-      <tr>
-        <td>D</td>
-        <td><input
-        className="uk-input"
-        type="text"
-      /></td>
-        <td><input class="uk-checkbox" type="checkbox"/>Đáp án</td>
-      </tr>`,
+      `<div style="margin-bottom: inherit;">
+        <div className="uk-width-1-1 uk-margin-small-bottom">          
+            <span style="width: 5%;text-align: right;">${maCauHoi}</span>
+            <input className="uk-input" type="text" style="width: 95%;"/>
+        </div>
+        <div className="uk-width-1-1 uk-margin-small-bottom">          
+            <input class="uk-radio" type="radio" name="${maCauHoi}" style="margin-left: 40px;"/>
+            <input className="uk-input" type="text" style="width: 85%;"/>
+        </div>
+        <div className="uk-width-1-1 uk-margin-small-bottom">          
+            <input class="uk-radio" type="radio" name="${maCauHoi}" style="margin-left: 40px;"/>
+            <input className="uk-input" type="text" style="width: 85%;"/>
+        </div>
+        <div className="uk-width-1-1 uk-margin-small-bottom">          
+            <input class="uk-radio" type="radio" name="${maCauHoi}" style="margin-left: 40px;"/>
+            <input className="uk-input" type="text" style="width: 85%;"/>
+        </div>
+        <div className="uk-width-1-1 uk-margin-small-bottom">          
+            <input class="uk-radio" type="radio" name="${maCauHoi}" style="margin-left: 40px;"/>
+            <input className="uk-input" type="text" style="width: 85%;"/>
+        </div>
+      </div>`,
     );
-
-    danhSachCauHoi.push({
-      maCauHoi: maCauHoi++,
-      dsDapAn: [
-        {
-          maDapAn: ++maDapAn,
-          loaiDapAn: 0,
-        },
-        {
-          maDapAn: ++maDapAn,
-          loaiDapAn: 0,
-        },
-        {
-          maDapAn: ++maDapAn,
-          loaiDapAn: 0,
-        },
-        {
-          maDapAn: ++maDapAn,
-          loaiDapAn: 0,
-        },
-      ],
-    });
+    maCauHoi++;
   };
 
   useEffect(() => {
@@ -149,7 +131,7 @@ const ExamAdd = () => {
                 className="uk-input"
                 type="text"
                 onChange={(e) => {
-                  tenDeThi = e.target.value;
+                  setTenDeThi(e.target.value);
                 }}
               />
             </div>
@@ -162,12 +144,12 @@ const ExamAdd = () => {
             <div className="uk-form-controls">
               <select
                 className="uk-select"
+                value={maChuyenDe}
                 onChange={(e) => {
-                  maChuyenDe = e.target.value;
+                  setMaChuyenDe(e.target.value);
                 }}
-                onBlur={() => {}}
               >
-                <option></option>
+                <option disabled></option>
                 {monHocs &&
                   monHocs.map((item, index) => (
                     <option value={item.id} key={index}>
@@ -185,11 +167,12 @@ const ExamAdd = () => {
             <div className="uk-form-controls">
               <select
                 className="uk-select"
+                value={doKho}
                 onChange={(e) => {
-                  doKho = e.target.value;
+                  setDoKho(e.target.value);
                 }}
-                onBlur={() => {}}
               >
+                <option disabled></option>
                 {doKhos.map((item, index) => (
                   <option value={item.id} key={index}>
                     {item.ten}
@@ -209,7 +192,7 @@ const ExamAdd = () => {
                 type="number"
                 min="1"
                 onChange={(e) => {
-                  thoiGianLam = e.target.value;
+                  setThoiGianLam(e.target.value);
                 }}
               />
               <span>phút</span>
@@ -225,23 +208,12 @@ const ExamAdd = () => {
               rows="5"
               placeholder="Textarea"
               onChange={(e) => {
-                moTaDeThi = e.target.value;
+                setMoTaDeThi(e.target.value);
               }}
             ></textarea>
           </div>
 
-          <div className="uk-margin-top">
-            <table className="uk-table uk-table-middle">
-              <thead>
-                <tr>
-                  <th className="uk-table-shrink"></th>
-                  <th className="uk-table-expand"></th>
-                  <th className="uk-width-small"></th>
-                </tr>
-              </thead>
-              <tbody id="cauHois"></tbody>
-            </table>
-          </div>
+          <div id="cauhoi" className="uk-margin"></div>
 
           <div className="uk-flex uk-flex-center">
             <div className="uk-card-body">
@@ -367,7 +339,7 @@ const ExamAdd = () => {
                 type="text"
                 disabled={!taoBoDe}
                 onChange={(e) => {
-                  maDeThi = e.target.value;
+                  setMaDeThi(e.target.value);
                 }}
               />
             </div>
@@ -385,7 +357,7 @@ const ExamAdd = () => {
                 placeholder="1"
                 disabled={!taoBoDe}
                 onChange={(e) => {
-                  soDe = e.target.value;
+                  setSoDe(e.target.value);
                 }}
               />
             </div>
@@ -396,9 +368,9 @@ const ExamAdd = () => {
               <button
                 className="uk-button"
                 style={{ backgroundColor: "#32d296", color: "#FFF" }}
-                onClick={(e) => {
+                onClick={async (e) => {
                   e.preventDefault();
-                  taoDeThi();
+                  await taoDeThi();
                 }}
               >
                 Lưu
