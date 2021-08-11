@@ -11,6 +11,9 @@ import ExamAdd from "../components/common/ExamAdd";
 import AccountFromFile from "../components/admin/AccountFromFile";
 import ExamRoom from "../components/common/ExamRoom";
 import ExamRoomAdd from "../components/common/ExamRoomAdd";
+import Question from "../components/common/Question";
+import QuestionAdd from "../components/common/QuestionAdd";
+import QuestionList from "../components/common/QuestionList";
 
 const AdminDashboard = () => {
   const role = ADMIN_ROLE;
@@ -71,6 +74,25 @@ const AdminDashboard = () => {
           component={AccountForm}
           title="Chỉnh sửa tài khoản"
         />
+        <PrivateRoute
+          role={role}
+          path="/questionaire"
+          component={Question}
+          title="Danh sách câu hỏi"
+        />
+        <PrivateRoute
+          role={role}
+          path="/questionaire/add"
+          component={QuestionAdd}
+          title="Thêm câu hỏi"
+        />
+        <PrivateRoute
+          role={role}
+          path="/question-list"
+          component={QuestionList}
+          title="Bộ câu hỏi"
+        />
+
         <PrivateRoute
           role={role}
           path="/examroom/:roomId"
