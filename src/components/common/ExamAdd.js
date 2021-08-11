@@ -15,6 +15,10 @@ const ExamAdd = () => {
   const [tenBoDe, setTenBoDe] = useState("");
   const [soDe, setSoDe] = useState(1);
   const [danhSachCauHoi, setDanhSachCauHoi] = useState([]);
+
+  const [loaiCauHoi, setLoaiCauHoi] = useState(1);
+  const [dsThemCauHoi, setDsThemCauHoi] = useState([]);
+
   let maCauHoi = 1;
 
   const getMonHoc = async () => {
@@ -37,24 +41,36 @@ const ExamAdd = () => {
         maCauHoi: 0,
         dsDapAn: [],
       };
+
+      const themCauHoi = {
+        noiDung: "",
+        dsDapAn: [],
+      };
+
       const el1 = el.children;
       const arr = Array.from(el1);
       const ch = arr.shift();
       cauHoi.maCauHoi = Number(ch.children[0].textContent);
-      // console.log(ch.children[1].value);
+      themCauHoi.noiDung = ch.children[1].value;
+
       for (const da of arr) {
         cauHoi.dsDapAn.push({
           maDapAn: maDapAn,
           loaiDapAn: Number(da.children[0].checked),
         });
-        // console.log(da.children[1].value);
+        themCauHoi.dsDapAn.push({
+          noiDung: da.children[1].value,
+          loaiDapAn: Number(da.children[0].checked),
+        });
         maDapAn++;
       }
 
       danhSachCauHoi.push(cauHoi);
+      dsThemCauHoi.push(themCauHoi);
     }
 
     const token = await getToken();
+
     const response = await postAPIWithToken(
       "/dethi/themDeThi",
       {
@@ -71,7 +87,19 @@ const ExamAdd = () => {
       },
       token,
     );
-    if (response?.status === 200) {
+
+    const rsThemCauhoi = await postAPIWithToken(
+      "/cauhoi/themDanhSachCauHoi",
+      {
+        maChuyenDe: maChuyenDe,
+        loaiCauHoi: loaiCauHoi,
+        doKho: doKho,
+        dsCauHoi: dsThemCauHoi,
+      },
+      token,
+    );
+
+    if (response?.status === 200 && rsThemCauhoi?.status === 200) {
       alert("Tạo đề thi thành công.");
     } else {
       alert("Đã xảy ra lỗi. Tạo đề thi thất bại.");
