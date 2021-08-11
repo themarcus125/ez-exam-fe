@@ -1,14 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { Editor } from "react-draft-wysiwyg";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import React, { useState, useRef } from "react";
 import EssayQuestionBlock from "./EssayQuestionBlock";
+
 import MultipleChoiceQuestionBlock from "./MultipleChoiceQuestionBlock";
-import { questionType } from "../../utils/constants";
+import { questionType, questionLevel } from "../../utils/constants";
+import { postAPIWithToken } from "../../utils/api";
+import { getUser } from "../../utils/auth";
+
+const token = getUser()?.tk ?? "";
 
 const QuestionAdd = () => {
-  const [type, setType] = useState(questionType.multipleChoice);
+  const [type, setType] = useState(questionType.MULTIPLE_CHOICE);
+  const [level, setLevel] = useState(questionLevel.EASY);
   const [essayQuestions, setEssayQuestions] = useState([]);
   const [multipleChoiceQuestions, setMultipleChoiceQuestions] = useState([]);
+  const multipleChoiceRefs = useRef([]);
+  const essayRefs = useRef([]);
+  const count = useRef(0);
+  const hasError = useRef(false);
 
   const buttonClass = (t) =>
     `uk-button uk-padding ${type === t ? "uk-button-primary" : ""}`;
@@ -19,26 +27,105 @@ const QuestionAdd = () => {
     }
   };
 
+  const onChangeLevel = (e) => {
+    setLevel(e.target.value);
+  };
+
+  const clearQuestions = (type) => {
+    if (type === questionType.ESSAY) {
+      setEssayQuestions([]);
+      essayRefs.current = [];
+    } else if (type === questionType.MULTIPLE_CHOICE) {
+      setMultipleChoiceQuestions([]);
+      multipleChoiceRefs.current = [];
+    }
+  };
+
   const onAddNewQuestion = () => {
-    if (type === questionType.multipleChoice) {
-      setMultipleChoiceQuestions([...multipleChoiceQuestions, ""]);
+    count.current += 1;
+    if (type === questionType.MULTIPLE_CHOICE) {
+      setMultipleChoiceQuestions([...multipleChoiceQuestions, count.current]);
     } else {
-      setEssayQuestions([...essayQuestions, ""]);
+      setEssayQuestions([...essayQuestions, count.current]);
+    }
+  };
+
+  const onRemoveQuestion = (id, type) => {
+    if (type === questionType.ESSAY) {
+      setEssayQuestions(essayQuestions.filter((question) => question !== id));
+    } else {
+      setMultipleChoiceQuestions(
+        multipleChoiceQuestions.filter((question) => question !== id),
+      );
+    }
+  };
+
+  const onSave = async () => {
+    hasError.current = false;
+    const questionList = [];
+    let refs = [];
+    if (type === questionType.MULTIPLE_CHOICE) {
+      refs = multipleChoiceRefs.current;
+    } else if (type === questionType.ESSAY) {
+      refs = essayRefs.current;
+    }
+
+    refs.forEach((ref) => {
+      if (ref !== null) {
+        const data = ref.getData();
+        if (data.error) {
+          hasError.current = true;
+          alert(data.error);
+          return;
+        }
+
+        questionList.push(data);
+      }
+    });
+
+    if (hasError.current) {
+      return;
+    }
+
+    try {
+      const res = await postAPIWithToken(
+        "/cauhoi/themDanhSachCauHoi",
+        {
+          maChuyenDe: 1,
+          loaiCauHoi: type,
+          doKho: level,
+          dsCauHoi: questionList,
+        },
+        token,
+      );
+      if (res.status === 200) {
+        alert(
+          `Thêm câu hỏi ${
+            type === questionType.ESSAY ? "tự luận" : "trắc nghiệm"
+          } thành công`,
+        );
+        clearQuestions(type);
+      }
+    } catch (err) {
+      alert("Thêm câu hỏi thất bại.");
     }
   };
 
   return (
     <div className="uk-flex uk-flex-row uk-flex-1">
-      <div className="uk-flex uk-flex-column uk-height-1-1">
+      <div
+        className="uk-flex uk-flex-column uk-height-1-1"
+        style={{ width: 200 }}
+      >
         <button
-          class={buttonClass(questionType.multipleChoice)}
-          onClick={() => onToggle(questionType.multipleChoice)}
+          className={buttonClass(questionType.MULTIPLE_CHOICE)}
+          onClick={() => onToggle(questionType.MULTIPLE_CHOICE)}
         >
           Trắc nghiệm
         </button>
         <button
-          class={buttonClass(questionType.essay)}
-          onClick={() => onToggle(questionType.essay)}
+          className={buttonClass(questionType.ESSAY)}
+          onClick={() => onToggle(questionType.ESSAY)}
         >
           Tự luận
         </button>
@@ -77,7 +164,6 @@ const QuestionAdd = () => {
                 }}
               >
                 <option>Chương 1</option>
-                <option>Chương 2</option>
               </select>
             </div>
           </div>
@@ -90,37 +176,66 @@ const QuestionAdd = () => {
                 style={{
                   border: "solid 0.5px #666",
                 }}
+                value={level}
+                onChange={onChangeLevel}
               >
-                <option>Dễ</option>
-                <option>Trung bình</option>
-                <option>Khó</option>
+                <option value={questionLevel.EASY}>Dễ</option>
+                <option value={questionLevel.MEDIUM}>Trung bình</option>
+                <option value={questionLevel.HARD}>Khó</option>
               </select>
             </div>
           </div>
         </div>
 
-        {/* Question block */}
-        {type === questionType.multipleChoice ? (
+        {type === questionType.MULTIPLE_CHOICE ? (
           <div>
-            {multipleChoiceQuestions.map((question) => {
-              return <MultipleChoiceQuestionBlock />;
+            {multipleChoiceQuestions.map((question, index) => {
+              return (
+                <MultipleChoiceQuestionBlock
+                  key={question}
+                  ref={(element) =>
+                    (multipleChoiceRefs.current[index] = element)
+                  }
+                  onRemove={() =>
+                    onRemoveQuestion(question, questionType.MULTIPLE_CHOICE)
+                  }
+                />
+              );
             })}
           </div>
         ) : (
           <div>
-            {essayQuestions.map((question) => {
-              return <EssayQuestionBlock />;
+            {essayQuestions.map((question, index) => {
+              return (
+                <EssayQuestionBlock
+                  key={question}
+                  ref={(element) => (essayRefs.current[index] = element)}
+                  onRemove={() =>
+                    onRemoveQuestion(question, questionType.ESSAY)
+                  }
+                />
+              );
             })}
           </div>
         )}
 
         <div className="uk-text-right uk-padding">
           <button
-            class="uk-button"
+            className="uk-button"
             style={{ backgroundColor: "#32d296", color: "#FFFFFF" }}
             onClick={onAddNewQuestion}
           >
             Thêm mới
+          </button>
+        </div>
+
+        <div className="uk-text-center uk-padding">
+          <button
+            className="uk-button"
+            style={{ backgroundColor: "#32d296", color: "#FFFFFF" }}
+            onClick={onSave}
+          >
+            Lưu
           </button>
         </div>
       </div>

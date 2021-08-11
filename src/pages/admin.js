@@ -70,16 +70,23 @@ const AdminDashboard = () => {
           component={AccountForm}
           title="Chỉnh sửa tài khoản"
         />
-        <PrivateRoute role={role} path="/questionaire" component={Question} />
+        <PrivateRoute
+          role={role}
+          path="/questionaire"
+          component={Question}
+          title="Danh sách câu hỏi"
+        />
         <PrivateRoute
           role={role}
           path="/questionaire/add"
           component={QuestionAdd}
+          title="Thêm câu hỏi"
         />
         <PrivateRoute
           role={role}
           path="/question-list"
           component={QuestionList}
+          title="Bộ câu hỏi"
         />
       </Router>
     </AdminLayout>

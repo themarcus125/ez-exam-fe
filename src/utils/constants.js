@@ -2,11 +2,11 @@ export const navBarCategories = {
   giaovien: [
     {
       title: "Ngân hàng câu hỏi",
-      path: "/",
+      path: "",
       subCategories: [
         {
           title: "Thêm câu hỏi",
-          path: "/",
+          path: "/questionaire/add",
         },
         {
           title: "Danh sách môn học",
@@ -69,11 +69,11 @@ export const navBarCategories = {
   admin: [
     {
       title: "Ngân hàng câu hỏi",
-      path: "/",
+      path: "",
       subCategories: [
         {
           title: "Thêm câu hỏi",
-          path: "/",
+          path: "/questionaire/add",
         },
         {
           title: "Danh sách môn học",
@@ -142,6 +142,8 @@ export const userRoleToPath = {
 export const questionType = {
   multipleChoice: "MULTIPLE_CHOICE",
   essay: "ESSAY",
+  MULTIPLE_CHOICE: 1,
+  ESSAY: 2,
 };
 
 export const userType = {
@@ -153,4 +155,10 @@ export const userType = {
 export const userStatus = {
   ACTIVE: 0,
   INACTIVE: 1,
+};
+
+export const questionLevel = {
+  EASY: 1,
+  MEDIUM: 2,
+  HARD: 3,
 };
