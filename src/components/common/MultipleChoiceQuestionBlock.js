@@ -2,7 +2,7 @@ import React, { useState, forwardRef, useImperativeHandle } from "react";
 
 const charNumberStart = 65;
 
-const MultipleChoiceQuestionBlock = forwardRef((props, ref) => {
+const MultipleChoiceQuestionBlock = (props, ref) => {
   const { onRemove } = props;
   const [answerList, setAnswerList] = useState([
     {
@@ -94,10 +94,7 @@ const MultipleChoiceQuestionBlock = forwardRef((props, ref) => {
   };
 
   return (
-    <div
-      className="uk-padding uk-margin-bottom"
-      style={{ backgroundColor: "#7FFFE3", borderRadius: "10px" }}
-    >
+    <div className="uk-padding uk-padding-remove-horizontal uk-padding-remove-top">
       <div className="uk-flex uk-flex-middle uk-flex-right">
         <label>
           <input
@@ -109,17 +106,17 @@ const MultipleChoiceQuestionBlock = forwardRef((props, ref) => {
           />{" "}
           Công khai
         </label>
-        <a
+        <button
           className="uk-margin-left uk-text-danger"
           uk-icon="icon: trash; ratio: 1.5"
           onClick={onRemove}
-        ></a>
+        ></button>
       </div>
       <div className="uk-margin-top uk-margin-bottom">
         <input
           className="uk-input"
           type="text"
-          placeholder="Input"
+          placeholder="Câu hỏi"
           value={title}
           onChange={onChangeTitle}
           required
@@ -180,6 +177,6 @@ const MultipleChoiceQuestionBlock = forwardRef((props, ref) => {
       </div>
     </div>
   );
-});
+};
 
-export default MultipleChoiceQuestionBlock;
+export default forwardRef(MultipleChoiceQuestionBlock);
