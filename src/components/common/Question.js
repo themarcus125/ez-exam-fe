@@ -151,7 +151,17 @@ const Question = () => {
                 return (
                   <Fragment key={question.id}>
                     <tr>
-                      <td>{question.noiDung}</td>
+                      {type === questionType.MULTIPLE_CHOICE ? (
+                        <td>{question.noiDung}</td>
+                      ) : (
+                        <td>
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: question.noiDung,
+                            }}
+                          ></div>
+                        </td>
+                      )}
                       <td>
                         {type !== questionType.ESSAY && (
                           <a
