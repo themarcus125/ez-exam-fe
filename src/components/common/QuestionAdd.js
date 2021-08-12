@@ -19,7 +19,9 @@ const QuestionAdd = () => {
   const hasError = useRef(false);
 
   const buttonClass = (t) =>
-    `uk-button uk-padding ${type === t ? "uk-button-primary" : ""}`;
+    `uk-button uk-padding ${
+      type === t ? "uk-button-primary" : "uk-button-link"
+    }`;
 
   const onToggle = (passedType) => {
     if (passedType !== type) {
