@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "gatsby";
 import { getAPIWithToken } from "../../utils/api";
-import { getToken } from "../../utils/auth";
+import { getToken, getUser } from "../../utils/auth";
 import moment from "moment";
+import Config from "../../utils/config";
 
 const limit = 10;
 
@@ -17,6 +18,9 @@ const Exam = () => {
   const [key, setKey] = useState("");
   const [loading, setLoading] = useState(false);
   let lstPage = [];
+
+  const role = getUser()?.role ?? "";
+  const url = Config.urlPath[role]?.url;
 
   const getMonHoc = async () => {
     const token = await getToken();
@@ -216,7 +220,9 @@ const Exam = () => {
                             <a>Tạo bản sao</a>
                           </li>
                           <li>
-                            <a>Xem chi tiết</a>
+                            <Link to={`${url}/exam/${item.id}`}>
+                              Xem chi tiết
+                            </Link>
                           </li>
                         </ul>
                       </div>
