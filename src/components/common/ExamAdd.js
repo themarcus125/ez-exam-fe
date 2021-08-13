@@ -7,19 +7,22 @@ const ExamAdd = () => {
   const [doKhos, setdoKhos] = useState([]);
   const [tenDeThi, setTenDeThi] = useState("");
   const [maChuyenDe, setMaChuyenDe] = useState("");
-  const [maDeThi, setMaDeThi] = useState("");
+  const [doKho, setDoKho] = useState("");
   const [thoiGianLam, setThoiGianLam] = useState(0);
   const [moTaDeThi, setMoTaDeThi] = useState("");
-  const [doKho, setDoKho] = useState("");
+  const [soLuongTracNghiem, setSoLuongTracNghiem] = useState(0);
+  const [soLuongTuLuan, setSoLuongTuLuan] = useState(0);
+  const [diemTracNghiem, setDiemTracNghiem] = useState(0);
+  const [diemTuLuan, setDiemTuLuan] = useState(0);
+  const [diemTungCauTracNghiem, setDiemTungCauTracNghiem] = useState(0);
+  const [diemTungCauTuLuan, setDiemTungCauTuLuan] = useState(0);
   const [taoBoDe, setTaoBoDe] = useState(false);
-  const [tenBoDe, setTenBoDe] = useState("");
   const [soDe, setSoDe] = useState(1);
+  const [maCauHoi, setMaCauHoi] = useState(1);
+
   const [danhSachCauHoi, setDanhSachCauHoi] = useState([]);
-
-  const [loaiCauHoi, setLoaiCauHoi] = useState(1);
-  const [dsThemCauHoi, setDsThemCauHoi] = useState([]);
-
-  let maCauHoi = 1;
+  const [dsCauHoiTN, setDsCauHoiTN] = useState([]);
+  const [dsCauHoiTL, setDsCauHoiTL] = useState([]);
 
   const getMonHoc = async () => {
     const token = await getToken();
@@ -34,76 +37,128 @@ const ExamAdd = () => {
   };
 
   const taoDeThi = async () => {
-    const els = document.getElementById("cauhoi").children;
-    let maDapAn = 1;
-    for (const el of els) {
+    const token = await getToken();
+
+    const responseThemCauTN = await postAPIWithToken(
+      "/cauhoi/themDanhSachCauHoi",
+      {
+        maChuyenDe: maChuyenDe,
+        loaiCauHoi: 1,
+        doKho: doKho,
+        dsCauHoi: dsCauHoiTN,
+      },
+      token,
+    );
+
+    const responseThemCauTL = await postAPIWithToken(
+      "/cauhoi/themDanhSachCauHoi",
+      {
+        maChuyenDe: maChuyenDe,
+        loaiCauHoi: 2,
+        doKho: doKho,
+        dsCauHoi: dsCauHoiTL,
+      },
+      token,
+    );
+
+    const dataTN = await responseThemCauTN.json();
+    const dataTL = await responseThemCauTL.json();
+
+    setDanhSachCauHoi([]);
+
+    for (const ch of dataTN.data) {
       const cauHoi = {
-        maCauHoi: 0,
+        maCauHoi: ch.id,
+        loaiCauHoi: ch.loaiCauHoi,
         dsDapAn: [],
       };
 
-      const themCauHoi = {
-        noiDung: "",
-        dsDapAn: [],
-      };
-
-      const el1 = el.children;
-      const arr = Array.from(el1);
-      const ch = arr.shift();
-      cauHoi.maCauHoi = Number(ch.children[0].textContent);
-      themCauHoi.noiDung = ch.children[1].value;
-
-      for (const da of arr) {
+      for (const da of ch.dsDapAn) {
         cauHoi.dsDapAn.push({
-          maDapAn: maDapAn,
-          loaiDapAn: Number(da.children[0].checked),
+          maDapAn: da.id,
+          loaiDapAn: da.loaiDapAn,
         });
-        themCauHoi.dsDapAn.push({
-          noiDung: da.children[1].value,
-          loaiDapAn: Number(da.children[0].checked),
-        });
-        maDapAn++;
       }
 
       danhSachCauHoi.push(cauHoi);
-      dsThemCauHoi.push(themCauHoi);
     }
 
-    const token = await getToken();
+    for (const ch of dataTL.data) {
+      const cauHoi = {
+        maCauHoi: ch.id,
+        loaiCauHoi: ch.loaiCauHoi,
+        dsDapAn: [],
+      };
 
-    const response = await postAPIWithToken(
+      danhSachCauHoi.push(cauHoi);
+    }
+
+    const responseTaoDeThi = await postAPIWithToken(
       "/dethi/themDeThi",
       {
         tenDeThi: tenDeThi,
         maChuyenDe: maChuyenDe,
-        maDeThi: maDeThi,
+        maDeThi: "Ma de thi",
         thoiGianLam: thoiGianLam,
         moTaDeThi: moTaDeThi,
         doKho: doKho,
+        soLuongTracNghiem: soLuongTracNghiem,
+        soLuongTuLuan: soLuongTuLuan,
+        diemTracNghiem: diemTracNghiem,
+        diemTuLuan: diemTuLuan,
+        diemTungCauTracNghiem: diemTungCauTracNghiem,
+        diemTungCauTuLuan: diemTungCauTuLuan,
         taoBoDe: taoBoDe,
-        tenBoDe: tenBoDe,
         soDe: soDe,
         danhSachCauHoi: danhSachCauHoi,
       },
       token,
     );
 
-    const rsThemCauhoi = await postAPIWithToken(
-      "/cauhoi/themDanhSachCauHoi",
-      {
-        maChuyenDe: maChuyenDe,
-        loaiCauHoi: loaiCauHoi,
-        doKho: doKho,
-        dsCauHoi: dsThemCauHoi,
-      },
-      token,
-    );
-
-    if (response?.status === 200 && rsThemCauhoi?.status === 200) {
+    if (responseTaoDeThi?.status === 200) {
       alert("Tạo đề thi thành công.");
     } else {
       alert("Đã xảy ra lỗi. Tạo đề thi thất bại.");
     }
+  };
+
+  const setDsCauHoi = () => {
+    setDsCauHoiTN([]);
+    setDsCauHoiTL([]);
+    const els = document.getElementById("cauhoi").children;
+
+    for (const el of els) {
+      const cauHoi = {
+        noiDung: el.children[0].children[1].value,
+      };
+      if (el.children[0].children[2].children[1].value === "1") {
+        cauHoi.dsDapAn = [];
+        for (const child of el.children[1].children) {
+          const da = {
+            noiDung: child.children[1].value,
+            loaiDapAn: Number(child.children[0].checked),
+          };
+          cauHoi.dsDapAn.push(da);
+        }
+        dsCauHoiTN.push(cauHoi);
+      } else {
+        dsCauHoiTL.push(cauHoi);
+      }
+    }
+  };
+
+  const themDapAn = (e) => {
+    const ma = e.target.id.split("_")[1];
+
+    const dsDapAn = document.getElementById(`dsdapan_${ma}`);
+
+    dsDapAn.insertAdjacentHTML(
+      "beforeend",
+      `<div className="uk-width-1-1 uk-margin-small-bottom">          
+          <input class="uk-radio" type="radio" name="${ma}" style="margin-left: 40px;"/>
+          <input className="uk-input" type="text" style="width: 65%;"/>
+      </div>`,
+    );
   };
 
   const themCauHoi = (e) => {
@@ -111,30 +166,94 @@ const ExamAdd = () => {
     const el = document.getElementById("cauhoi");
     el.insertAdjacentHTML(
       "beforeend",
-      `<div style="margin-bottom: inherit;">
+      `<div id="cauhoi_${maCauHoi}" style="margin-bottom: inherit;">
         <div className="uk-width-1-1 uk-margin-small-bottom">          
-            <span style="width: 5%;text-align: right;">${maCauHoi}</span>
-            <input className="uk-input" type="text" style="width: 95%;"/>
+            <span style="width: 5%;text-align: right;"></span>
+            <input className="uk-input" type="text" style="width: 70%;"/>
+            <div style="display: inline;padding-left: 100px;">
+              <span>Loại câu hỏi</span>
+              <select id="loaicauhoi_${maCauHoi}" className="uk-select">
+                <option value="1">Trắc nghiệm</option>
+                <option value="2">Tự luận</option>
+              </select>
+              <span id="xoacauhoi_${maCauHoi}" style="margin-left: 35px;color: red;cursor: pointer;"><span uk-icon="trash" style="pointer-events: none;"></span></span>
+            </div>
         </div>
-        <div className="uk-width-1-1 uk-margin-small-bottom">          
-            <input class="uk-radio" type="radio" name="${maCauHoi}" style="margin-left: 40px;"/>
-            <input className="uk-input" type="text" style="width: 85%;"/>
+        <div id="dsdapan_${maCauHoi}">
+          <div className="uk-width-1-1 uk-margin-small-bottom">          
+              <input class="uk-radio" type="radio" name="${maCauHoi}" style="margin-left: 40px;"/>
+              <input className="uk-input" type="text" style="width: 65%;"/>
+          </div>
+          <div className="uk-width-1-1 uk-margin-small-bottom">          
+              <input class="uk-radio" type="radio" name="${maCauHoi}" style="margin-left: 40px;"/>
+              <input className="uk-input" type="text" style="width: 65%;"/>
+          </div>
         </div>
-        <div className="uk-width-1-1 uk-margin-small-bottom">          
-            <input class="uk-radio" type="radio" name="${maCauHoi}" style="margin-left: 40px;"/>
-            <input className="uk-input" type="text" style="width: 85%;"/>
-        </div>
-        <div className="uk-width-1-1 uk-margin-small-bottom">          
-            <input class="uk-radio" type="radio" name="${maCauHoi}" style="margin-left: 40px;"/>
-            <input className="uk-input" type="text" style="width: 85%;"/>
-        </div>
-        <div className="uk-width-1-1 uk-margin-small-bottom">          
-            <input class="uk-radio" type="radio" name="${maCauHoi}" style="margin-left: 40px;"/>
-            <input className="uk-input" type="text" style="width: 85%;"/>
-        </div>
+        <button id="themdapan_${maCauHoi}" type="button" style="margin-left: 60px;cursor: pointer;">
+          Thêm đáp án
+        </button>
       </div>`,
     );
-    maCauHoi++;
+
+    const btnThem = document.getElementById(`themdapan_${maCauHoi}`);
+    btnThem.addEventListener("click", themDapAn);
+
+    const btnXoa = document.getElementById(`xoacauhoi_${maCauHoi}`);
+    btnXoa.addEventListener("click", xoaCauHoi);
+
+    const ddlLoai = document.getElementById(`loaicauhoi_${maCauHoi}`);
+    ddlLoai.addEventListener("change", thayDoiLoaiCauHoi);
+
+    thayDoiSoLuong();
+
+    setMaCauHoi(maCauHoi + 1);
+  };
+
+  const xoaCauHoi = (e) => {
+    const ma = e.target.id.split("_")[1];
+    document.getElementById(`cauhoi_${ma}`).remove();
+    thayDoiSoLuong();
+  };
+
+  const thayDoiLoaiCauHoi = (e) => {
+    const ma = e.target.id.split("_")[1];
+    const dsDapAn = document.getElementById(`dsdapan_${ma}`);
+    const btnThem = document.getElementById(`themdapan_${ma}`);
+
+    if (e.target.value === "1") {
+      dsDapAn.style.display = "";
+      btnThem.style.display = "";
+    } else {
+      dsDapAn.style.display = "none";
+      btnThem.style.display = "none";
+    }
+
+    thayDoiSoLuong();
+  };
+
+  const thayDoiSoLuong = () => {
+    let label = 1;
+    let slTracNghiem = 0;
+    let slTuLuan = 0;
+
+    const els = document.getElementById("cauhoi").children;
+    for (const el of els) {
+      const ch = el.children[0];
+      ch.children[0].textContent = label;
+      if (ch.children[2].children[1].value === "1") {
+        slTracNghiem++;
+      } else {
+        slTuLuan++;
+      }
+      label++;
+    }
+
+    const diemTN = document.getElementById("diemtracnghiem").value;
+    const diemTL = document.getElementById("diemtuluan").value;
+    setSoLuongTracNghiem(slTracNghiem);
+    setSoLuongTuLuan(slTuLuan);
+    setDiemTungCauTracNghiem(slTracNghiem != 0 ? diemTN / slTracNghiem : 0);
+    setDiemTungCauTuLuan(slTuLuan != 0 ? diemTL / slTuLuan : 0);
   };
 
   useEffect(() => {
@@ -275,7 +394,9 @@ const ExamAdd = () => {
                 className="uk-display-inline-block uk-width-1-5"
                 style={{ marginLeft: "10px" }}
               >
-                <span className="uk-display-inline-block uk-width-1-5">0</span>
+                <span className="uk-display-inline-block uk-width-1-5">
+                  {soLuongTracNghiem}
+                </span>
               </div>
             </div>
 
@@ -285,10 +406,18 @@ const ExamAdd = () => {
               </span>
               <div className="uk-display-inline-block uk-width-2-5">
                 <input
+                  id="diemtracnghiem"
                   className="uk-input uk-form-width-small"
                   type="number"
                   min="0"
-                  placeholder="0"
+                  disabled={!(soLuongTracNghiem != 0)}
+                  defaultValue="0"
+                  onChange={(e) => {
+                    setDiemTracNghiem(e.target.value);
+                    setDiemTungCauTracNghiem(
+                      e.target.value / soLuongTracNghiem,
+                    );
+                  }}
                 />
               </div>
             </div>
@@ -301,7 +430,9 @@ const ExamAdd = () => {
                 className="uk-display-inline-block uk-width-1-5"
                 style={{ marginLeft: "-50px" }}
               >
-                <span className="uk-display-inline-block ">0</span>
+                <span className="uk-display-inline-block ">
+                  {diemTungCauTracNghiem}
+                </span>
               </div>
             </div>
           </div>
@@ -315,7 +446,9 @@ const ExamAdd = () => {
                 className="uk-display-inline-block uk-width-1-5"
                 style={{ marginLeft: "10px" }}
               >
-                <span className="uk-display-inline-block uk-width-1-5">0</span>
+                <span className="uk-display-inline-block uk-width-1-5">
+                  {soLuongTuLuan}
+                </span>
               </div>
             </div>
 
@@ -325,10 +458,16 @@ const ExamAdd = () => {
               </span>
               <div className="uk-display-inline-block uk-width-2-5">
                 <input
+                  id="diemtuluan"
                   className="uk-input uk-form-width-small"
                   type="number"
                   min="0"
-                  placeholder="0"
+                  disabled={!(soLuongTuLuan != 0)}
+                  defaultValue="0"
+                  onChange={(e) => {
+                    setDiemTuLuan(e.target.value);
+                    setDiemTungCauTuLuan(e.target.value / soLuongTuLuan);
+                  }}
                 />
               </div>
             </div>
@@ -341,7 +480,9 @@ const ExamAdd = () => {
                 className="uk-display-inline-block uk-width-1-5"
                 style={{ marginLeft: "-50px" }}
               >
-                <span className="uk-display-inline-block ">0</span>
+                <span className="uk-display-inline-block ">
+                  {diemTungCauTuLuan}
+                </span>
               </div>
             </div>
           </div>
@@ -355,22 +496,6 @@ const ExamAdd = () => {
               />{" "}
               Có tạo bộ đề không?
             </label>
-          </div>
-
-          <div className="uk-margin">
-            <label className="uk-form-label" htmlFor="form-horizontal-text">
-              Nhập mã bộ đề
-            </label>
-            <div className="uk-form-controls">
-              <input
-                className="uk-input"
-                type="text"
-                disabled={!taoBoDe}
-                onChange={(e) => {
-                  setMaDeThi(e.target.value);
-                }}
-              />
-            </div>
           </div>
 
           <div className="uk-margin">
@@ -398,6 +523,7 @@ const ExamAdd = () => {
                 style={{ backgroundColor: "#32d296", color: "#FFF" }}
                 onClick={async (e) => {
                   e.preventDefault();
+                  setDsCauHoi();
                   await taoDeThi();
                 }}
               >
