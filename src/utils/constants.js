@@ -46,7 +46,6 @@ export const navBarCategories = {
         },
       ],
     },
-
     {
       title: "Kiểm tra kết quả thi",
       path: "/",
@@ -58,8 +57,12 @@ export const navBarCategories = {
   ],
   sinhvien: [
     {
+      title: "Phòng thi",
+      path: "/exam-room",
+    },
+    {
       title: "Thực hiệm kiểm tra",
-      path: "/",
+      path: "/exam-taker",
     },
     {
       title: "Xem kết quả kiểm tra",
@@ -99,21 +102,6 @@ export const navBarCategories = {
         },
       ],
     },
-    {
-      title: "Quản lý phòng thi",
-      path: "",
-      subCategories: [
-        {
-          title: "Danh sách phòng thi",
-          path: "/examroom",
-        },
-        {
-          title: "Tạo phòng thi",
-          path: "/examroom/add",
-        },
-      ],
-    },
-
     {
       title: "Kiểm tra kết quả thi",
       path: "/",
