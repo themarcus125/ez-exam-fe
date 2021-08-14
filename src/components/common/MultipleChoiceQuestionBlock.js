@@ -3,7 +3,7 @@ import React, { useState, forwardRef, useImperativeHandle } from "react";
 const charNumberStart = 65;
 
 const MultipleChoiceQuestionBlock = (props, ref) => {
-  const { onRemove } = props;
+  const { onRemove, publicButtonDisabled = false, readOnly = false } = props;
   const [answerList, setAnswerList] = useState([
     {
       id: 1,
@@ -14,35 +14,38 @@ const MultipleChoiceQuestionBlock = (props, ref) => {
   const [title, setTitle] = useState("");
   const [isPublic, setIsPublic] = useState(false);
 
-  useImperativeHandle(ref, () => ({
-    getData: () => {
-      const hasCorrectAnswer =
-        answerList.filter((answer) => answer.type === 1).length > 0;
-      if (!hasCorrectAnswer) {
-        return { error: "Hãy chọn đáp án đúng" };
-      }
+  if (ref) {
+    useImperativeHandle(ref, () => ({
+      getData: () => {
+        if (readOnly) return null;
+        const hasCorrectAnswer =
+          answerList.filter((answer) => answer.type === 1).length > 0;
+        if (!hasCorrectAnswer) {
+          return { error: "Hãy chọn đáp án đúng" };
+        }
 
-      if (!title) {
-        return { error: "Câu hỏi không được để trống" };
-      }
+        if (!title) {
+          return { error: "Câu hỏi không được để trống" };
+        }
 
-      const hasEmptyAnswer =
-        answerList.filter((answer) => !answer.content).length > 0;
-      if (hasEmptyAnswer) {
-        return { error: "Hãy điền đầy đủ đáp án" };
-      }
+        const hasEmptyAnswer =
+          answerList.filter((answer) => !answer.content).length > 0;
+        if (hasEmptyAnswer) {
+          return { error: "Hãy điền đầy đủ đáp án" };
+        }
 
-      return {
-        noiDung: title,
-        dsDapAn: answerList.map((answer) => {
-          return {
-            noiDung: answer.content,
-            loaiDapAn: answer.type,
-          };
-        }),
-      };
-    },
-  }));
+        return {
+          noiDung: title,
+          dsDapAn: answerList.map((answer) => {
+            return {
+              noiDung: answer.content,
+              loaiDapAn: answer.type,
+            };
+          }),
+        };
+      },
+    }));
+  }
 
   const onAddNewAnswer = () => {
     setAnswerList([
@@ -96,16 +99,19 @@ const MultipleChoiceQuestionBlock = (props, ref) => {
   return (
     <div className="uk-padding uk-padding-remove-horizontal uk-padding-remove-top">
       <div className="uk-flex uk-flex-middle uk-flex-right">
-        <label>
-          <input
-            className="uk-radio"
-            type="radio"
-            style={{ borderColor: "black" }}
-            checked={isPublic}
-            onChange={onPublic}
-          />{" "}
-          Công khai
-        </label>
+        {publicButtonDisabled ? null : (
+          <label>
+            <input
+              className="uk-radio"
+              type="radio"
+              style={{ borderColor: "black" }}
+              checked={isPublic}
+              onChange={onPublic}
+              disabled={readOnly}
+            />{" "}
+            Công khai
+          </label>
+        )}
         <button
           className="uk-margin-left uk-text-danger"
           uk-icon="icon: trash; ratio: 1.5"
@@ -119,6 +125,7 @@ const MultipleChoiceQuestionBlock = (props, ref) => {
           placeholder="Câu hỏi"
           value={title}
           onChange={onChangeTitle}
+          disabled={readOnly}
           required
         />
         <table
@@ -147,6 +154,7 @@ const MultipleChoiceQuestionBlock = (props, ref) => {
                       value={answer.content}
                       onChange={(e) => onChangeAnswer(e, answer.id)}
                       required
+                      disabled={readOnly}
                     />
                   </td>
                   <td className="uk-width-small">
@@ -156,6 +164,7 @@ const MultipleChoiceQuestionBlock = (props, ref) => {
                         type="checkbox"
                         checked={answer.type === 1}
                         onChange={(e) => onCheckCorrectAnswer(e, answer.id)}
+                        disabled={readOnly}
                       />{" "}
                       Đáp án
                     </label>
