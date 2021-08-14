@@ -18,7 +18,13 @@ const QuestionTable = ({ type, level, isSelectable }) => {
 
   useEffect(() => {
     getData();
-  }, [type, level, currentPage]);
+  }, [currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+    numOfPage.current = 1;
+    getData();
+  }, [type, level]);
 
   useEffect(() => {
     UIKit.modal("#modal-center");
