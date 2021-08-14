@@ -9,6 +9,7 @@ import { questionType } from "../../utils/constants";
 import EssayQuestionBlock from "./EssayQuestionBlock";
 import LoadingOverlay from "./LoadingOverlay";
 import MultipleChoiceQuestionBlock from "./MultipleChoiceQuestionBlock";
+import QuestionSelectModal, { showSelectModal } from "./QuestionSelectModal";
 
 const _questionTemplate = {
   noiDung: "",
@@ -508,6 +509,7 @@ const ExamAdd = ({ examId }) => {
                 <button
                   className="uk-button"
                   style={{ backgroundColor: "#32d296", color: "#FFF" }}
+                  onClick={() => showSelectModal()}
                 >
                   Chọn câu hỏi có sẵn
                 </button>
@@ -660,6 +662,7 @@ const ExamAdd = ({ examId }) => {
         </form>
       </div>
       <LoadingOverlay isLoading={loading} />
+      <QuestionSelectModal type={maChuyenDe || 1} level={doKho || 1} />
     </>
   );
 };
