@@ -14,93 +14,122 @@ const ExamTakerPage = () => {
   const [data, setData] = useState(null);
   const location = useLocation();
 
-  const { isPermissionApproved: webcamApproved, webcamRecorderObject } =
-    useWebcamRecorder();
-  const { isPermissionApproved: screenRecApproved, screenRecorderObject } =
-    useScreenRecorder();
+  // const { isPermissionApproved: webcamApproved, webcamRecorderObject } =
+  //   useWebcamRecorder();
+  // const { isPermissionApproved: screenRecApproved, screenRecorderObject } =
+  //   useScreenRecorder();
+
+  // useEffect(() => {
+  //   if (webcamApproved && screenRecApproved) {
+  //     setIsPermissionApproved(true);
+  //   }
+  // }, [webcamApproved, screenRecApproved]);
+
+  // useEffect(() => {
+  //   if (isPermissionApproved) {
+  //     const queriedExamId = queryString.parse(location.search)?.id;
+  //     if (queriedExamId) {
+  //       // Set data by requesting questionaire with current test id from server
+  //       setData(mockData["examtest"]);
+  //     }
+  //     if (!queriedExamId) {
+  //       navigate(`/examinee/exam-taker`);
+  //     }
+  //   }
+  // }, [isPermissionApproved]);
 
   useEffect(() => {
-    if (webcamApproved && screenRecApproved) {
-      setIsPermissionApproved(true);
-    }
-  }, [webcamApproved, screenRecApproved]);
-
-  useEffect(() => {
-    if (isPermissionApproved) {
-      const queriedExamId = queryString.parse(location.search)?.id;
-      if (queriedExamId) {
-        // Set data by requesting questionaire with current test id from server
-        setData(mockData["examtest"]);
-      }
-      if (!queriedExamId) {
-        navigate(`/${EXAMINEE_ROLE}`);
-      }
-    }
-  }, [isPermissionApproved]);
+    // Set data by requesting questionaire with current test id from server
+    setData(mockData["examtest"]);
+  }, []);
 
   const onSubmit = () => {
-    webcamRecorderObject.stop();
-    screenRecorderObject.stop();
-    navigate(`/${EXAMINEE_ROLE}`);
+    // webcamRecorderObject.stop();
+    // screenRecorderObject.stop();
+    // navigate(`/examinee/exam-taker`);
   };
 
   const renderExamTaker = () => {
     return (
-      <div className="uk-padding uk-height-1-1" style={{ overflowY: "auto" }}>
+      <div className="uk-padding-small uk-height-1-1" style={{ overflowY: "auto" }}>
         <div
-          className="uk-card uk-card-default uk-grid-collapse uk-child-width-1-1 uk-margin-small uk-card-hover"
+          className="uk-card uk-card-default uk-grid-collapse uk-margin-small uk-card-hover"
           uk-grid=""
         >
-          <div className="uk-flex uk-flex-row">
-            <h3 className="uk-card-title uk-width-1-1 uk-text-center uk-margin-medium-top">
-              <b>ĐỀ KIỂM TRA TRẮC NGHIỆM</b>
-            </h3>
-          </div>
-          {data.map((examtest) => {
-            return (
-              <div key={examtest.id}>
-                <div>
-                  <div className="uk-card-body">
-                    <div className="uk-form-label uk-card-title">
-                      <b>
-                        {examtest.stt}. {examtest.question}
-                      </b>
-                    </div>
-                    <div className="uk-form-controls uk-margin-small-left">
-                      <input className="uk-radio" type="radio" name="radio1" />{" "}
-                      {examtest.answer.A}
-                      <br />
-                      <input
-                        className="uk-radio"
-                        type="radio"
-                        name="radio1"
-                      />{" "}
-                      {examtest.answer.B}
-                      <br />
-                      <input
-                        className="uk-radio"
-                        type="radio"
-                        name="radio1"
-                      />{" "}
-                      {examtest.answer.C}
-                      <br />
-                      <input
-                        className="uk-radio"
-                        type="radio"
-                        name="radio1"
-                      />{" "}
-                      {examtest.answer.D}
+          <div className="uk-card uk-card-default uk-card-body uk-width-3-4@m">
+            <div className="uk-flex uk-flex-row">
+              <h3 className="uk-card-title uk-width-1-1 uk-text-center uk-margin-medium-top">
+                <b>ĐỀ KIỂM TRA TRẮC NGHIỆM</b>
+              </h3>
+            </div>
+            {data.map((examtest) => {
+              return (
+                <div key={examtest.id}>
+                  <div>
+                    <div className="uk-card-body">
+                      <div className="uk-form-label uk-card-title">
+                        <b>
+                          {examtest.stt}. {examtest.question}
+                        </b>
+                      </div>
+                      <div className="uk-form-controls uk-margin-small-left">
+                        <input className="uk-radio" type="radio" name="radio1" />{" "}
+                        {examtest.answer.A}
+                        <br />
+                        <input
+                          className="uk-radio"
+                          type="radio"
+                          name="radio1"
+                        />{" "}
+                        {examtest.answer.B}
+                        <br />
+                        <input
+                          className="uk-radio"
+                          type="radio"
+                          name="radio1"
+                        />{" "}
+                        {examtest.answer.C}
+                        <br />
+                        <input
+                          className="uk-radio"
+                          type="radio"
+                          name="radio1"
+                        />{" "}
+                        {examtest.answer.D}
+                      </div>
                     </div>
                   </div>
                 </div>
+              );
+            })}
+            <p className="uk-card-title uk-width-1-1 uk-text-center uk-margin-medium-bottom">
+              <button className="uk-button uk-button-primary" onClick={onSubmit}>
+                Nộp Bài
+              </button>
+            </p>
+          </div>
+          <div className="uk-card uk-card-default uk-card-body uk-width-1-4@m">
+            <div className="uk-grid uk-padding-small">
+              <div className="uk-width-1-1 uk-margin-bottom">
+                <div className="uk-form-horizontal uk-margin">
+                  <label
+                    className="uk-form-label"
+                    htmlFor="form-horizontal-text"
+                  >
+                    Tên phòng thi
+                  </label>
+                  <div className="uk-form-controls">
+                    <label
+                      className="uk-form-label"
+                      htmlFor="form-horizontal-text"
+                    >
+                      Tên phòng thi
+                    </label>
+                  </div>
+                </div>
               </div>
-            );
-          })}
-          <p className="uk-card-title uk-width-1-1 uk-text-center uk-margin-medium-bottom">
-            <button className="uk-button uk-button-primary" onClick={onSubmit}>
-              Nộp Bài
-            </button>
-          </p>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -108,7 +137,8 @@ const ExamTakerPage = () => {
 
   return (
     <div className="uk-height-1-1 uk-background-muted">
-      {data ? renderExamTaker() : <span uk-spinner="ratio: 4.5"></span>}
+      {data ? renderExamTaker() : <span>fail</span>}
+      {/* {data ? renderExamTaker() : <span uk-spinner="ratio: 4.5"></span>} */}
     </div>
   );
 };

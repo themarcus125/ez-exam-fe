@@ -59,7 +59,7 @@ export const navBarCategories = {
   sinhvien: [
     {
       title: "Thực hiệm kiểm tra",
-      path: "/",
+      path: "/exam-taker",
     },
     {
       title: "Xem kết quả kiểm tra",
