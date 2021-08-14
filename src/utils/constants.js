@@ -46,7 +46,6 @@ export const navBarCategories = {
         },
       ],
     },
-
     {
       title: "Kiểm tra kết quả thi",
       path: "/",
@@ -57,6 +56,10 @@ export const navBarCategories = {
     },
   ],
   sinhvien: [
+    {
+      title: "Phòng thi",
+      path: "/exam-room",
+    },
     {
       title: "Thực hiệm kiểm tra",
       path: "/exam-taker",

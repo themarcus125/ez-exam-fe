@@ -6,6 +6,7 @@ import MainCourses from "../components/examinee/MainCourses";
 import ExamTaker from "../components/examinee/ExamTaker";
 import PrivateRoute from "../components/common/PrivateRoute";
 import ExamineeHome from "../components/examinee/ExamineeHome";
+import ExamineeRoom from "../components/examinee/ExamineeRoom";
 
 const ExamineeDashboard = () => {
   const role = EXAMINEE_ROLE;
@@ -23,6 +24,12 @@ const ExamineeDashboard = () => {
           path="/exam-taker"
           component={ExamTaker}
           title="Vào thi"
+        />
+        <PrivateRoute
+          role={role}
+          path="/exam-room"
+          component={ExamineeRoom}
+          title="Phòng thi"
         />
       </Router>
     </ExamineeLayout>
