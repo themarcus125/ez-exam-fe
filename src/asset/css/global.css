@@ -10,3 +10,11 @@
 .react-datepicker-popper {
   z-index: 20 !important;
 }
+
+.ck-editor__editable_inline {
+  height: 200px;
+}
+
+.uk-button-primary {
+  background-color: rgb(50, 210, 150) !important;
+}

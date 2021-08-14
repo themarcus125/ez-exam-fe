@@ -40,7 +40,7 @@ const IndexPage = () => {
             </Link>
           </div>
 
-          <div className="uk-navbar-right uk-margin-small-right">
+          <div className="uk-navbar-right uk-margin-right">
             <ul className="uk-navbar-nav">
               <li>
                 <a href="login" onClick={onLogin}>
