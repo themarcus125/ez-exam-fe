@@ -1,104 +1,250 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   getAPIWithToken,
   postAPIWithToken,
   putAPIWithToken,
 } from "../../utils/api";
 import { getToken } from "../../utils/auth";
+import { questionType } from "../../utils/constants";
+import EssayQuestionBlock from "./EssayQuestionBlock";
 import LoadingOverlay from "./LoadingOverlay";
+import MultipleChoiceQuestionBlock from "./MultipleChoiceQuestionBlock";
+
+const _questionTemplate = {
+  noiDung: "",
+  dsDapAn: [],
+  type: questionType.MULTIPLE_CHOICE,
+  themMoi: false,
+};
 
 const ExamAdd = ({ examId }) => {
-  const [loading, setLoading] = useState(true);
   const [monHocs, setMonhocs] = useState([]);
   const [doKhos, setdoKhos] = useState([]);
+
   const [tenDeThi, setTenDeThi] = useState("");
   const [maChuyenDe, setMaChuyenDe] = useState("");
   const [doKho, setDoKho] = useState("");
   const [thoiGianLam, setThoiGianLam] = useState(0);
   const [moTaDeThi, setMoTaDeThi] = useState("");
+
   const [soLuongTracNghiem, setSoLuongTracNghiem] = useState(0);
-  const [soLuongTuLuan, setSoLuongTuLuan] = useState(0);
   const [diemTracNghiem, setDiemTracNghiem] = useState(0);
-  const [diemTuLuan, setDiemTuLuan] = useState(0);
   const [diemTungCauTracNghiem, setDiemTungCauTracNghiem] = useState(0);
+  const [soLuongTuLuan, setSoLuongTuLuan] = useState(0);
+  const [diemTuLuan, setDiemTuLuan] = useState(0);
   const [diemTungCauTuLuan, setDiemTungCauTuLuan] = useState(0);
+
+  const [questionList, setQuestionList] = useState([]);
+  const questionRefs = useRef([]);
+  const hasError = useRef(false);
+
   const [taoBoDe, setTaoBoDe] = useState(false);
   const [soDe, setSoDe] = useState(1);
-  const [maCauHoi, setMaCauHoi] = useState(1);
 
-  const [danhSachCauHoi, setDanhSachCauHoi] = useState([]);
-  const [dsCauHoiTN, setDsCauHoiTN] = useState([]);
-  const [dsCauHoiTL, setDsCauHoiTL] = useState([]);
+  const [token, settoken] = useState(null);
+  const [loading, setloading] = useState(true);
 
-  const getMonHoc = async () => {
-    const token = await getToken();
-    const lstMonHoc = await getAPIWithToken("/chuyende/monhocnguoidung", token);
-    setMonhocs(lstMonHoc.data);
+  const onRemoveQuestion = (question) => {
+    setQuestionList(
+      questionList.filter((currentQuestion) => currentQuestion !== question),
+    );
   };
 
-  const getDoKho = async () => {
-    const token = await getToken();
-    const lstDoKho = await getAPIWithToken("/dokho/layTatCaDoKho", token);
-    setdoKhos(lstDoKho.data);
+  const onAddQuestion = () => {
+    const id = questionList.length + 1;
+    setQuestionList([
+      ...questionList,
+      { ..._questionTemplate, id, themMoi: true },
+    ]);
   };
 
-  const taoDeThi = async () => {
-    const token = await getToken();
-
-    const responseThemCauTN = await postAPIWithToken(
-      "/cauhoi/themDanhSachCauHoi",
-      {
-        maChuyenDe: maChuyenDe,
-        loaiCauHoi: 1,
-        doKho: doKho,
-        dsCauHoi: dsCauHoiTN,
-      },
-      token,
+  const onQuestionTypeChange = (question, type) => {
+    setQuestionList(
+      questionList.map((currentQuestion) => {
+        if (currentQuestion === question) {
+          return { ...currentQuestion, type: +type };
+        }
+        return currentQuestion;
+      }),
     );
+  };
 
-    const responseThemCauTL = await postAPIWithToken(
-      "/cauhoi/themDanhSachCauHoi",
-      {
-        maChuyenDe: maChuyenDe,
-        loaiCauHoi: 2,
-        doKho: doKho,
-        dsCauHoi: dsCauHoiTL,
-      },
-      token,
-    );
-
-    const dataTN = await responseThemCauTN.json();
-    const dataTL = await responseThemCauTL.json();
-
-    setDanhSachCauHoi([]);
-
-    for (const ch of dataTN.data) {
-      const cauHoi = {
-        maCauHoi: ch.id,
-        loaiCauHoi: ch.loaiCauHoi,
-        dsDapAn: [],
-      };
-
-      for (const da of ch.dsDapAn) {
-        cauHoi.dsDapAn.push({
-          maDapAn: da.id,
-          loaiDapAn: da.loaiDapAn,
-        });
+  const getQuestionDataFromDOM = (e) => {
+    e.preventDefault();
+    hasError.current = false;
+    const questionDataList = [];
+    let refs = [];
+    refs = questionRefs.current;
+    refs.forEach((ref, index) => {
+      if (ref !== null) {
+        const data = ref.getData();
+        if (data.error) {
+          hasError.current = true;
+          alert(data.error);
+          return null;
+        }
+        data
+          ? questionDataList.push({ ...questionList[index], ...data })
+          : questionDataList.push(questionList[index]);
       }
+    });
 
-      danhSachCauHoi.push(cauHoi);
+    if (hasError.current) {
+      return null;
+    }
+    return questionDataList;
+  };
+
+  const appendAdditionalPropsToQuestionList = (
+    respondPostNewQuestions,
+    questionDataList,
+  ) => {
+    if (respondPostNewQuestions) {
+      const { dataTN = [], dataTL = [] } = respondPostNewQuestions;
+      const updatedQuestionList = questionDataList.map((question) => {
+        const { type, themMoi, dsDapAn } = question;
+        let targetQuestion = null;
+        if (themMoi) {
+          if (type === questionType.MULTIPLE_CHOICE) {
+            targetQuestion = dataTN.find(
+              (ques) => ques.noiDung === question.noiDung,
+            );
+          }
+          if (type === questionType.ESSAY) {
+            targetQuestion = dataTL.find(
+              (ques) => ques.noiDung === question.noiDung,
+            );
+          }
+        }
+        if (targetQuestion) {
+          return {
+            ...question,
+            maCauHoi: targetQuestion.id,
+            dsDapAn:
+              targetQuestion?.dsDapAn?.length > 0
+                ? dsDapAn.map((dapAn, index) => ({
+                    ...dapAn,
+                    maDapAn: targetQuestion.dsDapAn[index].id,
+                  }))
+                : [],
+          };
+        }
+        return question;
+      });
+      return updatedQuestionList;
+    }
+    return questionDataList;
+  };
+
+  const eliminateQuestionsProps = (questionDataList) => {
+    return questionDataList.map((question) => {
+      const { maCauHoi, type, dsDapAn } = question;
+      const updatedDsDapAn = dsDapAn.map((dapAn) => {
+        const { maDapAn, loaiDapAn } = dapAn;
+        return { maDapAn, loaiDapAn };
+      });
+      return { maCauHoi, loaiCauHoi: type, dsDapAn: updatedDsDapAn };
+    });
+  };
+
+  const onAddQuestionByBatch = (questionBatch) => {
+    setQuestionList([...questionList, ...questionBatch]);
+  };
+
+  useEffect(() => {
+    const questionCounter = questionList.reduce(
+      (counter, question) => {
+        return {
+          multiple:
+            counter.multiple +
+            (question.type === questionType.MULTIPLE_CHOICE ? 1 : 0),
+          essay: counter.essay + (question.type === questionType.ESSAY ? 1 : 0),
+        };
+      },
+      { multiple: 0, essay: 0 },
+    );
+    setSoLuongTracNghiem(questionCounter.multiple);
+    setSoLuongTuLuan(questionCounter.essay);
+  }, [questionList]);
+
+  useEffect(() => {
+    if (soLuongTracNghiem > 0 && diemTracNghiem > 0) {
+      setDiemTungCauTracNghiem(diemTracNghiem / soLuongTracNghiem);
+    }
+  }, [soLuongTracNghiem, diemTracNghiem]);
+
+  useEffect(() => {
+    if (soLuongTuLuan > 0 && diemTuLuan > 0) {
+      setDiemTungCauTuLuan(diemTuLuan / soLuongTuLuan);
+    }
+  }, [soLuongTuLuan, diemTuLuan]);
+
+  // api related effects / functions
+  const onPostNewQuestions = async (questionDataList) => {
+    const result = {};
+    setloading(true);
+    if (questionDataList === null) {
+      return result;
+    }
+    const multipleQuestionList = questionDataList.filter(
+      (question) =>
+        question.type === questionType.MULTIPLE_CHOICE && question.themMoi,
+    );
+
+    if (multipleQuestionList?.length > 0) {
+      try {
+        const responseThemCauTN = await postAPIWithToken(
+          "/cauhoi/themDanhSachCauHoi",
+          {
+            maChuyenDe: maChuyenDe,
+            loaiCauHoi: 1,
+            doKho: doKho,
+            dsCauHoi: multipleQuestionList,
+          },
+          token,
+        );
+        const responseContent = await responseThemCauTN.json();
+        result.dataTN = responseContent.data;
+      } catch (error) {
+        alert("Đã có lỗi xảy ra trong quá trình thêm câu hỏi trắc nghiệm mới.");
+      }
     }
 
-    for (const ch of dataTL.data) {
-      const cauHoi = {
-        maCauHoi: ch.id,
-        loaiCauHoi: ch.loaiCauHoi,
-        dsDapAn: [],
-      };
+    const essayQuestionList = questionDataList.filter(
+      (question) => question.type === questionType.ESSAY && question.themMoi,
+    );
 
-      danhSachCauHoi.push(cauHoi);
+    if (essayQuestionList?.length > 0) {
+      try {
+        const responseThemCauTL = await postAPIWithToken(
+          "/cauhoi/themDanhSachCauHoi",
+          {
+            maChuyenDe: maChuyenDe,
+            loaiCauHoi: 2,
+            doKho: doKho,
+            dsCauHoi: essayQuestionList,
+          },
+          token,
+        );
+        const dataTL = await responseThemCauTL.json();
+        result.dataTL = dataTL.data;
+      } catch (error) {
+        alert("Đã có lỗi xảy ra trong quá trình thêm câu hỏi tự luận mới.");
+      }
     }
 
+    setloading(false);
+    return result;
+  };
+
+  const onSubmit = async (e) => {
+    const questionDataList = getQuestionDataFromDOM(e);
+    const respondPostNewQuestions = await onPostNewQuestions(questionDataList);
+    const updatedQuestionList = appendAdditionalPropsToQuestionList(
+      respondPostNewQuestions,
+      questionDataList,
+    );
+    const danhSachCauHoi = eliminateQuestionsProps(updatedQuestionList);
     if (examId) {
       const responseCapNhat = await putAPIWithToken(
         `/dethi/suaDeThi`,
@@ -160,234 +306,97 @@ const ExamAdd = ({ examId }) => {
     }
   };
 
-  const setDsCauHoi = () => {
-    setDsCauHoiTN([]);
-    setDsCauHoiTL([]);
-    const els = document.getElementById("cauhoi").children;
-
-    for (const el of els) {
-      const cauHoi = {
-        noiDung: el.children[0].children[1].value,
-      };
-      if (el.children[0].children[2].children[1].value === "1") {
-        cauHoi.dsDapAn = [];
-        for (const child of el.children[1].children) {
-          const da = {
-            noiDung: child.children[1].value,
-            loaiDapAn: Number(child.children[0].checked),
-          };
-          cauHoi.dsDapAn.push(da);
-        }
-        dsCauHoiTN.push(cauHoi);
-      } else {
-        dsCauHoiTL.push(cauHoi);
-      }
-    }
-  };
-
-  const themDapAn = (e) => {
-    const ma = e.target.id.split("_")[1];
-
-    const dsDapAn = document.getElementById(`dsdapan_${ma}`);
-
-    dsDapAn.insertAdjacentHTML(
-      "beforeend",
-      `<div className="uk-width-1-1 uk-margin-small-bottom">          
-          <input class="uk-radio" type="radio" name="${ma}" style="margin-left: 40px;"/>
-          <input className="uk-input" type="text" style="width: 65%;"/>
-      </div>`,
-    );
-  };
-
-  const themCauHoi = (e) => {
-    e.preventDefault();
-    const el = document.getElementById("cauhoi");
-    el.insertAdjacentHTML(
-      "beforeend",
-      `<div id="cauhoi_${maCauHoi}" style="margin-bottom: inherit;">
-        <div className="uk-width-1-1 uk-margin-small-bottom">          
-            <span style="width: 5%;text-align: right;"></span>
-            <input className="uk-input" type="text" style="width: 70%;"/>
-            <div style="display: inline;padding-left: 100px;">
-              <span>Loại câu hỏi</span>
-              <select id="loaicauhoi_${maCauHoi}" className="uk-select">
-                <option value="1">Trắc nghiệm</option>
-                <option value="2">Tự luận</option>
-              </select>
-              <span id="xoacauhoi_${maCauHoi}" style="margin-left: 35px;color: red;cursor: pointer;"><span uk-icon="trash" style="pointer-events: none;"></span></span>
-            </div>
-        </div>
-        <div id="dsdapan_${maCauHoi}">
-          <div className="uk-width-1-1 uk-margin-small-bottom">          
-              <input class="uk-radio" type="radio" name="${maCauHoi}" style="margin-left: 40px;"/>
-              <input className="uk-input" type="text" style="width: 65%;"/>
-          </div>
-          <div className="uk-width-1-1 uk-margin-small-bottom">          
-              <input class="uk-radio" type="radio" name="${maCauHoi}" style="margin-left: 40px;"/>
-              <input className="uk-input" type="text" style="width: 65%;"/>
-          </div>
-        </div>
-        <button id="themdapan_${maCauHoi}" type="button" style="margin-left: 60px;cursor: pointer;">
-          Thêm đáp án
-        </button>
-      </div>`,
-    );
-
-    const btnThem = document.getElementById(`themdapan_${maCauHoi}`);
-    btnThem.addEventListener("click", themDapAn);
-
-    const btnXoa = document.getElementById(`xoacauhoi_${maCauHoi}`);
-    btnXoa.addEventListener("click", xoaCauHoi);
-
-    const ddlLoai = document.getElementById(`loaicauhoi_${maCauHoi}`);
-    ddlLoai.addEventListener("change", thayDoiLoaiCauHoi);
-
-    thayDoiSoLuong();
-
-    setMaCauHoi(maCauHoi + 1);
-  };
-
-  const xoaCauHoi = (e) => {
-    const ma = e.target.id.split("_")[1];
-    document.getElementById(`cauhoi_${ma}`).remove();
-    thayDoiSoLuong();
-  };
-
-  const thayDoiLoaiCauHoi = (e) => {
-    const ma = e.target.id.split("_")[1];
-    const dsDapAn = document.getElementById(`dsdapan_${ma}`);
-    const btnThem = document.getElementById(`themdapan_${ma}`);
-
-    if (e.target.value === "1") {
-      dsDapAn.style.display = "";
-      btnThem.style.display = "";
-    } else {
-      dsDapAn.style.display = "none";
-      btnThem.style.display = "none";
-    }
-
-    thayDoiSoLuong();
-  };
-
-  const thayDoiSoLuong = () => {
-    let label = 1;
-    let slTracNghiem = 0;
-    let slTuLuan = 0;
-
-    const els = document.getElementById("cauhoi").children;
-    for (const el of els) {
-      const ch = el.children[0];
-      ch.children[0].textContent = label;
-      if (ch.children[2].children[1].value === "1") {
-        slTracNghiem++;
-      } else {
-        slTuLuan++;
-      }
-      label++;
-    }
-
-    const diemTN = document.getElementById("diemtracnghiem").value;
-    const diemTL = document.getElementById("diemtuluan").value;
-    setSoLuongTracNghiem(slTracNghiem);
-    setSoLuongTuLuan(slTuLuan);
-    setDiemTungCauTracNghiem(slTracNghiem != 0 ? diemTN / slTracNghiem : 0);
-    setDiemTungCauTuLuan(slTuLuan != 0 ? diemTL / slTuLuan : 0);
-  };
-
-  const getChiTietDeThi = async () => {
+  useEffect(async () => {
     const token = await getToken();
-
-    const deThi = await getAPIWithToken(
-      `/dethi/layChiTietDeThi?id=${examId}`,
-      token,
-    );
-
-    const data = deThi?.data;
-    setTenDeThi(data.tieuDe);
-    setDoKho(data.doKho);
-    setThoiGianLam(data.thoiGianLam);
-    setMoTaDeThi(data.moTaDeThi);
-    setSoLuongTracNghiem(data.soLuongTracNghiem);
-    setSoLuongTuLuan(data.soLuongTuLuan);
-    setDiemTracNghiem(data.diemTracNghiem);
-    setDiemTuLuan(data.diemTuLuan);
-    setDiemTungCauTracNghiem(data.diemTungCauTracNghiem);
-    setDiemTungCauTuLuan(data.diemTungCauTuLuan);
-    setMaCauHoi(data.dsCauhoi.length + 1);
-    hienThiCauHoi(data.dsCauhoi);
-  };
-
-  const hienThiCauHoi = (dsCauHoi) => {
-    const el = document.getElementById("cauhoi");
-    let maCauHoi = 1;
-    for (const ch of dsCauHoi) {
-      el.insertAdjacentHTML(
-        "beforeend",
-        `<div id="cauhoi_${maCauHoi}" style="margin-bottom: inherit;">
-        <div className="uk-width-1-1 uk-margin-small-bottom">
-            <span style="width: 5%;text-align: right;">${maCauHoi}</span>
-            <input className="uk-input" type="text" style="width: 70%;" value="${ch.noiDung}"/>
-            <div style="display: inline;padding-left: 100px;">
-              <span>Loại câu hỏi</span>
-              <select id="loaicauhoi_${maCauHoi}" className="uk-select">
-                <option value="1">Trắc nghiệm</option>
-                <option value="2">Tự luận</option>
-              </select>
-              <span id="xoacauhoi_${maCauHoi}" style="margin-left: 35px;color: red;cursor: pointer;"><span uk-icon="trash" style="pointer-events: none;"></span></span>
-            </div>
-        </div>
-        <div id="dsdapan_${maCauHoi}">
-        </div>
-        <button id="themdapan_${maCauHoi}" type="button" style="margin-left: 60px;cursor: pointer;">
-          Thêm đáp án
-        </button>
-      </div>`,
-      );
-
-      if (ch.dsDapAn.length > 0) {
-        const dsDA = document.getElementById(`dsdapan_${maCauHoi}`);
-        for (const da of ch.dsDapAn) {
-          dsDA.insertAdjacentHTML(
-            "beforeend",
-            `<div className="uk-width-1-1 uk-margin-small-bottom">
-                <input class="uk-radio" type="radio" name="${maCauHoi}" style="margin-left: 40px;"/>
-                <input className="uk-input" type="text" style="width: 65%;" value="${da.noiDung}"/>
-            </div>`,
-          );
-        }
-      }
-
-      const btnThem = document.getElementById(`themdapan_${maCauHoi}`);
-      btnThem.addEventListener("click", themDapAn);
-
-      const btnXoa = document.getElementById(`xoacauhoi_${maCauHoi}`);
-      btnXoa.addEventListener("click", xoaCauHoi);
-
-      const ddlLoai = document.getElementById(`loaicauhoi_${maCauHoi}`);
-      ddlLoai.addEventListener("change", thayDoiLoaiCauHoi);
-
-      maCauHoi++;
+    if (token) {
+      settoken(token);
     }
-  };
+  }, []);
 
   useEffect(async () => {
-    await getMonHoc();
-    await getDoKho();
-    if (examId) {
-      await getChiTietDeThi();
+    if (token) {
+      const lstMonHoc = await getAPIWithToken(
+        "/chuyende/monhocnguoidung",
+        token,
+      );
+      setMonhocs(lstMonHoc.data);
+      const lstDoKho = await getAPIWithToken("/dokho/layTatCaDoKho", token);
+      setdoKhos(lstDoKho.data);
+      setloading(false);
     }
-    setLoading(false);
-  }, []);
+  }, [token]);
+
+  const renderQuestionaire = () => {
+    return (
+      <div id="cauhoi" className="uk-margin">
+        <h4>Danh sách câu hỏi</h4>
+        {questionList.map((question, index) => {
+          const { type, id } = question;
+          const renderQuestionIndividually = () => {
+            switch (type) {
+              case questionType.MULTIPLE_CHOICE:
+                return (
+                  <MultipleChoiceQuestionBlock
+                    ref={(element) => (questionRefs.current[index] = element)}
+                    onRemove={() => onRemoveQuestion(question)}
+                    publicButtonDisabled
+                  />
+                );
+              case questionType.ESSAY:
+                return (
+                  <EssayQuestionBlock
+                    ref={(element) => (questionRefs.current[index] = element)}
+                    onRemove={() => onRemoveQuestion(question)}
+                    publicButtonDisabled
+                  />
+                );
+              default:
+                return null;
+            }
+          };
+          return (
+            <div key={id}>
+              <p>Câu hỏi {id}</p>
+              <div className="uk-margin">
+                <label className="uk-form-label" htmlFor="form-horizontal-text">
+                  Loại câu hỏi
+                </label>
+                <div className="uk-form-controls">
+                  <select
+                    className="uk-select"
+                    value={type}
+                    onChange={(e) => {
+                      onQuestionTypeChange(question, e.target.value);
+                    }}
+                    onBlur={() => {}}
+                  >
+                    <option value={questionType.MULTIPLE_CHOICE}>
+                      Trắc nghiệm
+                    </option>
+                    <option value={questionType.ESSAY}>Tự luận</option>
+                  </select>
+                </div>
+              </div>
+              {renderQuestionIndividually()}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <>
       <div className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1">
+        {/* label */}
         <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
           {examId ? "Cập nhật đề thi" : "Tạo đề thi"}
         </p>
 
-        <form className="uk-form-horizontal uk-margin-large">
+        {/* content */}
+        <form className="uk-form-horizontal">
           <fieldset className="uk-fieldset">
+            {/* exam details */}
             <div className="uk-margin">
               <label className="uk-form-label" htmlFor="form-horizontal-text">
                 Tên đề thi
@@ -403,7 +412,6 @@ const ExamAdd = ({ examId }) => {
                 />
               </div>
             </div>
-
             <div className="uk-margin">
               <label className="uk-form-label" htmlFor="form-horizontal-text">
                 Môn học
@@ -415,6 +423,7 @@ const ExamAdd = ({ examId }) => {
                   onChange={(e) => {
                     setMaChuyenDe(e.target.value);
                   }}
+                  onBlur={() => {}}
                 >
                   <option disabled></option>
                   {monHocs &&
@@ -426,7 +435,6 @@ const ExamAdd = ({ examId }) => {
                 </select>
               </div>
             </div>
-
             <div className="uk-margin">
               <label className="uk-form-label" htmlFor="form-horizontal-text">
                 Mức độ
@@ -438,6 +446,7 @@ const ExamAdd = ({ examId }) => {
                   onChange={(e) => {
                     setDoKho(e.target.value);
                   }}
+                  onBlur={() => {}}
                 >
                   <option disabled></option>
                   {doKhos.map((item, index) => (
@@ -448,14 +457,13 @@ const ExamAdd = ({ examId }) => {
                 </select>
               </div>
             </div>
-
             <div className="uk-margin">
               <label className="uk-form-label" htmlFor="form-horizontal-text">
                 Thời gian làm bài
               </label>
               <div className="uk-form-controls">
                 <input
-                  className="uk-input uk-form-width-small"
+                  className="uk-input uk-form-width-small uk-margin-right"
                   type="number"
                   min="1"
                   value={thoiGianLam}
@@ -466,7 +474,6 @@ const ExamAdd = ({ examId }) => {
                 <span>phút</span>
               </div>
             </div>
-
             <div className="uk-margin">
               <label className="uk-form-label" htmlFor="form-horizontal-text">
                 Ghi chú
@@ -482,15 +489,15 @@ const ExamAdd = ({ examId }) => {
               ></textarea>
             </div>
 
-            <div id="cauhoi" className="uk-margin"></div>
-
+            {/* exam questionaire */}
+            {renderQuestionaire()}
             <div className="uk-flex uk-flex-center">
               <div className="uk-card-body">
                 <button
                   className="uk-button"
                   style={{ backgroundColor: "#32d296", color: "#FFF" }}
-                  onClick={(e) => {
-                    themCauHoi(e);
+                  onClick={() => {
+                    onAddQuestion();
                   }}
                 >
                   Thêm mới câu hỏi
@@ -507,6 +514,7 @@ const ExamAdd = ({ examId }) => {
               </div>
             </div>
 
+            {/* exam grading */}
             <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
               <div className="uk-width-1-4@s uk-display-inline-block">
                 <span className="uk-display-inline-block uk-width-3-5">
@@ -536,9 +544,6 @@ const ExamAdd = ({ examId }) => {
                     value={diemTracNghiem}
                     onChange={(e) => {
                       setDiemTracNghiem(e.target.value);
-                      setDiemTungCauTracNghiem(
-                        e.target.value / soLuongTracNghiem,
-                      );
                     }}
                   />
                 </div>
@@ -588,7 +593,6 @@ const ExamAdd = ({ examId }) => {
                     value={diemTuLuan}
                     onChange={(e) => {
                       setDiemTuLuan(e.target.value);
-                      setDiemTungCauTuLuan(e.target.value / soLuongTuLuan);
                     }}
                   />
                 </div>
@@ -609,6 +613,7 @@ const ExamAdd = ({ examId }) => {
               </div>
             </div>
 
+            {/* exam list creation */}
             <div className="uk-margin uk-grid-small uk-child-width-auto uk-grid">
               <label>
                 <input
@@ -639,16 +644,13 @@ const ExamAdd = ({ examId }) => {
               </div>
             </div>
 
+            {/* submit button */}
             <div className="uk-flex uk-flex-center">
               <div className="uk-card-body">
                 <button
                   className="uk-button"
                   style={{ backgroundColor: "#32d296", color: "#FFF" }}
-                  onClick={async (e) => {
-                    e.preventDefault();
-                    setDsCauHoi();
-                    await taoDeThi();
-                  }}
+                  onClick={onSubmit}
                 >
                   {examId ? "Cập nhật" : "Lưu"}
                 </button>
