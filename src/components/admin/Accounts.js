@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "gatsby";
 
+import PaginationButtonGroup from "../common/PaginationButtonGroup";
 import { getUser } from "../../utils/auth";
 import { getAPIWithToken } from "../../utils/api";
 import { userType, userStatus } from "../../utils/constants";
@@ -22,7 +23,7 @@ const AdminAccounts = () => {
       if (token) {
         setLoading(true);
         const response = await getAPIWithToken(
-          `/nguoidung?quyen=${type}&&trangthai=${status}&&timkiem=${searchString}`,
+          `/users?quyen=${type}&&trangthai=${status}&&timkiem=${searchString}`,
           token,
         );
         numOfPage.current =
@@ -199,48 +200,13 @@ const AdminAccounts = () => {
         )}
       </div>
       <ul className="uk-pagination uk-flex-center" uk-margin="">
-        <li className={`${currentPage === 1 ? "uk-disabled" : ""}`}>
-          <button
-            className="uk-button uk-button-default uk-button-small"
-            onClick={onPrev}
-          >
-            <span className="uk-icon" uk-icon="icon: chevron-left"></span>
-          </button>
-        </li>
-        {Array.from({ length: numOfPage.current }, (_, i) => i + 1).map(
-          (num) => {
-            const isActiveButton = currentPage === num;
-            return (
-              <li
-                key={num}
-                className={`${isActiveButton ? "uk-disabled" : ""}`}
-              >
-                <button
-                  className="uk-button uk-button-default uk-button-small"
-                  style={{
-                    ...paginationButton,
-                    ...(isActiveButton && activeButton),
-                  }}
-                  onClick={() => onChangePage(num)}
-                >
-                  {num}
-                </button>
-              </li>
-            );
-          },
-        )}
-        <li
-          className={`${
-            currentPage === numOfPage.current ? "uk-disabled" : ""
-          }`}
-        >
-          <button
-            className="uk-button uk-button-default uk-button-small"
-            onClick={onNext}
-          >
-            <span className="uk-icon" uk-icon="icon: chevron-right"></span>
-          </button>
-        </li>
+        <PaginationButtonGroup
+          onChangePage={onChangePage}
+          onNext={onNext}
+          onPrev={onPrev}
+          numOfPage={numOfPage.current}
+          currentPage={currentPage}
+        />
       </ul>
     </div>
   );

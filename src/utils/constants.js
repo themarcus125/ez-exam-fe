@@ -2,11 +2,11 @@ export const navBarCategories = {
   giaovien: [
     {
       title: "Ngân hàng câu hỏi",
-      path: "/",
+      path: "",
       subCategories: [
         {
           title: "Thêm câu hỏi",
-          path: "/",
+          path: "/questionaire/add",
         },
         {
           title: "Danh sách môn học",
@@ -46,7 +46,6 @@ export const navBarCategories = {
         },
       ],
     },
-
     {
       title: "Kiểm tra kết quả thi",
       path: "/",
@@ -58,8 +57,12 @@ export const navBarCategories = {
   ],
   sinhvien: [
     {
+      title: "Phòng thi",
+      path: "/exam-room",
+    },
+    {
       title: "Thực hiệm kiểm tra",
-      path: "/",
+      path: "/exam-taker",
     },
     {
       title: "Xem kết quả kiểm tra",
@@ -69,11 +72,11 @@ export const navBarCategories = {
   admin: [
     {
       title: "Ngân hàng câu hỏi",
-      path: "/",
+      path: "",
       subCategories: [
         {
           title: "Thêm câu hỏi",
-          path: "/",
+          path: "/questionaire/add",
         },
         {
           title: "Danh sách môn học",
@@ -99,21 +102,6 @@ export const navBarCategories = {
         },
       ],
     },
-    {
-      title: "Quản lý phòng thi",
-      path: "",
-      subCategories: [
-        {
-          title: "Danh sách phòng thi",
-          path: "/examroom",
-        },
-        {
-          title: "Tạo phòng thi",
-          path: "/examroom/add",
-        },
-      ],
-    },
-
     {
       title: "Kiểm tra kết quả thi",
       path: "/",
@@ -139,6 +127,13 @@ export const userRoleToPath = {
   admin: "admin",
 };
 
+export const questionType = {
+  multipleChoice: "MULTIPLE_CHOICE",
+  essay: "ESSAY",
+  MULTIPLE_CHOICE: 1,
+  ESSAY: 2,
+};
+
 export const userType = {
   SINHVIEN: "sinhvien",
   GIAOVIEN: "giaovien",
@@ -148,4 +143,10 @@ export const userType = {
 export const userStatus = {
   ACTIVE: 0,
   INACTIVE: 1,
+};
+
+export const questionLevel = {
+  EASY: 1,
+  MEDIUM: 2,
+  HARD: 3,
 };
