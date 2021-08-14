@@ -23,7 +23,7 @@ const AdminAccounts = () => {
       if (token) {
         setLoading(true);
         const response = await getAPIWithToken(
-          `/nguoidung?quyen=${type}&&trangthai=${status}&&timkiem=${searchString}`,
+          `/users?quyen=${type}&&trangthai=${status}&&timkiem=${searchString}`,
           token,
         );
         numOfPage.current =
