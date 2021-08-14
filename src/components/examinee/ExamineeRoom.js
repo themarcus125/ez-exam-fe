@@ -1,12 +1,21 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Link } from "gatsby";
+import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { getAPIWithToken } from "../../utils/api";
-import { getToken, getUser } from "../../utils/auth";
-import Config from "../../utils/config";
+import { getToken } from "../../utils/auth";
 
 const ExamRoom = () => {
+    const [loading, setLoading] = useState(true);
     const [lstExamRoom, setLstExamRoom] = useState([]);
+    useEffect(async () => {
+        setLoading(true);
+        const token = await getToken();
+        const tmp_lstExamRoom = await getAPIWithToken(
+            "/sinhvien/phongthi",
+            token,
+        );
+        setLstExamRoom(tmp_lstExamRoom.data);
+        setLoading(false);
+    }, []);
 
     return (
         <div
@@ -17,48 +26,43 @@ const ExamRoom = () => {
                 Danh sách phòng thi
             </p>
             <div
-                className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom"
-                style={{ marginLeft: 100, marginRight: 100 }}
+                className="uk-margin-bottom"
+                style={{ marginLeft: 80, marginRight: 80 }}
             >
                 <div className="uk-grid-column-small uk-grid-row-large uk-child-width-1-3@s uk-text-center" uk-grid="true">
-                    <div>
-                        <div className="uk-card uk-card-default uk-card-body uk-flex uk-flex-row uk-flex-between">
-                            <a className="uk-width-1-3@m">
-                                <span uk-icon="home"></span>
-                            </a>
-                            <hr class="uk-divider-vertical"></hr>
-                            <div className="uk-width-2-3@m">
-                                <label className="uk-form-label uk-margin-small-right"><b>Tên phòng thi</b></label>
-                                <label className="uk-form-label">Tên phòng thi</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <div className="uk-card uk-card-default uk-card-body">Item</div>
-                    </div>
-                    <div>
-                        <div className="uk-card uk-card-default uk-card-body">Item</div>
-                    </div>
-                    <div>
-                        <div className="uk-card uk-card-default uk-card-body">Item</div>
-                    </div>
-                    <div>
-                        <div className="uk-card uk-card-default uk-card-body">Item</div>
-                    </div>
-                    <div>
-                        <div className="uk-card uk-card-default uk-card-body">Item</div>
-                    </div>
-                    <div>
-                        <div className="uk-card uk-card-default uk-card-body">Item</div>
-                    </div>
-                    <div>
-                        <div className="uk-card uk-card-default uk-card-body">Item</div>
-                    </div>
-                    <div>
-                        <div className="uk-card uk-card-default uk-card-body">Item</div>
-                    </div>
+                    {!loading &&
+                        lstExamRoom?.map((item) => {
+                            return (
+                                <div key={item.id}>
+                                    <div className="uk-card uk-card-default uk-flex uk-flex-row uk-flex-between examineeroom_grid">
+                                        <span className="icon uk-width-1-3@m" uk-icon="home"></span>
+                                        <hr className="uk-divider-vertical"></hr>
+                                        <div className="uk-width-2-3@m">
+                                            <div>
+                                                <label className="uk-form-label uk-margin-small-right" style={{ fontSize: "large" }}><b>{item.tenPhong}</b></label>
+                                            </div>
+                                            <div>
+                                                <label className="uk-form-label uk-margin-small-right">Ngày thi:</label>
+                                                <label className="uk-form-label"><b>{moment(item.ngayThi).format("DD/MM/YYYY")}</b></label>
+                                            </div>
+                                            <div>
+                                                <label className="uk-form-label uk-margin-small-right">Môn học:</label>
+                                                <label className="uk-form-label"><b>{item.tenMonHoc}</b></label>
+                                            </div>
+                                            <div>
+                                                <label className="uk-form-label uk-margin-small-right">Giờ thi:</label>
+                                                <label className="uk-form-label"><b>{item.thoiGianBatDauThi}</b></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
                 </div>
             </div>
+            {loading && (
+                <div className="uk-flex uk-flex-center" uk-spinner=""></div>
+            )}
         </div>
     );
 };
