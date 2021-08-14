@@ -1,8 +1,9 @@
 import React, { forwardRef, useImperativeHandle, useState } from "react";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import loadable from "@loadable/component";
 
-const EssayQuestionBlock = forwardRef((props, ref) => {
+const LoadableEditor = loadable(() => import("./Editor"));
+
+const EssayQuestionBlock = (props, ref) => {
   const { onRemove } = props;
   const [title, setTitle] = useState("");
 
@@ -43,26 +44,10 @@ const EssayQuestionBlock = forwardRef((props, ref) => {
         </div>
       </div>
       <div style={{ border: "1px solid black" }}>
-        <CKEditor
-          editor={ClassicEditor}
-          data={title}
-          onChange={onChangeTitle}
-          config={{
-            toolbar: [
-              "heading",
-              "|",
-              "bold",
-              "italic",
-              "link",
-              "bulletedList",
-              "numberedList",
-              "blockQuote",
-            ],
-          }}
-        />
+        <LoadableEditor title={title} onChangeTitle={onChangeTitle} />
       </div>
     </div>
   );
-});
+};
 
-export default EssayQuestionBlock;
+export default forwardRef(EssayQuestionBlock);
