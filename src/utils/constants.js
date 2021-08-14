@@ -100,21 +100,6 @@ export const navBarCategories = {
       ],
     },
     {
-      title: "Quản lý phòng thi",
-      path: "",
-      subCategories: [
-        {
-          title: "Danh sách phòng thi",
-          path: "/examroom",
-        },
-        {
-          title: "Tạo phòng thi",
-          path: "/examroom/add",
-        },
-      ],
-    },
-
-    {
       title: "Kiểm tra kết quả thi",
       path: "/",
     },
