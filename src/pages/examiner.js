@@ -9,6 +9,9 @@ import Exam from "../components/common/Exam";
 import ExamAdd from "../components/common/ExamAdd";
 import ExamRoom from "../components/common/ExamRoom";
 import ExamRoomAdd from "../components/common/ExamRoomAdd";
+import Question from "../components/common/Question";
+import QuestionAdd from "../components/common/QuestionAdd";
+import QuestionList from "../components/common/QuestionList";
 import ExaminerHome from "../components/examiner/ExaminerHome";
 
 const ExaminerDashboard = () => {
@@ -52,6 +55,25 @@ const ExaminerDashboard = () => {
           component={ExamRoomAdd}
           title="Thêm phòng thi"
         />
+        <PrivateRoute
+          role={role}
+          path="/questionaire"
+          component={Question}
+          title="Danh sách câu hỏi"
+        />
+        <PrivateRoute
+          role={role}
+          path="/questionaire/add"
+          component={QuestionAdd}
+          title="Thêm câu hỏi"
+        />
+        <PrivateRoute
+          role={role}
+          path="/question-list"
+          component={QuestionList}
+          title="Bộ câu hỏi"
+        />
+
         <PrivateRoute
           role={role}
           path="/examroom/:roomId"

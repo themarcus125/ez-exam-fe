@@ -9,8 +9,9 @@ import PrivateRoute from "../components/common/PrivateRoute";
 import Exam from "../components/common/Exam";
 import ExamAdd from "../components/common/ExamAdd";
 import AccountFromFile from "../components/admin/AccountFromFile";
-import ExamRoom from "../components/common/ExamRoom";
-import ExamRoomAdd from "../components/common/ExamRoomAdd";
+import Question from "../components/common/Question";
+import QuestionAdd from "../components/common/QuestionAdd";
+import QuestionList from "../components/common/QuestionList";
 
 const AdminDashboard = () => {
   const role = ADMIN_ROLE;
@@ -55,18 +56,6 @@ const AdminDashboard = () => {
         />
         <PrivateRoute
           role={role}
-          path="/examroom"
-          component={ExamRoom}
-          title="Phòng thi"
-        />
-        <PrivateRoute
-          role={role}
-          path="/examroom/add"
-          component={ExamRoomAdd}
-          title="Thêm phòng thi"
-        />
-        <PrivateRoute
-          role={role}
           path="/account/add-from-file"
           component={AccountFromFile}
           title="Thêm tài khoản từ file"
@@ -79,14 +68,21 @@ const AdminDashboard = () => {
         />
         <PrivateRoute
           role={role}
-          path="/examroom/:roomId"
-          component={ExamRoomAdd}
-          title="Cập nhật phòng thi"
+          path="/questionaire"
+          component={Question}
+          title="Danh sách câu hỏi"
         />
         <PrivateRoute
           role={role}
-          path="/examroom/:roomId"
-          component={ExamRoomAdd}
+          path="/questionaire/add"
+          component={QuestionAdd}
+          title="Thêm câu hỏi"
+        />
+        <PrivateRoute
+          role={role}
+          path="/question-list"
+          component={QuestionList}
+          title="Bộ câu hỏi"
         />
       </Router>
     </AdminLayout>

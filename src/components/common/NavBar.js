@@ -69,13 +69,32 @@ const NavBar = () => {
             })}
           </ul>
         </div>
-        <div className="uk-navbar-right uk-margin-small-right">
+        <div className="uk-navbar-right uk-margin-right">
           <ul className="uk-navbar-nav">
             <li>
-              <span>
-                {userName}
-                <span className="uk-icon" uk-icon="icon: triangle-down"></span>
-              </span>
+              <div className="uk-flex uk-flex-middle">
+                <div className="uk-width-auto">
+                  <div
+                    className="uk-border-circle uk-flex uk-flex-center uk-flex-middle uk-margin-small-right"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      backgroundColor: "#32d296",
+                      textTransform: "uppercase",
+                      color: "#FFFFFF",
+                    }}
+                  >
+                    {userName.slice(0, 2)}
+                  </div>
+                </div>
+                <span>
+                  {userName}
+                  <span
+                    className="uk-icon"
+                    uk-icon="icon: triangle-down"
+                  ></span>
+                </span>
+              </div>
               <div className="uk-navbar-dropdown">
                 <ul className="uk-nav uk-navbar-dropdown-nav">
                   <li>
