@@ -19,12 +19,11 @@ const _questionTemplate = {
 };
 
 const ExamAdd = ({ examId }) => {
+  const doKho = 1;
   const [monHocs, setMonhocs] = useState([]);
-  const [doKhos, setdoKhos] = useState([]);
 
   const [tenDeThi, setTenDeThi] = useState("");
   const [maChuyenDe, setMaChuyenDe] = useState("");
-  const [doKho, setDoKho] = useState("");
   const [thoiGianLam, setThoiGianLam] = useState(0);
   const [moTaDeThi, setMoTaDeThi] = useState("");
 
@@ -153,19 +152,22 @@ const ExamAdd = ({ examId }) => {
   };
 
   useEffect(() => {
-    const questionCounter = questionList.reduce(
-      (counter, question) => {
-        return {
-          multiple:
-            counter.multiple +
-            (question.type === questionType.MULTIPLE_CHOICE ? 1 : 0),
-          essay: counter.essay + (question.type === questionType.ESSAY ? 1 : 0),
-        };
-      },
-      { multiple: 0, essay: 0 },
-    );
-    setSoLuongTracNghiem(questionCounter.multiple);
-    setSoLuongTuLuan(questionCounter.essay);
+    if (questionList?.length > 0) {
+      const questionCounter = questionList.reduce(
+        (counter, question) => {
+          return {
+            multiple:
+              counter.multiple +
+              (question.type === questionType.MULTIPLE_CHOICE ? 1 : 0),
+            essay:
+              counter.essay + (question.type === questionType.ESSAY ? 1 : 0),
+          };
+        },
+        { multiple: 0, essay: 0 },
+      );
+      setSoLuongTracNghiem(questionCounter.multiple);
+      setSoLuongTuLuan(questionCounter.essay);
+    }
   }, [questionList]);
 
   useEffect(() => {
@@ -239,6 +241,7 @@ const ExamAdd = ({ examId }) => {
   };
 
   const onSubmit = async (e) => {
+    e.preventDefault();
     const questionDataList = getQuestionDataFromDOM(e);
     const respondPostNewQuestions = await onPostNewQuestions(questionDataList);
     const updatedQuestionList = appendAdditionalPropsToQuestionList(
@@ -321,8 +324,6 @@ const ExamAdd = ({ examId }) => {
         token,
       );
       setMonhocs(lstMonHoc.data);
-      const lstDoKho = await getAPIWithToken("/dokho/layTatCaDoKho", token);
-      setdoKhos(lstDoKho.data);
       setloading(false);
     }
   }, [token]);
@@ -395,7 +396,7 @@ const ExamAdd = ({ examId }) => {
         </p>
 
         {/* content */}
-        <form className="uk-form-horizontal">
+        <div className="uk-form-horizontal">
           <fieldset className="uk-fieldset">
             {/* exam details */}
             <div className="uk-margin">
@@ -438,35 +439,12 @@ const ExamAdd = ({ examId }) => {
             </div>
             <div className="uk-margin">
               <label className="uk-form-label" htmlFor="form-horizontal-text">
-                Mức độ
-              </label>
-              <div className="uk-form-controls">
-                <select
-                  className="uk-select"
-                  value={doKho}
-                  onChange={(e) => {
-                    setDoKho(e.target.value);
-                  }}
-                  onBlur={() => {}}
-                >
-                  <option disabled></option>
-                  {doKhos.map((item, index) => (
-                    <option value={item.id} key={index}>
-                      {item.ten}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div className="uk-margin">
-              <label className="uk-form-label" htmlFor="form-horizontal-text">
                 Thời gian làm bài
               </label>
               <div className="uk-form-controls">
                 <input
                   className="uk-input uk-form-width-small uk-margin-right"
                   type="number"
-                  min="1"
                   value={thoiGianLam}
                   onChange={(e) => {
                     setThoiGianLam(e.target.value);
@@ -659,7 +637,7 @@ const ExamAdd = ({ examId }) => {
               </div>
             </div>
           </fieldset>
-        </form>
+        </div>
       </div>
       <LoadingOverlay isLoading={loading} />
       <QuestionSelectModal type={maChuyenDe || 1} level={doKho || 1} />
