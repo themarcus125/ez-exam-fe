@@ -342,9 +342,12 @@ const ExamAdd = ({ examId }) => {
               ch.noiDung
             }" disabled/>
             <div style="display: inline;padding-left: 100px;">
-              <span>Loại câu hỏi: ${
-                ch.loaiCauHoi === 1 ? "Trắc nghiệm" : "Tự luận"
-              }</span>
+              <span>Loại câu hỏi</span>
+              <select className="uk-select" disabled>
+                <option value="${ch.loaiCauHoi}">${
+          ch.loaiCauHoi === 1 ? "Trắc nghiệm" : "Tự luận"
+        }</option>
+              </select>
               <span id="xoacauhoi_${maCauHoi}" style="margin-left: 35px;color: red;cursor: pointer;"><span uk-icon="trash" style="pointer-events: none;"></span></span>
             </div>
         </div>
@@ -447,7 +450,7 @@ const ExamAdd = ({ examId }) => {
                     setThoiGianLam(e.target.value);
                   }}
                 />
-                <span>phút</span>
+                <span style={{ marginLeft: "15px" }}>phút</span>
               </div>
             </div>
 
@@ -458,7 +461,6 @@ const ExamAdd = ({ examId }) => {
               <textarea
                 className="uk-textarea"
                 rows="5"
-                placeholder="Textarea"
                 value={moTaDeThi}
                 onChange={(e) => {
                   setMoTaDeThi(e.target.value);

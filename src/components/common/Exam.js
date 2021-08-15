@@ -201,7 +201,7 @@ const Exam = () => {
           <input
             className="uk-search-input uk-width-4-5"
             type="search"
-            placeholder="Search"
+            placeholder="Tìm kiếm"
             style={{
               border: "solid 0.5px #666",
             }}
