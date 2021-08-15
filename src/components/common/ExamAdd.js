@@ -10,10 +10,8 @@ import LoadingOverlay from "./LoadingOverlay";
 const ExamAdd = ({ examId }) => {
   const [loading, setLoading] = useState(true);
   const [monHocs, setMonhocs] = useState([]);
-  const [doKhos, setdoKhos] = useState([]);
   const [tenDeThi, setTenDeThi] = useState("");
   const [maChuyenDe, setMaChuyenDe] = useState("");
-  const [doKho, setDoKho] = useState("");
   const [thoiGianLam, setThoiGianLam] = useState(0);
   const [moTaDeThi, setMoTaDeThi] = useState("");
   const [soLuongTracNghiem, setSoLuongTracNghiem] = useState(0);
@@ -30,16 +28,13 @@ const ExamAdd = ({ examId }) => {
   const [dsCauHoiTN, setDsCauHoiTN] = useState([]);
   const [dsCauHoiTL, setDsCauHoiTL] = useState([]);
 
+  const [dsCauhoiDaLuu, setDsCauhoiDaLuu] = useState([]);
+  const [coDoiCauHoi, setCoDoiCauHoi] = useState(false);
+
   const getMonHoc = async () => {
     const token = await getToken();
     const lstMonHoc = await getAPIWithToken("/chuyende/monhocnguoidung", token);
     setMonhocs(lstMonHoc.data);
-  };
-
-  const getDoKho = async () => {
-    const token = await getToken();
-    const lstDoKho = await getAPIWithToken("/dokho/layTatCaDoKho", token);
-    setdoKhos(lstDoKho.data);
   };
 
   const taoDeThi = async () => {
@@ -50,7 +45,7 @@ const ExamAdd = ({ examId }) => {
       {
         maChuyenDe: maChuyenDe,
         loaiCauHoi: 1,
-        doKho: doKho,
+        doKho: 1,
         dsCauHoi: dsCauHoiTN,
       },
       token,
@@ -61,7 +56,7 @@ const ExamAdd = ({ examId }) => {
       {
         maChuyenDe: maChuyenDe,
         loaiCauHoi: 2,
-        doKho: doKho,
+        doKho: 1,
         dsCauHoi: dsCauHoiTL,
       },
       token,
@@ -70,32 +65,26 @@ const ExamAdd = ({ examId }) => {
     const dataTN = await responseThemCauTN.json();
     const dataTL = await responseThemCauTL.json();
 
-    setDanhSachCauHoi([]);
-
     for (const ch of dataTN.data) {
       const cauHoi = {
         maCauHoi: ch.id,
         loaiCauHoi: ch.loaiCauHoi,
         dsDapAn: [],
       };
-
       for (const da of ch.dsDapAn) {
         cauHoi.dsDapAn.push({
           maDapAn: da.id,
           loaiDapAn: da.loaiDapAn,
         });
       }
-
       danhSachCauHoi.push(cauHoi);
     }
-
     for (const ch of dataTL.data) {
       const cauHoi = {
         maCauHoi: ch.id,
         loaiCauHoi: ch.loaiCauHoi,
         dsDapAn: [],
       };
-
       danhSachCauHoi.push(cauHoi);
     }
 
@@ -106,10 +95,9 @@ const ExamAdd = ({ examId }) => {
           id: examId,
           tenDeThi: tenDeThi,
           maChuyenDe: maChuyenDe,
-          maDeThi: "Ma de thi",
           thoiGianLam: thoiGianLam,
           moTaDeThi: moTaDeThi,
-          doKho: doKho,
+          doKho: 1,
           soLuongTracNghiem: soLuongTracNghiem,
           soLuongTuLuan: soLuongTuLuan,
           diemTracNghiem: diemTracNghiem,
@@ -117,13 +105,12 @@ const ExamAdd = ({ examId }) => {
           diemTungCauTracNghiem: diemTungCauTracNghiem,
           diemTungCauTuLuan: diemTungCauTuLuan,
           coTaoBoDe: taoBoDe,
-          coDoiCauHoi: true,
+          coDoiCauHoi: coDoiCauHoi,
           soDe: soDe,
           danhSachCauHoi: danhSachCauHoi,
         },
         token,
       );
-
       if (responseCapNhat?.status === 200) {
         alert("Cập nhật đề thi thành công.");
       } else {
@@ -135,23 +122,21 @@ const ExamAdd = ({ examId }) => {
         {
           tenDeThi: tenDeThi,
           maChuyenDe: maChuyenDe,
-          maDeThi: "Ma de thi",
           thoiGianLam: thoiGianLam,
           moTaDeThi: moTaDeThi,
-          doKho: doKho,
+          doKho: 1,
           soLuongTracNghiem: soLuongTracNghiem,
           soLuongTuLuan: soLuongTuLuan,
           diemTracNghiem: diemTracNghiem,
           diemTuLuan: diemTuLuan,
           diemTungCauTracNghiem: diemTungCauTracNghiem,
           diemTungCauTuLuan: diemTungCauTuLuan,
-          taoBoDe: taoBoDe,
+          coTaoBoDe: taoBoDe,
           soDe: soDe,
           danhSachCauHoi: danhSachCauHoi,
         },
         token,
       );
-
       if (responseTaoDeThi?.status === 200) {
         alert("Tạo đề thi thành công.");
       } else {
@@ -166,21 +151,28 @@ const ExamAdd = ({ examId }) => {
     const els = document.getElementById("cauhoi").children;
 
     for (const el of els) {
-      const cauHoi = {
-        noiDung: el.children[0].children[1].value,
-      };
-      if (el.children[0].children[2].children[1].value === "1") {
-        cauHoi.dsDapAn = [];
-        for (const child of el.children[1].children) {
-          const da = {
-            noiDung: child.children[1].value,
-            loaiDapAn: Number(child.children[0].checked),
-          };
-          cauHoi.dsDapAn.push(da);
-        }
-        dsCauHoiTN.push(cauHoi);
+      if (el.getAttribute("name") != null) {
+        const cauHoi = dsCauhoiDaLuu.find(
+          (x) => x.maCauHoi === Number(el.getAttribute("name")),
+        );
+        danhSachCauHoi.push(cauHoi);
       } else {
-        dsCauHoiTL.push(cauHoi);
+        const cauHoi = {
+          noiDung: el.children[0].children[1].value,
+        };
+        if (el.children[0].children[2].children[1].value === "1") {
+          cauHoi.dsDapAn = [];
+          for (const child of el.children[1].children) {
+            const da = {
+              noiDung: child.children[1].value,
+              loaiDapAn: Number(child.children[0].checked),
+            };
+            cauHoi.dsDapAn.push(da);
+          }
+          dsCauHoiTN.push(cauHoi);
+        } else {
+          dsCauHoiTL.push(cauHoi);
+        }
       }
     }
   };
@@ -245,12 +237,19 @@ const ExamAdd = ({ examId }) => {
     thayDoiSoLuong();
 
     setMaCauHoi(maCauHoi + 1);
+    if (coDoiCauHoi === false) {
+      setCoDoiCauHoi(true);
+    }
   };
 
   const xoaCauHoi = (e) => {
     const ma = e.target.id.split("_")[1];
     document.getElementById(`cauhoi_${ma}`).remove();
     thayDoiSoLuong();
+
+    if (coDoiCauHoi === false) {
+      setCoDoiCauHoi(true);
+    }
   };
 
   const thayDoiLoaiCauHoi = (e) => {
@@ -304,7 +303,6 @@ const ExamAdd = ({ examId }) => {
 
     const data = deThi?.data;
     setTenDeThi(data.tieuDe);
-    setDoKho(data.doKho);
     setThoiGianLam(data.thoiGianLam);
     setMoTaDeThi(data.moTaDeThi);
     setSoLuongTracNghiem(data.soLuongTracNghiem);
@@ -315,6 +313,20 @@ const ExamAdd = ({ examId }) => {
     setDiemTungCauTuLuan(data.diemTungCauTuLuan);
     setMaCauHoi(data.dsCauhoi.length + 1);
     hienThiCauHoi(data.dsCauhoi);
+
+    for (const ch of data.dsCauhoi) {
+      const cauHoi = {
+        maCauHoi: ch.id,
+        loaiCauHoi: ch.loaiCauHoi,
+        dsDapAn: [],
+      };
+      if (ch.dsDapAn.length > 0) {
+        for (const da of ch.dsDapAn) {
+          cauHoi.dsDapAn.push({ maDapAn: da.id, loaiDapAn: da.loaiDapAn });
+        }
+      }
+      dsCauhoiDaLuu.push(cauHoi);
+    }
   };
 
   const hienThiCauHoi = (dsCauHoi) => {
@@ -323,24 +335,23 @@ const ExamAdd = ({ examId }) => {
     for (const ch of dsCauHoi) {
       el.insertAdjacentHTML(
         "beforeend",
-        `<div id="cauhoi_${maCauHoi}" style="margin-bottom: inherit;">
+        `<div id="cauhoi_${maCauHoi}" style="margin-bottom: inherit;" name="${
+          ch.id
+        }">
         <div className="uk-width-1-1 uk-margin-small-bottom">
             <span style="width: 5%;text-align: right;">${maCauHoi}</span>
-            <input className="uk-input" type="text" style="width: 70%;" value="${ch.noiDung}"/>
+            <input className="uk-input" type="text" style="width: 70%;" value="${
+              ch.noiDung
+            }" disabled/>
             <div style="display: inline;padding-left: 100px;">
-              <span>Loại câu hỏi</span>
-              <select id="loaicauhoi_${maCauHoi}" className="uk-select">
-                <option value="1">Trắc nghiệm</option>
-                <option value="2">Tự luận</option>
-              </select>
+              <span>Loại câu hỏi: ${
+                ch.loaiCauHoi === 1 ? "Trắc nghiệm" : "Tự luận"
+              }</span>
               <span id="xoacauhoi_${maCauHoi}" style="margin-left: 35px;color: red;cursor: pointer;"><span uk-icon="trash" style="pointer-events: none;"></span></span>
             </div>
         </div>
         <div id="dsdapan_${maCauHoi}">
         </div>
-        <button id="themdapan_${maCauHoi}" type="button" style="margin-left: 60px;cursor: pointer;">
-          Thêm đáp án
-        </button>
       </div>`,
       );
 
@@ -350,21 +361,19 @@ const ExamAdd = ({ examId }) => {
           dsDA.insertAdjacentHTML(
             "beforeend",
             `<div className="uk-width-1-1 uk-margin-small-bottom">
-                <input class="uk-radio" type="radio" name="${maCauHoi}" style="margin-left: 40px;"/>
-                <input className="uk-input" type="text" style="width: 65%;" value="${da.noiDung}"/>
+                <input class="uk-radio" type="radio" style="margin-left: 40px;" disabled ${
+                  da.loaiDapAn === 1 ? "checked" : ""
+                }/>
+                <input className="uk-input" type="text" style="width: 65%;" value="${
+                  da.noiDung
+                }" disabled/>
             </div>`,
           );
         }
       }
 
-      const btnThem = document.getElementById(`themdapan_${maCauHoi}`);
-      btnThem.addEventListener("click", themDapAn);
-
       const btnXoa = document.getElementById(`xoacauhoi_${maCauHoi}`);
       btnXoa.addEventListener("click", xoaCauHoi);
-
-      const ddlLoai = document.getElementById(`loaicauhoi_${maCauHoi}`);
-      ddlLoai.addEventListener("change", thayDoiLoaiCauHoi);
 
       maCauHoi++;
     }
@@ -372,7 +381,6 @@ const ExamAdd = ({ examId }) => {
 
   useEffect(async () => {
     await getMonHoc();
-    await getDoKho();
     if (examId) {
       await getChiTietDeThi();
     }
@@ -423,28 +431,6 @@ const ExamAdd = ({ examId }) => {
                         {item.tenChuyenDe}
                       </option>
                     ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="uk-margin">
-              <label className="uk-form-label" htmlFor="form-horizontal-text">
-                Mức độ
-              </label>
-              <div className="uk-form-controls">
-                <select
-                  className="uk-select"
-                  value={doKho}
-                  onChange={(e) => {
-                    setDoKho(e.target.value);
-                  }}
-                >
-                  <option disabled></option>
-                  {doKhos.map((item, index) => (
-                    <option value={item.id} key={index}>
-                      {item.ten}
-                    </option>
-                  ))}
                 </select>
               </div>
             </div>
