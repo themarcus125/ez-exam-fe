@@ -10,7 +10,13 @@ export const hideModal = (modalID) => {
   UIKit.modal(`#${modalID}`).hide();
 };
 
-const Modal = ({ modalID, title, description, onSave, children }) => {
+const Modal = ({
+  modalID,
+  title,
+  description,
+  onSave = () => {},
+  children,
+}) => {
   return (
     <ModalPortal modalID={modalID}>
       <div className="uk-modal-dialog uk-modal-body">

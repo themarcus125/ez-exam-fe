@@ -10,7 +10,13 @@ import { questionType } from "../../utils/constants";
 const QUESTION_PER_PAGE = 10;
 const token = getUser()?.tk ?? "";
 
-const QuestionTable = ({ type, level, isSelectable }) => {
+const QuestionTable = ({
+  type,
+  level,
+  isSelectable,
+  isQuestionChecked = () => {},
+  onCheckQuestion = () => {},
+}) => {
   const [questionList, setQuestionList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -57,8 +63,6 @@ const QuestionTable = ({ type, level, isSelectable }) => {
     }
   };
 
-  const onCheckQuestion = (e, id) => {};
-
   return (
     <Fragment>
       <div className="uk-margin-top" style={{ minHeight: 340 }}>
@@ -81,9 +85,9 @@ const QuestionTable = ({ type, level, isSelectable }) => {
                           <input
                             className="uk-checkbox"
                             type="checkbox"
-                            checked={false}
-                            onCheckQuestion={(e) =>
-                              onCheckQuestion(e, question.id)
+                            checked={() => isQuestionChecked(question)}
+                            onChange={(e) =>
+                              onCheckQuestion(e, question)
                             }
                           />
                         </CheckBoxColumn>
