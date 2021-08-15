@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "gatsby";
-import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
+import {
+  getAPIWithToken,
+  postAPIWithToken,
+  deleteAPIWithToken,
+} from "../../utils/api";
 import { getToken, getUser } from "../../utils/auth";
 import moment from "moment";
 import Config from "../../utils/config";
@@ -81,7 +85,6 @@ const Exam = () => {
         maChuyenDe: 1,
         thoiGianLam: data.thoiGianLam,
         moTaDeThi: data.moTaDeThi,
-        doKho: 1,
         soLuongTracNghiem: data.soLuongTracNghiem,
         soLuongTuLuan: data.soLuongTuLuan,
         diemTracNghiem: data.diemTracNghiem,
@@ -99,6 +102,22 @@ const Exam = () => {
       alert("Tạo bản sao thành công.");
     } else {
       alert("Đã xảy ra lỗi. Tạo bản sao thất bại.");
+    }
+  };
+
+  const xoaBoDe = async (maBoDe) => {
+    const token = await getToken();
+
+    const response = await deleteAPIWithToken(
+      `/dethi/xoaBoDeThi?maBoDe=${maBoDe}`,
+      token,
+    );
+
+    if (response?.status === 200) {
+      alert("Xóa đề thi thành công.");
+      await getDeThi(meta?.currentPage);
+    } else {
+      alert("Đã xảy ra lỗi. Xóa đề thi thất bại.");
     }
   };
 
@@ -259,6 +278,15 @@ const Exam = () => {
                             <Link to={`${url}/exam/${item.id}`}>
                               Xem chi tiết
                             </Link>
+                          </li>
+                          <li>
+                            <a
+                              onClick={() => {
+                                xoaBoDe(item.maBoDe);
+                              }}
+                            >
+                              Xóa đề thi
+                            </a>
                           </li>
                         </ul>
                       </div>
