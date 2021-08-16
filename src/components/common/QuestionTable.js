@@ -14,8 +14,8 @@ const QuestionTable = ({
   type,
   level,
   isSelectable,
-  isQuestionChecked = () => {},
   onCheckQuestion = () => {},
+  checkboxQuestionRef,
 }) => {
   const [questionList, setQuestionList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -83,12 +83,12 @@ const QuestionTable = ({
                       {isSelectable && (
                         <CheckBoxColumn className="uk-text-center">
                           <input
+                            ref={(el) => {
+                              checkboxQuestionRef.current[question.id] = el;
+                            }}
                             className="uk-checkbox"
                             type="checkbox"
-                            checked={() => isQuestionChecked(question)}
-                            onChange={(e) =>
-                              onCheckQuestion(e, question)
-                            }
+                            onChange={(e) => onCheckQuestion(e, question)}
                           />
                         </CheckBoxColumn>
                       )}
