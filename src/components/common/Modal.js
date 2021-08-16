@@ -28,14 +28,14 @@ const Modal = ({
             className="uk-button uk-button-default uk-modal-close"
             type="button"
           >
-            Cancel
+            Huỷ bỏ
           </button>
           <button
             className="uk-button uk-button-primary uk-margin-left"
             type="button"
             onClick={onSave}
           >
-            Save
+            Chọn
           </button>
         </p>
       </div>
