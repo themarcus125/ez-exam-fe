@@ -148,8 +148,8 @@ const ExamAdd = ({ examId }) => {
     });
   };
 
-  const setMaValueFromIDValue = (questionList) => {
-    return questionList.map((question) => {
+  const setMaValueFromIDValue = (targetQuestionList) => {
+    return targetQuestionList?.map((question) => {
       const { id, dsDapAn } = question;
       if (id) {
         const updatedDsDapAn = dsDapAn?.map((dapAn) => {
@@ -362,6 +362,20 @@ const ExamAdd = ({ examId }) => {
         token,
       );
       setMonhocs(lstMonHoc.data);
+      if (examId) {
+        const deThi = await getAPIWithToken(
+          `/dethi/layChiTietDeThi?id=${examId}`,
+          token,
+        );
+        const data = deThi.data;
+        setTenDeThi(data.tieuDe);
+        setThoiGianLam(data.thoiGianLam);
+        setMoTaDeThi(data.moTaDeThi);
+        setDiemTracNghiem(data.diemTracNghiem);
+        setDiemTuLuan(data.diemTuLuan);
+        setQuestionList(setMaValueFromIDValue(data.dsCauhoi || []));
+        setMaChuyenDe(data.dsCauhoi?.[0]?.maChuyenDe || "");
+      }
       setloading(false);
     }
   }, [token]);
