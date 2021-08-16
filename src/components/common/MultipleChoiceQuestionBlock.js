@@ -3,46 +3,64 @@ import React, { useState, forwardRef, useImperativeHandle } from "react";
 const charNumberStart = 65;
 
 const MultipleChoiceQuestionBlock = (props, ref) => {
-  const { onRemove } = props;
-  const [answerList, setAnswerList] = useState([
-    {
-      id: 1,
-      content: "",
-      type: 0,
-    },
-  ]);
-  const [title, setTitle] = useState("");
+  const {
+    onRemove,
+    publicButtonDisabled = false,
+    readOnly = false,
+    defaultQuestionProp,
+    defaultAnswerListProp,
+  } = props;
+  const defaultQuestion = defaultQuestionProp ? defaultQuestionProp : "";
+  const defaultAnswerList =
+    defaultAnswerListProp?.length > 0
+      ? defaultAnswerListProp.map((answer) => ({
+          id: answer.id,
+          content: answer.noiDung,
+          type: answer.loaiDapAn,
+        }))
+      : [
+          {
+            id: 1,
+            content: "",
+            type: 0,
+          },
+        ];
+  const [answerList, setAnswerList] = useState(defaultAnswerList);
+  const [title, setTitle] = useState(defaultQuestion);
   const [isPublic, setIsPublic] = useState(false);
 
-  useImperativeHandle(ref, () => ({
-    getData: () => {
-      const hasCorrectAnswer =
-        answerList.filter((answer) => answer.type === 1).length > 0;
-      if (!hasCorrectAnswer) {
-        return { error: "Hãy chọn đáp án đúng" };
-      }
+  if (ref) {
+    useImperativeHandle(ref, () => ({
+      getData: () => {
+        if (readOnly) return null;
+        const hasCorrectAnswer =
+          answerList.filter((answer) => answer.type === 1).length > 0;
+        if (!hasCorrectAnswer) {
+          return { error: "Hãy chọn đáp án đúng" };
+        }
 
-      if (!title) {
-        return { error: "Câu hỏi không được để trống" };
-      }
+        if (!title) {
+          return { error: "Câu hỏi không được để trống" };
+        }
 
-      const hasEmptyAnswer =
-        answerList.filter((answer) => !answer.content).length > 0;
-      if (hasEmptyAnswer) {
-        return { error: "Hãy điền đầy đủ đáp án" };
-      }
+        const hasEmptyAnswer =
+          answerList.filter((answer) => !answer.content).length > 0;
+        if (hasEmptyAnswer) {
+          return { error: "Hãy điền đầy đủ đáp án" };
+        }
 
-      return {
-        noiDung: title,
-        dsDapAn: answerList.map((answer) => {
-          return {
-            noiDung: answer.content,
-            loaiDapAn: answer.type,
-          };
-        }),
-      };
-    },
-  }));
+        return {
+          noiDung: title,
+          dsDapAn: answerList.map((answer) => {
+            return {
+              noiDung: answer.content,
+              loaiDapAn: answer.type,
+            };
+          }),
+        };
+      },
+    }));
+  }
 
   const onAddNewAnswer = () => {
     setAnswerList([
@@ -96,16 +114,19 @@ const MultipleChoiceQuestionBlock = (props, ref) => {
   return (
     <div className="uk-padding uk-padding-remove-horizontal uk-padding-remove-top">
       <div className="uk-flex uk-flex-middle uk-flex-right">
-        <label>
-          <input
-            className="uk-radio"
-            type="radio"
-            style={{ borderColor: "black" }}
-            checked={isPublic}
-            onChange={onPublic}
-          />{" "}
-          Công khai
-        </label>
+        {publicButtonDisabled ? null : (
+          <label>
+            <input
+              className="uk-radio"
+              type="radio"
+              style={{ borderColor: "black" }}
+              checked={isPublic}
+              onChange={onPublic}
+              disabled={readOnly}
+            />{" "}
+            Công khai
+          </label>
+        )}
         <button
           className="uk-margin-left uk-text-danger"
           uk-icon="icon: trash; ratio: 1.5"
@@ -119,6 +140,7 @@ const MultipleChoiceQuestionBlock = (props, ref) => {
           placeholder="Câu hỏi"
           value={title}
           onChange={onChangeTitle}
+          disabled={readOnly}
           required
         />
         <table
@@ -147,6 +169,7 @@ const MultipleChoiceQuestionBlock = (props, ref) => {
                       value={answer.content}
                       onChange={(e) => onChangeAnswer(e, answer.id)}
                       required
+                      disabled={readOnly}
                     />
                   </td>
                   <td className="uk-width-small">
@@ -156,6 +179,7 @@ const MultipleChoiceQuestionBlock = (props, ref) => {
                         type="checkbox"
                         checked={answer.type === 1}
                         onChange={(e) => onCheckCorrectAnswer(e, answer.id)}
+                        disabled={readOnly}
                       />{" "}
                       Đáp án
                     </label>
@@ -171,6 +195,7 @@ const MultipleChoiceQuestionBlock = (props, ref) => {
           className="uk-button"
           style={{ backgroundColor: "#32d296", color: "#FFFFFF" }}
           onClick={onAddNewAnswer}
+          disabled={readOnly}
         >
           Thêm đáp án
         </button>

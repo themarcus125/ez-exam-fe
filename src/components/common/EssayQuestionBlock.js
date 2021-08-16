@@ -4,11 +4,18 @@ import loadable from "@loadable/component";
 const LoadableEditor = loadable(() => import("./Editor"));
 
 const EssayQuestionBlock = (props, ref) => {
-  const { onRemove } = props;
-  const [title, setTitle] = useState("");
+  const {
+    onRemove,
+    publicButtonDisabled = false,
+    readOnly,
+    defaultQuestionProp,
+  } = props;
+  const defaultQuestion = defaultQuestionProp ? defaultQuestionProp : "";
+  const [title, setTitle] = useState(defaultQuestion);
 
   useImperativeHandle(ref, () => ({
     getData: () => {
+      if (readOnly) return null;
       if (!title) {
         return { error: "Câu hỏi không được để trống" };
       }
@@ -28,14 +35,16 @@ const EssayQuestionBlock = (props, ref) => {
       <div className="uk-flex uk-flex-between uk-margin-bottom">
         <span>Nhập câu hỏi</span>
         <div className="uk-inline-block uk-flex uk-flex-middle uk-flex-right">
-          <label>
-            <input
-              className="uk-radio"
-              type="radio"
-              style={{ borderColor: "black" }}
-            />{" "}
-            Công khai
-          </label>
+          {publicButtonDisabled ? null : (
+            <label>
+              <input
+                className="uk-radio"
+                type="radio"
+                style={{ borderColor: "black" }}
+              />{" "}
+              Công khai
+            </label>
+          )}
           <a
             className="uk-margin-left uk-text-danger"
             uk-icon="icon: trash; ratio: 1.5"
@@ -44,7 +53,11 @@ const EssayQuestionBlock = (props, ref) => {
         </div>
       </div>
       <div style={{ border: "1px solid black" }}>
-        <LoadableEditor title={title} onChangeTitle={onChangeTitle} />
+        <LoadableEditor
+          title={title}
+          onChangeTitle={onChangeTitle}
+          readOnly={readOnly}
+        />
       </div>
     </div>
   );

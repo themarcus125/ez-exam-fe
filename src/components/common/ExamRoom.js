@@ -6,7 +6,7 @@ import { getAPIWithToken } from "../../utils/api";
 import { getToken, getUser } from "../../utils/auth";
 import Config from "../../utils/config";
 
-const USER_PER_PAGE = 5;
+const USER_PER_PAGE = 10;
 const ExamRoom = () => {
   const [lstExamRoom, setLstExamRoom] = useState([]);
   const [startDate, setStartDate] = useState(
@@ -24,6 +24,7 @@ const ExamRoom = () => {
 
   const getData = async () => {
     try {
+      setLoading(true);
       const token = await getToken();
       if (token) {
         const response = await getAPIWithToken(
@@ -49,13 +50,17 @@ const ExamRoom = () => {
     }
   };
 
-  useEffect(async () => {
+  const getSubject = async () => {
     const token = await getToken();
     const tmp_lstSubject = await getAPIWithToken(
       "/chuyende/monhocnguoidung",
       token,
     );
     setLstSubject(tmp_lstSubject.data);
+  };
+
+  useEffect(() => {
+    getSubject();
     getData();
   }, []);
 
@@ -118,15 +123,15 @@ const ExamRoom = () => {
               }}
               onChange={handleChangeSubject}
               value={subject}
-              onBlur={() => {}}
+              onBlur={() => { }}
             >
               <option disabled></option>
               {lstSubject
                 ? lstSubject.map((item, key) => (
-                    <option key={key} value={item.id}>
-                      {item.tenChuyenDe}
-                    </option>
-                  ))
+                  <option key={key} value={item.id}>
+                    {item.tenChuyenDe}
+                  </option>
+                ))
                 : null}
             </select>
           </div>
@@ -174,7 +179,7 @@ const ExamRoom = () => {
           <input
             className="uk-search-input uk-width-4-5"
             type="search"
-            placeholder="Search"
+            placeholder="Tìm kiếm"
             value={search}
             onChange={handleChangeSearch}
             style={{
@@ -190,9 +195,9 @@ const ExamRoom = () => {
           </button>
         </div>
 
-        <button className="uk-button" style={{ ...myButton, ...activeText }}>
-          Báo cáo tổng hợp
-        </button>
+        <a className="uk-button" href={`${url}/examroom/add`} style={{ ...myButton, ...activeText }}>
+          Tạo phòng thi
+        </a>
       </div>
       <div className="uk-margin-top uk-overflow-auto" style={{ height: 400 }}>
         <table className="uk-table uk-table-striped uk-table-middle">
@@ -228,13 +233,20 @@ const ExamRoom = () => {
                         <div uk-dropdown="mode: click">
                           <ul className="uk-nav uk-dropdown-nav">
                             <li>
-                              <a>Xem báo cáo</a>
+                              <a>Báo cáo tổng hợp</a>
                             </li>
                             <li>
-                              <Link to={`${url}/examroom/${item.id}`}>
-                                Xem chi tiết
-                              </Link>
+                              <a>Xem danh sách bài thi</a>
                             </li>
+                            {Date.parse(moment(moment(item.ngayThi).format("DD/MM/YYYY") + " " + item.thoiGianBatDauThi, "DD/MM/YYYY hh:mm")) > Date.parse(new Date())
+                              ?
+                              <li>
+                                <Link to={`${url}/examroom/${item.id}`}>
+                                  Sửa thông tin
+                                </Link>
+                              </li>
+                              : ""
+                            }
                           </ul>
                         </div>
                       </ul>
@@ -280,9 +292,8 @@ const ExamRoom = () => {
           },
         )}
         <li
-          className={`${
-            currentPage === numOfPage.current ? "uk-disabled" : ""
-          }`}
+          className={`${currentPage === numOfPage.current ? "uk-disabled" : ""
+            }`}
         >
           <button
             className="uk-button uk-button-default uk-button-small"
