@@ -15,6 +15,8 @@ const ExamRoom = () => {
   const [endDate, setEndDate] = useState(new Date());
   const [lstSubject, setLstSubject] = useState(null);
   const [subject, setSubject] = useState("");
+  const [lstTeacher, setLstTeacher] = useState(null);
+  const [teacher, setTeacher] = useState("");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -28,11 +30,10 @@ const ExamRoom = () => {
       const token = await getToken();
       if (token) {
         const response = await getAPIWithToken(
-          `/phongthi?timkiem=${search}&mamonhoc=${subject}&tungay=${moment(
-            startDate,
-          ).format("YYYY-MM-DD")}&denngay=${moment(endDate).format(
-            "YYYY-MM-DD",
-          )}`,
+          `/phongthi?timkiem=${search}&mamonhoc=${subject}
+          &tungay=${moment(startDate,).format("YYYY-MM-DD")}
+          &denngay=${moment(endDate).format("YYYY-MM-DD",)}
+          &giaovien=${teacher}`,
           token,
         );
         numOfPage.current =
@@ -59,8 +60,18 @@ const ExamRoom = () => {
     setLstSubject(tmp_lstSubject.data);
   };
 
+  const getTeacher = async () => {
+    const token = await getToken();
+    const tmp_lstTeacher = await getAPIWithToken(
+      "/users?quyen=giaovien&trangthai=0",
+      token,
+    );
+    setLstTeacher(tmp_lstTeacher.data);
+  };
+
   useEffect(() => {
     getSubject();
+    getTeacher();
     getData();
   }, []);
 
@@ -81,6 +92,9 @@ const ExamRoom = () => {
   };
   const handleChangeSubject = (e) => {
     setSubject(e.target.value);
+  };
+  const handleChangeTeacher = (e) => {
+    setTeacher(e.target.value);
   };
   const handleChangeStartDate = (date) => {
     setStartDate(date);
@@ -111,11 +125,11 @@ const ExamRoom = () => {
       </p>
       <div
         className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom"
-        style={{ marginLeft: 50, marginRight: 50 }}
+      // style={{ marginLeft: 50, marginRight: 50 }}
       >
-        <div className="uk-width-1-4@s uk-display-inline-block">
-          <span className="uk-display-inline-block uk-width-2-5">Môn học</span>
-          <div className="uk-display-inline-block uk-width-3-5">
+        <div className="uk-width-1-4@s uk-display-inline-block uk-padding-small">
+          <span className="uk-display-inline-block uk-width-1-4">Môn học</span>
+          <div className="uk-display-inline-block uk-width-3-4">
             <select
               className="uk-select uk-width-1-1"
               style={{
@@ -136,10 +150,34 @@ const ExamRoom = () => {
             </select>
           </div>
         </div>
-
-        <div className="uk-width-1-4@s uk-display-inline-block">
-          <span className="uk-display-inline-block uk-width-2-5">Từ ngày</span>
-          <div className="uk-display-inline-block uk-width-3-5">
+        {role === "admin" ?
+          <div className="uk-width-1-4@s uk-display-inline-block uk-padding-small">
+            <span className="uk-display-inline-block uk-width-1-4">Giáo viên</span>
+            <div className="uk-display-inline-block uk-width-3-4">
+              <select
+                className="uk-select uk-width-1-1"
+                style={{
+                  border: "solid 0.5px #666",
+                }}
+                onChange={handleChangeTeacher}
+                value={teacher}
+                onBlur={() => { }}
+              >
+                <option disabled></option>
+                {lstTeacher
+                  ? lstTeacher.map((item, key) => (
+                    <option key={key} value={item.id}>
+                      {item.tenNguoiDung}
+                    </option>
+                  ))
+                  : null}
+              </select>
+            </div>
+          </div> : ""
+        }
+        <div className="uk-width-1-4@s uk-display-inline-block uk-padding-small">
+          <span className="uk-display-inline-block uk-width-1-4">Từ ngày</span>
+          <div className="uk-display-inline-block uk-width-3-4">
             <DatePicker
               className="uk-select uk-width-1-1"
               style={{
@@ -154,9 +192,9 @@ const ExamRoom = () => {
             />
           </div>
         </div>
-        <div className="uk-width-1-4@s uk-display-inline-block">
-          <span className="uk-display-inline-block uk-width-2-5">Đến ngày</span>
-          <div className="uk-display-inline-block uk-width-3-5">
+        <div className="uk-width-1-4@s uk-display-inline-block uk-padding-small">
+          <span className="uk-display-inline-block uk-width-1-4">Đến ngày</span>
+          <div className="uk-display-inline-block uk-width-3-4">
             <DatePicker
               className="uk-select uk-width-1-1"
               style={{
@@ -194,10 +232,10 @@ const ExamRoom = () => {
             Tìm kiếm
           </button>
         </div>
-
-        <a className="uk-button" href={`${url}/examroom/add`} style={{ ...myButton, ...activeText }}>
-          Tạo phòng thi
-        </a>
+        {role !== "admin" ?
+          <a className="uk-button" href={`${url}/examroom/add`} style={{ ...myButton, ...activeText }}>
+            Tạo phòng thi
+          </a> : ""}
       </div>
       <div className="uk-margin-top uk-overflow-auto" style={{ height: 400 }}>
         <table className="uk-table uk-table-striped uk-table-middle">
@@ -238,7 +276,7 @@ const ExamRoom = () => {
                             <li>
                               <a>Xem danh sách bài thi</a>
                             </li>
-                            {Date.parse(moment(moment(item.ngayThi).format("DD/MM/YYYY") + " " + item.thoiGianBatDauThi, "DD/MM/YYYY hh:mm")) > Date.parse(new Date())
+                            {role !== "admin" && Date.parse(moment(moment(item.ngayThi).format("DD/MM/YYYY") + " " + item.thoiGianBatDauThi, "DD/MM/YYYY hh:mm")) > Date.parse(new Date())
                               ?
                               <li>
                                 <Link to={`${url}/examroom/${item.id}`}>
