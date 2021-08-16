@@ -19,6 +19,10 @@
   background-color: rgb(50, 210, 150) !important;
 }
 
+button:disabled {
+  cursor: not-allowedr;
+}
+
 .examineeroom_grid {
   display: flex;
   align-items: center;

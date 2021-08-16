@@ -195,6 +195,7 @@ const MultipleChoiceQuestionBlock = (props, ref) => {
           className="uk-button"
           style={{ backgroundColor: "#32d296", color: "#FFFFFF" }}
           onClick={onAddNewAnswer}
+          disabled={readOnly}
         >
           Thêm đáp án
         </button>
