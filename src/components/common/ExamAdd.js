@@ -13,8 +13,9 @@ import QuestionSelectModal, { showSelectModal } from "./QuestionSelectModal";
 
 const _questionTemplate = {
   noiDung: "",
+  maCauHoi: -1,
   dsDapAn: [],
-  type: questionType.MULTIPLE_CHOICE,
+  loaiCauHoi: questionType.MULTIPLE_CHOICE,
   themMoi: false,
 };
 
@@ -58,11 +59,11 @@ const ExamAdd = ({ examId }) => {
     ]);
   };
 
-  const onQuestionTypeChange = (question, type) => {
+  const onQuestionTypeChange = (question, loaiCauHoi) => {
     setQuestionList(
       questionList.map((currentQuestion) => {
         if (currentQuestion === question) {
-          return { ...currentQuestion, type: +type };
+          return { ...currentQuestion, loaiCauHoi: +loaiCauHoi };
         }
         return currentQuestion;
       }),
@@ -78,7 +79,7 @@ const ExamAdd = ({ examId }) => {
     refs.forEach((ref, index) => {
       if (ref !== null) {
         const data = ref.getData();
-        if (data.error) {
+        if (data?.error) {
           hasError.current = true;
           alert(data.error);
           return null;
@@ -102,15 +103,15 @@ const ExamAdd = ({ examId }) => {
     if (respondPostNewQuestions) {
       const { dataTN = [], dataTL = [] } = respondPostNewQuestions;
       const updatedQuestionList = questionDataList.map((question) => {
-        const { type, themMoi, dsDapAn } = question;
+        const { loaiCauHoi, themMoi, dsDapAn } = question;
         let targetQuestion = null;
         if (themMoi) {
-          if (type === questionType.MULTIPLE_CHOICE) {
+          if (loaiCauHoi === questionType.MULTIPLE_CHOICE) {
             targetQuestion = dataTN.find(
               (ques) => ques.noiDung === question.noiDung,
             );
           }
-          if (type === questionType.ESSAY) {
+          if (loaiCauHoi === questionType.ESSAY) {
             targetQuestion = dataTL.find(
               (ques) => ques.noiDung === question.noiDung,
             );
@@ -138,29 +139,64 @@ const ExamAdd = ({ examId }) => {
 
   const eliminateQuestionsProps = (questionDataList) => {
     return questionDataList.map((question) => {
-      const { maCauHoi, type, dsDapAn } = question;
+      const { maCauHoi, loaiCauHoi, dsDapAn } = question;
       const updatedDsDapAn = dsDapAn.map((dapAn) => {
         const { maDapAn, loaiDapAn } = dapAn;
         return { maDapAn, loaiDapAn };
       });
-      return { maCauHoi, loaiCauHoi: type, dsDapAn: updatedDsDapAn };
+      return { maCauHoi, loaiCauHoi, dsDapAn: updatedDsDapAn };
+    });
+  };
+
+  const setMaValueFromIDValue = (questionList) => {
+    return questionList.map((question) => {
+      const { id, dsDapAn } = question;
+      if (id) {
+        const updatedDsDapAn = dsDapAn?.map((dapAn) => {
+          const { id } = dapAn;
+          return id ? { ...dapAn, maDapAn: id } : dapAn;
+        });
+        return { ...question, maCauHoi: id, dsDapAn: updatedDsDapAn };
+      }
+      return question;
     });
   };
 
   const onAddQuestionByBatch = (questionBatch) => {
-    setQuestionList([...questionList, ...questionBatch]);
+    if (questionBatch?.length > 0) {
+      const filteredNewQuestionsFromBatch = questionBatch.filter(
+        (q) => questionList.indexOf(q) < 0,
+      );
+
+      if (filteredNewQuestionsFromBatch.length > 0) {
+        setQuestionList([
+          ...questionList,
+          ...setMaValueFromIDValue(filteredNewQuestionsFromBatch),
+        ]);
+        return alert("Đã thêm các câu hỏi được chọn vào đề thi");
+      }
+    }
+    alert(
+      "Không có câu hỏi nào được thêm vào đề thi. Vui lòng kiểm tra lại câu hỏi bạn chọn đã có trong đề thi hay chưa.",
+    );
+  };
+
+  const onSaveQuestionsFromQuestionaire = (questionBatch) => {
+    onAddQuestionByBatch(questionBatch);
   };
 
   useEffect(() => {
+    console.log(questionList);
     if (questionList?.length > 0) {
       const questionCounter = questionList.reduce(
         (counter, question) => {
           return {
             multiple:
               counter.multiple +
-              (question.type === questionType.MULTIPLE_CHOICE ? 1 : 0),
+              (question.loaiCauHoi === questionType.MULTIPLE_CHOICE ? 1 : 0),
             essay:
-              counter.essay + (question.type === questionType.ESSAY ? 1 : 0),
+              counter.essay +
+              (question.loaiCauHoi === questionType.ESSAY ? 1 : 0),
           };
         },
         { multiple: 0, essay: 0 },
@@ -191,7 +227,8 @@ const ExamAdd = ({ examId }) => {
     }
     const multipleQuestionList = questionDataList.filter(
       (question) =>
-        question.type === questionType.MULTIPLE_CHOICE && question.themMoi,
+        question.loaiCauHoi === questionType.MULTIPLE_CHOICE &&
+        question.themMoi,
     );
 
     if (multipleQuestionList?.length > 0) {
@@ -214,7 +251,8 @@ const ExamAdd = ({ examId }) => {
     }
 
     const essayQuestionList = questionDataList.filter(
-      (question) => question.type === questionType.ESSAY && question.themMoi,
+      (question) =>
+        question.loaiCauHoi === questionType.ESSAY && question.themMoi,
     );
 
     if (essayQuestionList?.length > 0) {
@@ -333,15 +371,18 @@ const ExamAdd = ({ examId }) => {
       <div id="cauhoi" className="uk-margin">
         <h4>Danh sách câu hỏi</h4>
         {questionList.map((question, index) => {
-          const { type, id } = question;
+          const { loaiCauHoi, id, themMoi, noiDung, dsDapAn } = question;
           const renderQuestionIndividually = () => {
-            switch (type) {
+            switch (loaiCauHoi) {
               case questionType.MULTIPLE_CHOICE:
                 return (
                   <MultipleChoiceQuestionBlock
                     ref={(element) => (questionRefs.current[index] = element)}
                     onRemove={() => onRemoveQuestion(question)}
                     publicButtonDisabled
+                    readOnly={!themMoi}
+                    defaultQuestionProp={noiDung}
+                    defaultAnswerListProp={dsDapAn}
                   />
                 );
               case questionType.ESSAY:
@@ -350,6 +391,7 @@ const ExamAdd = ({ examId }) => {
                     ref={(element) => (questionRefs.current[index] = element)}
                     onRemove={() => onRemoveQuestion(question)}
                     publicButtonDisabled
+                    readOnly={!themMoi}
                   />
                 );
               default:
@@ -358,7 +400,6 @@ const ExamAdd = ({ examId }) => {
           };
           return (
             <div key={id}>
-              <p>Câu hỏi {id}</p>
               <div className="uk-margin">
                 <label className="uk-form-label" htmlFor="form-horizontal-text">
                   Loại câu hỏi
@@ -366,11 +407,12 @@ const ExamAdd = ({ examId }) => {
                 <div className="uk-form-controls">
                   <select
                     className="uk-select"
-                    value={type}
+                    value={loaiCauHoi}
                     onChange={(e) => {
                       onQuestionTypeChange(question, e.target.value);
                     }}
                     onBlur={() => {}}
+                    disabled={!themMoi}
                   >
                     <option value={questionType.MULTIPLE_CHOICE}>
                       Trắc nghiệm
@@ -460,7 +502,6 @@ const ExamAdd = ({ examId }) => {
               <textarea
                 className="uk-textarea"
                 rows="5"
-                placeholder="Textarea"
                 value={moTaDeThi}
                 onChange={(e) => {
                   setMoTaDeThi(e.target.value);
@@ -640,7 +681,11 @@ const ExamAdd = ({ examId }) => {
         </div>
       </div>
       <LoadingOverlay isLoading={loading} />
-      <QuestionSelectModal type={maChuyenDe || 1} level={doKho || 1} />
+      <QuestionSelectModal
+        type={maChuyenDe || 1}
+        level={doKho || 1}
+        onSave={onSaveQuestionsFromQuestionaire}
+      />
     </>
   );
 };
