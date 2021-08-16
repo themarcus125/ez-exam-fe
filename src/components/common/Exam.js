@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "gatsby";
-import { getAPIWithToken } from "../../utils/api";
+import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
 import { getToken, getUser } from "../../utils/auth";
 import moment from "moment";
 import Config from "../../utils/config";
@@ -11,7 +11,6 @@ const Exam = () => {
   const [monHocs, setMonhocs] = useState([]);
   const [deThis, setdeThis] = useState([]);
   const [meta, setMeta] = useState(null);
-  const [doKhos, setdoKhos] = useState([]);
   const [maMonHoc, setMaMonHoc] = useState("");
   const [tuNgay, setTuNgay] = useState("");
   const [denNgay, setDenNgay] = useState("");
@@ -26,12 +25,6 @@ const Exam = () => {
     const token = await getToken();
     const lstMonHoc = await getAPIWithToken("/chuyende/monhocnguoidung", token);
     setMonhocs(lstMonHoc.data);
-  };
-
-  const getDoKho = async () => {
-    const token = await getToken();
-    const lstDoKho = await getAPIWithToken("/dokho/layTatCaDoKho", token);
-    setdoKhos(lstDoKho.data);
   };
 
   const getDeThi = async (crPage) => {
@@ -51,9 +44,66 @@ const Exam = () => {
     setLoading(false);
   };
 
+  const taoBanSao = async (id) => {
+    const token = await getToken();
+
+    const deThi = await getAPIWithToken(
+      `/dethi/layChiTietDeThi?id=${id}`,
+      token,
+    );
+
+    const data = deThi?.data;
+
+    const dsCauHoi = [];
+    for (const ch of data.dsCauhoi) {
+      const cauHoi = {
+        maCauHoi: ch.id,
+        loaiCauHoi: ch.loaiCauHoi,
+        dsDapAn: [],
+      };
+
+      if (ch.dsDapAn.length > 0) {
+        for (const da of ch.dsDapAn) {
+          cauHoi.dsDapAn.push({
+            maDapAn: da.id,
+            loaiDapAn: da.loaiDapAn,
+          });
+        }
+      }
+
+      dsCauHoi.push(cauHoi);
+    }
+
+    const response = await postAPIWithToken(
+      "/dethi/themDeThi",
+      {
+        tenDeThi: data.tieuDe,
+        maChuyenDe: 1,
+        thoiGianLam: data.thoiGianLam,
+        moTaDeThi: data.moTaDeThi,
+        doKho: 1,
+        soLuongTracNghiem: data.soLuongTracNghiem,
+        soLuongTuLuan: data.soLuongTuLuan,
+        diemTracNghiem: data.diemTracNghiem,
+        diemTuLuan: data.diemTuLuan,
+        diemTungCauTracNghiem: data.diemTungCauTracNghiem,
+        diemTungCauTuLuan: data.diemTungCauTuLuan,
+        coTaoBoDe: false,
+        soDe: 0,
+        danhSachCauHoi: dsCauHoi,
+      },
+      token,
+    );
+
+    if (response?.status === 200) {
+      alert("Tạo bản sao thành công.");
+    } else {
+      alert("Đã xảy ra lỗi. Tạo bản sao thất bại.");
+    }
+  };
+
   useEffect(() => {
     getMonHoc();
-    getDoKho();
     getDeThi(1);
   }, []);
 
@@ -125,24 +175,6 @@ const Exam = () => {
             />
           </div>
         </div>
-
-        <div className="uk-width-1-4@s uk-display-inline-block">
-          <span className="uk-display-inline-block uk-width-1-5">Mức độ</span>
-          <div className="uk-display-inline-block uk-width-3-5">
-            <select
-              className="uk-select uk-width-1-1"
-              style={{
-                border: "solid 0.5px #666",
-              }}
-            >
-              {doKhos.map((item, index) => (
-                <option value={item.id} key={index}>
-                  {item.ten}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
       </div>
 
       <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
@@ -184,13 +216,12 @@ const Exam = () => {
         <table className="uk-table uk-table-striped uk-table-middle">
           <thead>
             <tr>
-              <th className="uk-width-large">Mã bộ đề</th>
+              <th className="uk-width-medium">Mã bộ đề</th>
               <th className="uk-width-large">Mã đề</th>
               <th className="uk-width-large">Tên đề thi</th>
               <th className="uk-width-large">Môn học</th>
               <th className="uk-width-large">Ngày tạo</th>
-              <th className="uk-width-large">Mức độ</th>
-              <th className="uk-width-small"></th>
+              <th className="uk-width-medium"></th>
             </tr>
           </thead>
           <tbody>
@@ -202,9 +233,8 @@ const Exam = () => {
                   <td>{item.maBoDe}</td>
                   <td>{item.maDe}</td>
                   <td>{item.tieuDe}</td>
-                  <td>{item.tenBoDe}</td>
+                  <td>{item.tenChuyenDe}</td>
                   <td>{moment(item.ngayTao).format("DD/MM/YYYY")}</td>
-                  <td>{doKhos.find((x) => x.id == item.doKho)?.ten}</td>
                   <td>
                     <ul class="uk-subnav-pill">
                       <a
@@ -217,7 +247,13 @@ const Exam = () => {
                       <div uk-dropdown="mode: click">
                         <ul class="uk-nav uk-dropdown-nav">
                           <li>
-                            <a>Tạo bản sao</a>
+                            <a
+                              onClick={() => {
+                                taoBanSao(item.id);
+                              }}
+                            >
+                              Tạo bản sao
+                            </a>
                           </li>
                           <li>
                             <Link to={`${url}/exam/${item.id}`}>
