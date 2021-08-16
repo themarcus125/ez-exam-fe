@@ -3,15 +3,30 @@ import React, { useState, forwardRef, useImperativeHandle } from "react";
 const charNumberStart = 65;
 
 const MultipleChoiceQuestionBlock = (props, ref) => {
-  const { onRemove, publicButtonDisabled = false, readOnly = false } = props;
-  const [answerList, setAnswerList] = useState([
-    {
-      id: 1,
-      content: "",
-      type: 0,
-    },
-  ]);
-  const [title, setTitle] = useState("");
+  const {
+    onRemove,
+    publicButtonDisabled = false,
+    readOnly = false,
+    defaultQuestionProp,
+    defaultAnswerListProp,
+  } = props;
+  const defaultQuestion = defaultQuestionProp ? defaultQuestionProp : "";
+  const defaultAnswerList =
+    defaultAnswerListProp?.length > 0
+      ? defaultAnswerListProp.map((answer) => ({
+          id: answer.id,
+          content: answer.noiDung,
+          type: answer.loaiDapAn,
+        }))
+      : [
+          {
+            id: 1,
+            content: "",
+            type: 0,
+          },
+        ];
+  const [answerList, setAnswerList] = useState(defaultAnswerList);
+  const [title, setTitle] = useState(defaultQuestion);
   const [isPublic, setIsPublic] = useState(false);
 
   if (ref) {

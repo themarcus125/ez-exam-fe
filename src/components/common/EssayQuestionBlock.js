@@ -4,8 +4,14 @@ import loadable from "@loadable/component";
 const LoadableEditor = loadable(() => import("./Editor"));
 
 const EssayQuestionBlock = (props, ref) => {
-  const { onRemove, publicButtonDisabled = false, readOnly } = props;
-  const [title, setTitle] = useState("");
+  const {
+    onRemove,
+    publicButtonDisabled = false,
+    readOnly,
+    defaultQuestionProp,
+  } = props;
+  const defaultQuestion = defaultQuestionProp ? defaultQuestionProp : "";
+  const [title, setTitle] = useState(defaultQuestion);
 
   useImperativeHandle(ref, () => ({
     getData: () => {
