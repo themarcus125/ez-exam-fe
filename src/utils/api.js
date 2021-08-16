@@ -25,7 +25,7 @@ export const putAPIWithToken = (endpoint, data, token, options = {}) =>
   fetch(`${API_URL}${endpoint}`, {
     method: "PUT",
     headers: {
-      "Accept": "application/json",
+      Accept: "application/json",
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
@@ -89,5 +89,15 @@ export const postFileAPIWithToken = (endpoint, formData, token, options = {}) =>
       Authorization: `Bearer ${token}`,
     },
     body: formData,
+    ...options,
+  });
+
+export const deleteAPIWithToken = (endpoint, token, options = {}) =>
+  fetch(`${API_URL}${endpoint}`, {
+    method: "DELETE",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     ...options,
   });

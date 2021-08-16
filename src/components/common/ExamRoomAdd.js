@@ -21,26 +21,37 @@ const ExamRoomAdd = ({ roomId }) => {
   const [lstCodeExam, setLstCodeExam] = useState(null);
   const [codeExam, setCodeExam] = useState("");
 
-  useEffect(async () => {
+  const getSubject = async () => {
     const token = await getToken();
     const tmp_lstSubject = await getAPIWithToken(
       "/chuyende/monhocnguoidung",
       token,
     );
     setLstSubject(tmp_lstSubject.data);
+  };
+
+  const getCodeExam = async () => {
+    const token = await getToken();
     const tmp_lstCodeExam = await getAPIWithToken(
       "/dethi/layDanhSachBoDeThi",
       token,
     );
     setLstCodeExam(tmp_lstCodeExam.data.dsDeThi);
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    getSubject();
+    getCodeExam();
     //load update
     if (roomId) {
-      await getExamRoom();
+      getExamRoom();
     }
     setLoading(false);
   }, []);
 
   const getExamRoom = async () => {
+    setLoading(true);
     const token = await getToken();
     if (token) {
       const tmp_lstExamRoom = await getAPIWithToken(
@@ -57,6 +68,7 @@ const ExamRoomAdd = ({ roomId }) => {
         setCodeExam(lstExamRoom.maBoDe);
       }
     }
+    setLoading(false);
   };
 
   const handleChangeSubject = (e) => {
@@ -240,15 +252,15 @@ const ExamRoomAdd = ({ roomId }) => {
                       onChange={handleChangeSubject}
                       value={subject}
                       required
-                      onBlur={() => {}}
+                      onBlur={() => { }}
                     >
                       <option disabled></option>
                       {lstSubject
                         ? lstSubject.map((item, key) => (
-                            <option key={key} value={item.id}>
-                              {item.tenChuyenDe}
-                            </option>
-                          ))
+                          <option key={key} value={item.id}>
+                            {item.tenChuyenDe}
+                          </option>
+                        ))
                         : null}
                     </select>
                   </div>
@@ -268,15 +280,15 @@ const ExamRoomAdd = ({ roomId }) => {
                       onChange={handleChangeCodeExam}
                       value={codeExam}
                       required
-                      onBlur={() => {}}
+                      onBlur={() => { }}
                     >
                       <option disabled></option>
                       {lstCodeExam
                         ? lstCodeExam.map((item, key) => (
-                            <option key={key} value={item.maBoDe}>
-                              {item.maDe}
-                            </option>
-                          ))
+                          <option key={key} value={item.maBoDe}>
+                            {item.maDe}
+                          </option>
+                        ))
                         : null}
                     </select>
                   </div>

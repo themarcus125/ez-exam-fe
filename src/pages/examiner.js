@@ -39,6 +39,12 @@ const ExaminerDashboard = () => {
         />
         <PrivateRoute
           role={role}
+          path="/exam/:examId"
+          component={ExamAdd}
+          title="Cập nhật đề thi"
+        />
+        <PrivateRoute
+          role={role}
           path="/examroom"
           component={ExamRoom}
           title="Phòng thi"
