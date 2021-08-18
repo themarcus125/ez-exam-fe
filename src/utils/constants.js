@@ -103,6 +103,10 @@ export const navBarCategories = {
       ],
     },
     {
+      title: "Danh sách phòng thi",
+      path: "/examroom"
+    },
+    {
       title: "Kiểm tra kết quả thi",
       path: "/",
     },

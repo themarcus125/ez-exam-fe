@@ -91,6 +91,15 @@ const ExamRoomAdd = ({ roomId }) => {
     setCodeExam(e.target.value);
   };
 
+  const clearData = () => {
+    setRoomName("");
+    setDateExam(new Date());
+    setSubject("");
+    setHourExamRoom("");
+    setHourStartExam("");
+    setCodeExam("");
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
     const token = await getToken();
@@ -133,6 +142,7 @@ const ExamRoomAdd = ({ roomId }) => {
         );
         const { data } = await res.json();
         if ((res.status === 200) & (data !== undefined)) {
+          clearData();
           toast.success("Tạo phòng thành công !!!");
         } else {
           toast.error("Tạo phòng thất bại !!!");
