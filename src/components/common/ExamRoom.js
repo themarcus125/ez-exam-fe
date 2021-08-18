@@ -233,9 +233,9 @@ const ExamRoom = () => {
           </button>
         </div>
         {role !== "admin" ?
-          <a className="uk-button" href={`${url}/examroom/add`} style={{ ...myButton, ...activeText }}>
+          <Link className="uk-button" to={`${url}/examroom/add`} style={{ ...myButton, ...activeText }}>
             Tạo phòng thi
-          </a> : ""}
+          </Link> : ""}
       </div>
       <div className="uk-margin-top uk-overflow-auto" style={{ height: 400 }}>
         <table className="uk-table uk-table-striped uk-table-middle">
