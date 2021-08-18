@@ -258,7 +258,7 @@ const ExamRoom = () => {
                   <tr key={item.id}>
                     <td value={item.maPhong}>{item.tenPhong}</td>
                     <td value={item.maMonHoc}>{item.tenMonHoc}</td>
-                    <td value={item.maBoDe}>{item.tenBoDe}</td>
+                    <td value={item.maBoDe}>{item.maBoDe}</td>
                     <td>{item.siSo}</td>
                     <td>{moment(item.ngayThi).format("DD/MM/YYYY")}</td>
                     <td>{item.thoiGianBatDauPhong}</td>
