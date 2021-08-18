@@ -9,6 +9,10 @@ export const navBarCategories = {
           path: "/questionaire/add",
         },
         {
+          title: "Danh sách câu hỏi",
+          path: "/questionaire",
+        },
+        {
           title: "Danh sách môn học",
           path: "/",
         },
@@ -77,6 +81,10 @@ export const navBarCategories = {
         {
           title: "Thêm câu hỏi",
           path: "/questionaire/add",
+        },
+        {
+          title: "Danh sách câu hỏi",
+          path: "/questionaire",
         },
         {
           title: "Danh sách môn học",

@@ -100,6 +100,7 @@ const Exam = () => {
 
     if (response?.status === 200) {
       alert("Tạo bản sao thành công.");
+      await getDeThi(meta?.currentPage);
     } else {
       alert("Đã xảy ra lỗi. Tạo bản sao thất bại.");
     }
