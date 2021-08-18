@@ -146,7 +146,6 @@ const QuestionTable = ({
             <div>
               <a
                 className="uk-modal-close-default"
-                uk-icon="close"
                 uk-close=""
               ></a>
             </div>
