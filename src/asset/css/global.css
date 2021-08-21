@@ -92,6 +92,12 @@ button:disabled {
   *+.uk-grid-margin, .uk-grid+.uk-grid, .uk-grid>.uk-grid-margin {
     margin-top: 16px;
   }
+  .flex-responsive {
+    display: block !important;
+  }
+  .full-width-small-screen {
+    width: 100% !important;
+  }
 }
 
 @media screen and (max-width: 600px) {
