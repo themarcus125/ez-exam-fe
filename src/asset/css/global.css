@@ -23,6 +23,21 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.examtaker_timer {
+  display: flex;
+  align-items: center;
+}
+
+.examtaker_timer .icon svg {
+  width: 36px;
+  height: 36px;
+}
+
+.examtaker_timer .countdown {
+  font-size: 36px;
+  margin-left: 16px;
+}
+
 .examineeroom_grid {
   display: flex;
   align-items: center;
