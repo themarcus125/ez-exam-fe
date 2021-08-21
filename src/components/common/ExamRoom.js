@@ -235,7 +235,7 @@ const ExamRoom = () => {
         onSearchStringChanged={handleChangeSearch}
         onSearchButtonClicked={onSearch}
       />
-      <div className="uk-margin-top uk-overflow-auto" style={{ height: 400 }}>
+      <div className="uk-margin-top uk-overflow-auto">
         <table className="uk-table uk-table-striped uk-table-middle">
           <thead>
             <tr>
@@ -254,14 +254,26 @@ const ExamRoom = () => {
               lstExamRoom[currentPage - 1]?.map((item) => {
                 return (
                   <tr key={item.id}>
-                    <td value={item.maPhong}>{item.tenPhong}</td>
-                    <td value={item.maMonHoc}>{item.tenMonHoc}</td>
-                    <td value={item.maBoDe}>{item.maBoDe}</td>
-                    <td>{item.siSo}</td>
-                    <td>{moment(item.ngayThi).format("DD/MM/YYYY")}</td>
-                    <td>{item.thoiGianBatDauPhong}</td>
-                    <td>{item.thoiGianBatDauThi}</td>
-                    <td>
+                    <td data-label="Mã phòng" value={item.maPhong}>
+                      {item.tenPhong}
+                    </td>
+                    <td data-label="Môn học" value={item.maMonHoc}>
+                      {item.tenMonHoc}
+                    </td>
+                    <td data-label="Mã bộ đề" value={item.maBoDe}>
+                      {item.maBoDe}
+                    </td>
+                    <td data-label="Số lượng">{item.siSo}</td>
+                    <td data-label="Ngày thi">
+                      {moment(item.ngayThi).format("DD/MM/YYYY")}
+                    </td>
+                    <td data-label="Thời gian bắt đầu phòng">
+                      {item.thoiGianBatDauPhong}
+                    </td>
+                    <td data-label="Thời gian bắt đầu thi">
+                      {item.thoiGianBatDauThi}
+                    </td>
+                    <td data-label="Tùy chỉnh">
                       <ul className="uk-subnav-pill">
                         <a style={{ activeText }}>
                           <span uk-icon="table"></span>
@@ -304,50 +316,52 @@ const ExamRoom = () => {
           <div className="uk-flex uk-flex-center" uk-spinner=""></div>
         )}
       </div>
-      <ul className="uk-pagination uk-flex-center" uk-margin="">
-        <li className={`${currentPage === 1 ? "uk-disabled" : ""}`}>
-          <button
-            className="uk-button uk-button-default uk-button-small"
-            onClick={onPrev}
-          >
-            <span className="uk-icon" uk-icon="icon: chevron-left"></span>
-          </button>
-        </li>
-        {Array.from({ length: numOfPage.current }, (_, i) => i + 1).map(
-          (num) => {
-            const isActiveButton = currentPage === num;
-            return (
-              <li
-                key={num}
-                className={`${isActiveButton ? "uk-disabled" : ""}`}
-              >
-                <button
-                  className="uk-button uk-button-default uk-button-small"
-                  style={{
-                    ...paginationButton,
-                    ...(isActiveButton && activeButton),
-                  }}
-                  onClick={() => onChangePage(num)}
+      {numOfPage.current && numOfPage.current > 1 ? (
+        <ul className="uk-pagination uk-flex-center" uk-margin="">
+          <li className={`${currentPage === 1 ? "uk-disabled" : ""}`}>
+            <button
+              className="uk-button uk-button-default uk-button-small"
+              onClick={onPrev}
+            >
+              <span className="uk-icon" uk-icon="icon: chevron-left"></span>
+            </button>
+          </li>
+          {Array.from({ length: numOfPage.current }, (_, i) => i + 1).map(
+            (num) => {
+              const isActiveButton = currentPage === num;
+              return (
+                <li
+                  key={num}
+                  className={`${isActiveButton ? "uk-disabled" : ""}`}
                 >
-                  {num}
-                </button>
-              </li>
-            );
-          },
-        )}
-        <li
-          className={`${
-            currentPage === numOfPage.current ? "uk-disabled" : ""
-          }`}
-        >
-          <button
-            className="uk-button uk-button-default uk-button-small"
-            onClick={onNext}
+                  <button
+                    className="uk-button uk-button-default uk-button-small"
+                    style={{
+                      ...paginationButton,
+                      ...(isActiveButton && activeButton),
+                    }}
+                    onClick={() => onChangePage(num)}
+                  >
+                    {num}
+                  </button>
+                </li>
+              );
+            },
+          )}
+          <li
+            className={`${
+              currentPage === numOfPage.current ? "uk-disabled" : ""
+            }`}
           >
-            <span className="uk-icon" uk-icon="icon: chevron-right"></span>
-          </button>
-        </li>
-      </ul>
+            <button
+              className="uk-button uk-button-default uk-button-small"
+              onClick={onNext}
+            >
+              <span className="uk-icon" uk-icon="icon: chevron-right"></span>
+            </button>
+          </li>
+        </ul>
+      ) : null}
     </div>
   );
 };
