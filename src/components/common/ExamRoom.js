@@ -235,6 +235,7 @@ const ExamRoom = () => {
         onSearchStringChanged={handleChangeSearch}
         onSearchButtonClicked={onSearch}
       />
+      {loading && <div className="uk-flex uk-flex-center" uk-spinner=""></div>}
       <div className="uk-margin-top uk-overflow-auto">
         <table className="uk-table uk-table-striped uk-table-middle">
           <thead>
@@ -312,9 +313,6 @@ const ExamRoom = () => {
               })}
           </tbody>
         </table>
-        {loading && (
-          <div className="uk-flex uk-flex-center" uk-spinner=""></div>
-        )}
       </div>
       <ul className="uk-pagination uk-flex-center" uk-margin="">
         <li className={`${currentPage === 1 ? "uk-disabled" : ""}`}>

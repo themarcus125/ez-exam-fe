@@ -153,7 +153,8 @@ const AdminAccounts = () => {
         onSearchStringChanged={onChangeSearch}
         onSearchButtonClicked={onSearch}
       />
-      <div className="uk-margin-top" style={{ height: 400 }}>
+      {loading && <div className="uk-flex uk-flex-center" uk-spinner=""></div>}
+      <div className="uk-margin-top">
         <table className="uk-table uk-table-striped uk-table-middle">
           <thead>
             <tr>
@@ -170,15 +171,15 @@ const AdminAccounts = () => {
                 const role = user.phan_quyen?.[0]?.quyen;
                 return (
                   <tr key={user.tenDangNhap}>
-                    <td>{user.tenDangNhap}</td>
-                    <td>{user.tenNguoiDung}</td>
-                    <td>
+                    <td data-label="Mã tài khoản">{user.tenDangNhap}</td>
+                    <td data-label="Họ tên">{user.tenNguoiDung}</td>
+                    <td data-label="Loại tài khoản">
                       {role === userType.GIAOVIEN ? "Giáo viên" : "Học sinh"}
                     </td>
-                    <td>{`${
+                    <td data-label="Trạng thái">{`${
                       user.trangThai === 0 ? "Đang" : "Ngừng"
                     } hoạt động`}</td>
-                    <td>
+                    <td data-label="Tùy chỉnh">
                       <Link
                         title="Chỉnh sửa"
                         className="uk-icon-link uk-margin-small-right"
@@ -191,9 +192,6 @@ const AdminAccounts = () => {
               })}
           </tbody>
         </table>
-        {loading && (
-          <div className="uk-flex uk-flex-center" uk-spinner=""></div>
-        )}
       </div>
       <ul className="uk-pagination uk-flex-center" uk-margin="">
         <PaginationButtonGroup

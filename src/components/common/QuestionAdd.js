@@ -21,7 +21,7 @@ const QuestionAdd = () => {
   const hasError = useRef(false);
 
   const buttonClass = (t) =>
-    `uk-button uk-padding ${
+    `uk-button uk-padding uk-padding-remove-vertical ${
       type === t ? "uk-button-primary" : "uk-button-link"
     }`;
 
@@ -116,11 +116,8 @@ const QuestionAdd = () => {
   };
 
   return (
-    <div className="uk-flex uk-flex-row uk-flex-1">
-      <div
-        className="uk-flex uk-flex-column uk-height-1-1"
-        style={{ width: 200 }}
-      >
+    <div className="uk-flex uk-flex-column uk-flex-1">
+      <div className="uk-flex uk-flex-row uk-height-1-1">
         <button
           className={buttonClass(questionType.MULTIPLE_CHOICE)}
           onClick={() => onToggle(questionType.MULTIPLE_CHOICE)}
@@ -135,7 +132,7 @@ const QuestionAdd = () => {
         </button>
       </div>
       <div
-        className="uk-padding uk-padding-remove-vertical uk-height-1-1 uk-flex-1"
+        className="uk-padding uk-height-1-1 uk-flex-1"
         style={{ overflowY: "auto" }}
       >
         <ControlBar

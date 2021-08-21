@@ -221,6 +221,8 @@ const Exam = () => {
           await getDeThi();
         }}
       />
+
+      {loading && <div className="uk-flex uk-flex-center" uk-spinner=""></div>}
       <div className="uk-margin-top uk-overflow-auto">
         <table className="uk-table uk-table-striped uk-table-middle">
           <thead>
@@ -288,9 +290,6 @@ const Exam = () => {
               ))}
           </tbody>
         </table>
-        {loading && (
-          <div className="uk-flex uk-flex-center" uk-spinner=""></div>
-        )}
       </div>
 
       <ul className="uk-pagination uk-flex-center" uk-margin>
