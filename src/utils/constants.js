@@ -112,7 +112,7 @@ export const navBarCategories = {
     },
     {
       title: "Danh sách phòng thi",
-      path: "/examroom"
+      path: "/examroom",
     },
     {
       title: "Kiểm tra kết quả thi",
@@ -124,7 +124,7 @@ export const navBarCategories = {
     },
     {
       title: "Môn học",
-      path: "/",
+      path: "/course",
     },
     {
       title: "Tài khoản",
