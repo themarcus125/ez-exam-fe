@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import styled from "styled-components";
 import EssayQuestionBlock from "./EssayQuestionBlock";
 
 import MultipleChoiceQuestionBlock from "./MultipleChoiceQuestionBlock";
@@ -139,41 +140,25 @@ const QuestionAdd = () => {
         <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
           Thêm câu hỏi
         </p>
-        <div className="uk-flex uk-flex-row uk-flex-between uk-margin-medium-bottom">
-          <div className="uk-width-1-6@s uk-display-inline-block">
-            <span className="uk-display-inline-block uk-width-2-5">
-              Môn học
-            </span>
-            <div className="uk-display-inline-block uk-width-3-5">
-              <select
+        <div class="uk-child-width-expand@s uk-flex" uk-grid>
+          <div className="uk-text-center">
+            <FilterLabel>Môn học</FilterLabel>
+            <div className="uk-display-inline-block">
+              <FilterSelector
                 className="uk-select uk-width-1-1"
                 style={{
                   border: "solid 0.5px #666",
                 }}
               >
                 <option>Phần mềm</option>
-              </select>
+              </FilterSelector>
             </div>
           </div>
 
-          <div className="uk-width-1-6@s uk-display-inline-block">
-            <span className="uk-display-inline-block uk-width-2-5">Chương</span>
-            <div className="uk-display-inline-block uk-width-3-5">
-              <select
-                className="uk-select uk-width-1-1"
-                style={{
-                  border: "solid 0.5px #666",
-                }}
-              >
-                <option>Chương 1</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="uk-width-1-6@s uk-display-inline-block">
-            <span className="uk-display-inline-block uk-width-2-5">Mức độ</span>
-            <div className="uk-display-inline-block uk-width-3-5">
-              <select
+          <div className="uk-text-center">
+            <FilterLabel>Mức độ</FilterLabel>
+            <div className="uk-display-inline-block">
+              <FilterSelector
                 className="uk-select uk-width-1-1"
                 style={{
                   border: "solid 0.5px #666",
@@ -184,7 +169,7 @@ const QuestionAdd = () => {
                 <option value={questionLevel.EASY}>Dễ</option>
                 <option value={questionLevel.MEDIUM}>Trung bình</option>
                 <option value={questionLevel.HARD}>Khó</option>
-              </select>
+              </FilterSelector>
             </div>
           </div>
         </div>
@@ -246,3 +231,16 @@ const QuestionAdd = () => {
 };
 
 export default QuestionAdd;
+
+const FilterSelector = styled.select`
+  width: 200px;
+`;
+
+const FilterLabel = styled.span`
+  margin-right: 20px;
+  @media (max-width: 1000px) {
+    display: block;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+`;
