@@ -140,7 +140,7 @@ const QuestionAdd = () => {
         <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
           Thêm câu hỏi
         </p>
-        <div class="uk-child-width-expand@s uk-flex" uk-grid>
+        <div className="uk-child-width-expand@s uk-flex" uk-grid="true">
           <div className="uk-text-center">
             <FilterLabel>Môn học</FilterLabel>
             <div className="uk-display-inline-block">

@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import UIKit from "uikit/dist/js/uikit.min.js";
 import { Link } from "gatsby";
+import styled, { css } from "styled-components";
 
 import { navigate } from "../../utils/common";
 import { logout, getUser } from "../../utils/auth";
@@ -11,6 +12,7 @@ const NavBar = () => {
   const { username: userName, role: userRole } = getUser();
   const rootPath = userRoleToPath[userRole] || "examinee";
   const categories = navBarCategories[userRole] || navBarCategories["sinhvien"];
+  const isCanvasOpen = useRef(false);
 
   useEffect(() => {
     UIKit.navbar("#navbar");
@@ -19,6 +21,14 @@ const NavBar = () => {
   const onLogout = (e) => {
     e.preventDefault();
     logout(() => navigate(`/`));
+  };
+
+  const onToggle = () => {
+    if (isCanvasOpen.current) {
+      UIKit.offcanvas("#offcanvas-slide").hide();
+    } else {
+      UIKit.offcanvas("#offcanvas-slide").show();
+    }
   };
 
   return (
@@ -31,13 +41,21 @@ const NavBar = () => {
       >
         <div className="uk-navbar-left uk-margin-small-left">
           <ul className="uk-navbar-nav">
+            <HamburgerButton
+              className="uk-button"
+              type="button"
+              onClick={onToggle}
+            >
+              <span uk-icon="icon: table"></span>
+            </HamburgerButton>
+
             <Link to={`/${rootPath}`}>
               <img src={logo} alt="Logo" width="200" height="80" />
             </Link>
 
             {categories.map((category, index) => {
               return (
-                <li key={index} className="uk-flex uk-flex-middle">
+                <NavBarItem key={index} className="uk-flex uk-flex-middle">
                   <Link
                     to={
                       category?.subCategories
@@ -64,7 +82,7 @@ const NavBar = () => {
                       </ul>
                     </div>
                   )}
-                </li>
+                </NavBarItem>
               );
             })}
           </ul>
@@ -111,8 +129,74 @@ const NavBar = () => {
           </ul>
         </div>
       </nav>
+      <div id="offcanvas-slide" uk-offcanvas="overlay: true">
+        <div className="uk-offcanvas-bar" style={{ backgroundColor: "#FFF" }}>
+          <button
+            className="uk-offcanvas-close"
+            type="button"
+            uk-close="true"
+            style={{ color: "#222" }}
+          ></button>
+
+          <ul className="uk-nav">
+            {categories.map((category, index) => {
+              return (
+                <NavBarItem canvas key={index} className="uk-parent">
+                  <Link
+                    to={
+                      category?.subCategories
+                        ? `/${rootPath}${category?.subCategories[0]?.path}`
+                        : `/${rootPath}${category.path}`
+                    }
+                    style={{ color: "#222" }}
+                  >
+                    {category.title}
+                  </Link>
+                  {category?.subCategories && (
+                    <ul className="uk-nav-sub">
+                      {category.subCategories.map((subCategory, index) => {
+                        return (
+                          <li key={index}>
+                            <Link
+                              to={`/${rootPath}${category.path}${subCategory.path}`}
+                              style={{ color: "#222" }}
+                            >
+                              {subCategory.title}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </NavBarItem>
+              );
+            })}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default NavBar;
+
+const NavBarItem = styled.li`
+  @media (max-width: 1320px) {
+    ${(props) =>
+      !props.canvas &&
+      css`
+        display: none;
+      `}
+  }
+`;
+
+const HamburgerButton = styled.button`
+  display: none;
+  align-self: center;
+  padding: 10px;
+  background-color: #f8f8f8;
+  border: none;
+  @media (max-width: 1320px) {
+    display: inline-block;
+  }
+`;

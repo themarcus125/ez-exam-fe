@@ -24,7 +24,7 @@ const Question = () => {
       <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
         Danh sách câu hỏi
       </p>
-      <div class="uk-child-width-expand@s uk-flex" uk-grid>
+      <div className="uk-child-width-expand@s uk-flex" uk-grid="true">
         <div>
           <FilterLabel>Môn học</FilterLabel>
           <div className="uk-display-inline-block">
