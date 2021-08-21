@@ -78,6 +78,14 @@ button:disabled {
   html {
     font-size: 14px;
   }
+  .uk-navbar {
+    margin-bottom: 16px;
+  }
+  .logo-image {
+    margin-top: 6px;
+    width: 130px;
+    height: auto;
+  }
   .uk-padding {
     padding: 16px;
   }

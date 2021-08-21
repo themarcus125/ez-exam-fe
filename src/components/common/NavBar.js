@@ -49,7 +49,7 @@ const NavBar = () => {
               <span uk-icon="icon: table"></span>
             </HamburgerButton>
 
-            <Link to={`/${rootPath}`}>
+            <Link className="logo-image" to={`/${rootPath}`}>
               <img src={logo} alt="Logo" width="200" height="80" />
             </Link>
 
