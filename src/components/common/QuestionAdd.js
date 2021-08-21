@@ -6,6 +6,7 @@ import MultipleChoiceQuestionBlock from "./MultipleChoiceQuestionBlock";
 import { questionType, questionLevel } from "../../utils/constants";
 import { postAPIWithToken } from "../../utils/api";
 import { getUser } from "../../utils/auth";
+import ControlBar from "./ControlBar";
 
 const token = getUser()?.tk ?? "";
 
@@ -134,45 +135,46 @@ const QuestionAdd = () => {
         </button>
       </div>
       <div
-        className="uk-padding uk-padding-remove-bottom uk-height-1-1 uk-flex-1"
+        className="uk-padding uk-padding-remove-vertical uk-height-1-1 uk-flex-1"
         style={{ overflowY: "auto" }}
       >
-        <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
-          Thêm câu hỏi
-        </p>
-        <div class="uk-child-width-expand@s uk-flex" uk-grid>
-          <div className="uk-text-center">
-            <FilterLabel>Môn học</FilterLabel>
-            <div className="uk-display-inline-block">
-              <FilterSelector
-                className="uk-select uk-width-1-1"
-                style={{
-                  border: "solid 0.5px #666",
-                }}
-              >
-                <option>Phần mềm</option>
-              </FilterSelector>
-            </div>
-          </div>
-
-          <div className="uk-text-center">
-            <FilterLabel>Mức độ</FilterLabel>
-            <div className="uk-display-inline-block">
-              <FilterSelector
-                className="uk-select uk-width-1-1"
-                style={{
-                  border: "solid 0.5px #666",
-                }}
-                value={level}
-                onChange={onChangeLevel}
-              >
-                <option value={questionLevel.EASY}>Dễ</option>
-                <option value={questionLevel.MEDIUM}>Trung bình</option>
-                <option value={questionLevel.HARD}>Khó</option>
-              </FilterSelector>
-            </div>
-          </div>
-        </div>
+        <ControlBar
+          title="Thêm câu hỏi"
+          controlRow={() => (
+            <>
+              <div className="uk-text">
+                <FilterLabel>Môn học</FilterLabel>
+                <div className="uk-display-inline-block">
+                  <FilterSelector
+                    className="uk-select uk-width-1-1"
+                    style={{
+                      border: "solid 0.5px #666",
+                    }}
+                  >
+                    <option>Phần mềm</option>
+                  </FilterSelector>
+                </div>
+              </div>
+              <div className="uk-text-right">
+                <FilterLabel>Mức độ</FilterLabel>
+                <div className="uk-display-inline-block">
+                  <FilterSelector
+                    className="uk-select uk-width-1-1"
+                    style={{
+                      border: "solid 0.5px #666",
+                    }}
+                    value={level}
+                    onChange={onChangeLevel}
+                  >
+                    <option value={questionLevel.EASY}>Dễ</option>
+                    <option value={questionLevel.MEDIUM}>Trung bình</option>
+                    <option value={questionLevel.HARD}>Khó</option>
+                  </FilterSelector>
+                </div>
+              </div>
+            </>
+          )}
+        />
 
         {type === questionType.MULTIPLE_CHOICE ? (
           <div>
