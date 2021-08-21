@@ -316,52 +316,50 @@ const ExamRoom = () => {
           <div className="uk-flex uk-flex-center" uk-spinner=""></div>
         )}
       </div>
-      {numOfPage.current && numOfPage.current > 1 ? (
-        <ul className="uk-pagination uk-flex-center" uk-margin="">
-          <li className={`${currentPage === 1 ? "uk-disabled" : ""}`}>
-            <button
-              className="uk-button uk-button-default uk-button-small"
-              onClick={onPrev}
-            >
-              <span className="uk-icon" uk-icon="icon: chevron-left"></span>
-            </button>
-          </li>
-          {Array.from({ length: numOfPage.current }, (_, i) => i + 1).map(
-            (num) => {
-              const isActiveButton = currentPage === num;
-              return (
-                <li
-                  key={num}
-                  className={`${isActiveButton ? "uk-disabled" : ""}`}
-                >
-                  <button
-                    className="uk-button uk-button-default uk-button-small"
-                    style={{
-                      ...paginationButton,
-                      ...(isActiveButton && activeButton),
-                    }}
-                    onClick={() => onChangePage(num)}
-                  >
-                    {num}
-                  </button>
-                </li>
-              );
-            },
-          )}
-          <li
-            className={`${
-              currentPage === numOfPage.current ? "uk-disabled" : ""
-            }`}
+      <ul className="uk-pagination uk-flex-center" uk-margin="">
+        <li className={`${currentPage === 1 ? "uk-disabled" : ""}`}>
+          <button
+            className="uk-button uk-button-default uk-button-small"
+            onClick={onPrev}
           >
-            <button
-              className="uk-button uk-button-default uk-button-small"
-              onClick={onNext}
-            >
-              <span className="uk-icon" uk-icon="icon: chevron-right"></span>
-            </button>
-          </li>
-        </ul>
-      ) : null}
+            <span className="uk-icon" uk-icon="icon: chevron-left"></span>
+          </button>
+        </li>
+        {Array.from({ length: numOfPage.current }, (_, i) => i + 1).map(
+          (num) => {
+            const isActiveButton = currentPage === num;
+            return (
+              <li
+                key={num}
+                className={`${isActiveButton ? "uk-disabled" : ""}`}
+              >
+                <button
+                  className="uk-button uk-button-default uk-button-small"
+                  style={{
+                    ...paginationButton,
+                    ...(isActiveButton && activeButton),
+                  }}
+                  onClick={() => onChangePage(num)}
+                >
+                  {num}
+                </button>
+              </li>
+            );
+          },
+        )}
+        <li
+          className={`${
+            currentPage === numOfPage.current ? "uk-disabled" : ""
+          }`}
+        >
+          <button
+            className="uk-button uk-button-default uk-button-small"
+            onClick={onNext}
+          >
+            <span className="uk-icon" uk-icon="icon: chevron-right"></span>
+          </button>
+        </li>
+      </ul>
     </div>
   );
 };

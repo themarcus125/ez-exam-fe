@@ -221,7 +221,7 @@ const Exam = () => {
           await getDeThi();
         }}
       />
-      <div className="uk-margin-top uk-overflow-auto" style={{ height: 400 }}>
+      <div className="uk-margin-top uk-overflow-auto">
         <table className="uk-table uk-table-striped uk-table-middle">
           <thead>
             <tr>
@@ -239,12 +239,14 @@ const Exam = () => {
               deThis.length > 0 &&
               deThis.map((item, index) => (
                 <tr key={index}>
-                  <td>{item.maBoDe}</td>
-                  <td>{item.maDe}</td>
-                  <td>{item.tieuDe}</td>
-                  <td>{item.tenChuyenDe}</td>
-                  <td>{moment(item.ngayTao).format("DD/MM/YYYY")}</td>
-                  <td>
+                  <td data-label="Mã bộ đề">{item.maBoDe}</td>
+                  <td data-label="Mã đề">{item.maDe}</td>
+                  <td data-label="Tên đề thi">{item.tieuDe}</td>
+                  <td data-label="Môn học">{item.tenChuyenDe}</td>
+                  <td data-label="Ngày tạo">
+                    {moment(item.ngayTao).format("DD/MM/YYYY")}
+                  </td>
+                  <td data-label="Tùy chỉnh">
                     <ul className="uk-subnav-pill">
                       <a
                         style={{
