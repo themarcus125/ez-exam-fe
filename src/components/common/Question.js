@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import styled from "styled-components";
-
 import { questionLevel, questionType } from "../../utils/constants";
+import ControlBar from "./ControlBar";
 import QuestionTable from "./QuestionTable";
 
 const Question = () => {
@@ -18,62 +17,63 @@ const Question = () => {
 
   return (
     <div
-      className="uk-padding uk-padding-remove-bottom uk-height-1-1"
+      className="uk-padding uk-padding-remove-vertical uk-height-1-1"
       style={{ overflowY: "auto" }}
     >
-      <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
-        Danh sách câu hỏi
-      </p>
-      <div className="uk-child-width-expand@s uk-flex" uk-grid="true">
-        <div>
-          <FilterLabel>Môn học</FilterLabel>
-          <div className="uk-display-inline-block">
-            <FilterSelector
-              className="uk-select uk-width-1-1"
-              style={{
-                border: "solid 0.5px #666",
-              }}
-            >
-              <option>Phần mềm</option>
-            </FilterSelector>
-          </div>
-        </div>
+      <ControlBar
+        title="Danh sách câu hỏi"
+        controlRow={() => (
+          <>
+            <div className="uk-width-1-3@l uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-1-4">
+                Môn học
+              </span>
+              <div className="uk-display-inline-block uk-width-3-4">
+                <select className="uk-select uk-width-1-1 black-border">
+                  <option>Phần mềm</option>
+                </select>
+              </div>
+            </div>
 
-        <div className="uk-text-center">
-          <FilterLabel>Loại câu hỏi</FilterLabel>
-          <div className="uk-display-inline-block">
-            <FilterSelector
-              className="uk-select uk-width-1-1"
-              style={{
-                border: "solid 0.5px #666",
-              }}
-              value={type}
-              onChange={onChangeType}
-            >
-              <option value={questionType.MULTIPLE_CHOICE}>Trắc nghiệm</option>
-              <option value={questionType.ESSAY}>Tự luận</option>
-            </FilterSelector>
-          </div>
-        </div>
+            <div className="uk-width-1-3@l uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-1-4">
+                Loại câu hỏi
+              </span>
+              <div className="uk-display-inline-block uk-width-3-4">
+                <select
+                  className="uk-select uk-width-1-1 black-border"
+                  value={type}
+                  onChange={onChangeType}
+                  onBlur={() => {}}
+                >
+                  <option value={questionType.MULTIPLE_CHOICE}>
+                    Trắc nghiệm
+                  </option>
+                  <option value={questionType.ESSAY}>Tự luận</option>
+                </select>
+              </div>
+            </div>
 
-        <div className="uk-text-right">
-          <FilterLabel>Mức độ</FilterLabel>
-          <div className="uk-display-inline-block">
-            <FilterSelector
-              className="uk-select uk-width-1-1"
-              style={{
-                border: "solid 0.5px #666",
-              }}
-              value={level}
-              onChange={onChangeLevel}
-            >
-              <option value={questionLevel.EASY}>Dễ</option>
-              <option value={questionLevel.MEDIUM}>Trung bình</option>
-              <option value={questionLevel.HARD}>Khó</option>
-            </FilterSelector>
-          </div>
-        </div>
-      </div>
+            <div className="uk-width-1-3@l uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-1-4">
+                Mức độ
+              </span>
+              <div className="uk-display-inline-block uk-width-3-4">
+                <select
+                  className="uk-select uk-width-1-1 black-border"
+                  value={level}
+                  onChange={onChangeLevel}
+                  onBlur={() => {}}
+                >
+                  <option value={questionLevel.EASY}>Dễ</option>
+                  <option value={questionLevel.MEDIUM}>Trung bình</option>
+                  <option value={questionLevel.HARD}>Khó</option>
+                </select>
+              </div>
+            </div>
+          </>
+        )}
+      />
 
       <QuestionTable type={type} level={level} />
     </div>
@@ -81,22 +81,3 @@ const Question = () => {
 };
 
 export default Question;
-
-const FilterSelector = styled.select`
-  width: 200px;
-  @media (max-width: 768px) {
-    width: 150px;
-  }
-  @media (max-width: 500px) {
-    width: 100px;
-  }
-`;
-
-const FilterLabel = styled.span`
-  margin-right: 20px;
-  @media (max-width: 1000px) {
-    display: block;
-    margin-right: 0;
-    margin-bottom: 10px;
-  }
-`;
