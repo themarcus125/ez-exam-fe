@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import styled from "styled-components";
-
 import { questionLevel, questionType } from "../../utils/constants";
 import ControlBar from "./ControlBar";
 import QuestionTable from "./QuestionTable";
