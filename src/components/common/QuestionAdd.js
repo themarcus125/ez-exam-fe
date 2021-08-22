@@ -66,7 +66,6 @@ const QuestionAdd = () => {
 
   const onSave = async () => {
     hasError.current = false;
-    const questionList = [];
     let refs = [];
     if (type === questionType.MULTIPLE_CHOICE) {
       refs = multipleChoiceRefs.current;
@@ -74,7 +73,7 @@ const QuestionAdd = () => {
       refs = essayRefs.current;
     }
 
-    refs.forEach((ref) => {
+    const questionList = refs.reduce((arr, ref) => {
       if (ref !== null) {
         const data = ref.getData();
         if (data.error) {
@@ -83,9 +82,10 @@ const QuestionAdd = () => {
           return;
         }
 
-        questionList.push(data);
+        arr.push(data);
+        return arr;
       }
-    });
+    }, []);
 
     if (hasError.current) {
       return;
