@@ -30,10 +30,12 @@ const MultipleChoiceQuestionBlock = (props, ref) => {
             type: 0,
           },
         ];
+  const correctAnswer = useRef(
+    defaultAnswerList.findIndex((answer) => answer.type === 1),
+  );
   const [answerList, setAnswerList] = useState(defaultAnswerList);
   const [title, setTitle] = useState(defaultQuestion);
   const [isPublic, setIsPublic] = useState(false);
-  const correctAnswer = useRef(null);
 
   if (ref) {
     useImperativeHandle(ref, () => ({
