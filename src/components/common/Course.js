@@ -9,6 +9,7 @@ import { getToken, getUser } from "../../utils/auth";
 import Config from "../../utils/config";
 
 const Course = () => {
+  const [token, setToken] = useState(null);
   const [monHoc, setMonHoc] = useState([]);
   const [meta, setMeta] = useState(null);
   const [key, setKey] = useState("");
@@ -20,7 +21,6 @@ const Course = () => {
 
   const getMonHoc = async (crPage) => {
     setLoading(true);
-    const token = await getToken();
     const lstMonHoc = await getAPIWithToken(
       `/chuyende/layDanhSachChuyenDe?limit=10&page=${crPage}&keywork=${key}`,
       token,
@@ -31,9 +31,30 @@ const Course = () => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    getMonHoc(1);
+  const xoaMonHoc = async (id) => {
+    const response = await deleteAPIWithToken(
+      `/chuyende/xoaChuyenDe?id=${id}`,
+      token,
+    );
+
+    if (response?.status === 200) {
+      alert("Xóa môn học thành công.");
+      await getMonHoc(meta?.currentPage);
+    } else {
+      alert("Đã xảy ra lỗi. Xóa môn học thất bại.");
+    }
+  };
+
+  useEffect(async () => {
+    const token = await getToken();
+    if (token) {
+      setToken(token);
+    }
   }, []);
+
+  useEffect(async () => {
+    await getMonHoc(1);
+  }, [token]);
 
   for (let i = 1; i <= meta?.lastPage; i++) {
     lstPage.push(i);
@@ -63,7 +84,7 @@ const Course = () => {
             className={`uk-button ${loading ? "uk-disabled" : ""}`}
             style={{ backgroundColor: "#32d296", color: "#FFF" }}
             onClick={() => {
-              getMonHoc();
+              getMonHoc(1);
             }}
           >
             Tìm kiếm
@@ -113,7 +134,7 @@ const Course = () => {
                           <li>
                             <a
                               onClick={() => {
-                                xoaBoDe(item.maBoDe);
+                                xoaMonHoc(item.id);
                               }}
                             >
                               Xóa môn học
