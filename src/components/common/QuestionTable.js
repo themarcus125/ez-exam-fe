@@ -113,12 +113,12 @@ const QuestionTable = ({
                             uk-toggle={`target: .answer-${question.id}`}
                           ></a>
                         )}
-                        <a
+                        {/* <a
                           title="Lưu vào ngân hàng câu hỏi"
                           className="uk-icon-link uk-margin-small-right"
                           uk-icon="cloud-upload"
                           uk-toggle="target: #modal-center"
-                        ></a>
+                        ></a> */}
                       </td>
                     </tr>
                     {question.dsDapAn.map((answer, index) => {
