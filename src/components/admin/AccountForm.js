@@ -100,7 +100,7 @@ const AdminAccountForm = ({ userId }) => {
     <div className="uk-flex uk-margin-top uk-flex-center">
       <div className="uk-width-1-2@m uk-background-default uk-border-rounded uk-padding">
         <form className="uk-form" onSubmit={onSubmit}>
-          <p className="uk-text-large uk-text-bold uk-text-center uk-text-success">
+          <p className="title uk-text-large uk-text-uppercase uk-text-bold uk-text-center uk-text-success">
             {`${userId ? "Sửa thông tin" : "Tạo"} tài khoản`}
           </p>
 
