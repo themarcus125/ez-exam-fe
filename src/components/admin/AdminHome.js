@@ -1,9 +1,10 @@
 import React from "react";
+import { ResponsiveFlexWrapper } from "../../utils/ui";
 
 const AdminHome = () => {
   return (
     <div className="uk-padding" style={{ flexGrow: 1 }}>
-      <div className="uk-flex uk-height-1-1">
+      <ResponsiveFlexWrapper className="uk-height-1-1">
         <div
           className="uk-padding uk-padding-remove-vertical"
           style={{ flex: 2 }}
@@ -26,7 +27,7 @@ const AdminHome = () => {
             </p>
           </div>
         </div>
-        <div style={{ flex: 3 }}>
+        <div style={{ flex: 3, height: "400px" }}>
           <iframe
             title="clip"
             src="https://www.youtube.com/embed/dQw4w9WgXcQ"
@@ -40,7 +41,7 @@ const AdminHome = () => {
             }}
           ></iframe>
         </div>
-      </div>
+      </ResponsiveFlexWrapper>
     </div>
   );
 };
