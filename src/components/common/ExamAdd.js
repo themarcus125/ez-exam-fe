@@ -6,6 +6,10 @@ import {
 } from "../../utils/api";
 import { getToken } from "../../utils/auth";
 import { questionType } from "../../utils/constants";
+import {
+  ResponsiveButtonsWrapper,
+  ResponsiveGradingQuestionsWrapper,
+} from "../../utils/ui";
 import EssayQuestionBlock from "./EssayQuestionBlock";
 import LoadingOverlay from "./LoadingOverlay";
 import MultipleChoiceQuestionBlock from "./MultipleChoiceQuestionBlock";
@@ -525,10 +529,10 @@ const ExamAdd = ({ examId }) => {
 
             {/* exam questionaire */}
             {renderQuestionaire()}
-            <div className="uk-flex uk-flex-center">
-              <div className="uk-card-body">
+            <ResponsiveButtonsWrapper className="uk-flex-center">
+              <div className="uk-padding">
                 <button
-                  className="uk-button"
+                  className="uk-button full-width-small-screen"
                   style={{ backgroundColor: "#32d296", color: "#FFF" }}
                   onClick={() => {
                     onAddQuestion();
@@ -538,38 +542,27 @@ const ExamAdd = ({ examId }) => {
                 </button>
               </div>
 
-              <div className="uk-card-body uk-margin-left">
+              <div className="uk-padding">
                 <button
-                  className="uk-button"
+                  className="uk-button full-width-small-screen"
                   style={{ backgroundColor: "#32d296", color: "#FFF" }}
                   onClick={() => showSelectModal()}
                 >
                   Chọn câu hỏi có sẵn
                 </button>
               </div>
-            </div>
+            </ResponsiveButtonsWrapper>
 
             {/* exam grading */}
-            <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
-              <div className="uk-width-1-4@s uk-display-inline-block">
-                <span className="uk-display-inline-block uk-width-3-5">
-                  Số câu hỏi trắc nghiệm
-                </span>
-                <div
-                  className="uk-display-inline-block uk-width-1-5"
-                  style={{ marginLeft: "10px" }}
-                >
-                  <span className="uk-display-inline-block uk-width-1-5">
-                    {soLuongTracNghiem}
-                  </span>
-                </div>
+            <ResponsiveGradingQuestionsWrapper className="uk-flex-row uk-flex-between uk-margin-bottom">
+              <div className="uk-width-1-3@s uk-flex">
+                <span className="uk-width-3-4">Số câu hỏi trắc nghiệm</span>
+                <span className="uk-width-1-4">{soLuongTracNghiem}</span>
               </div>
 
-              <div className="uk-width-1-4@s uk-display-inline-block">
-                <span className="uk-display-inline-block uk-width-2-5">
-                  Nhập điểm
-                </span>
-                <div className="uk-display-inline-block uk-width-2-5">
+              <div className="uk-width-1-3@s uk-flex">
+                <span className="uk-width-3-4">Nhập điểm</span>
+                <div className="uk-width-1-4">
                   <input
                     id="diemtracnghiem"
                     className="uk-input uk-form-width-small"
@@ -584,41 +577,23 @@ const ExamAdd = ({ examId }) => {
                 </div>
               </div>
 
-              <div className="uk-width-1-4@s uk-display-inline-block">
-                <span className="uk-display-inline-block uk-width-3-5">
-                  Điểm từng câu
+              <div className="uk-width-1-3@s uk-flex extended-margin-left">
+                <span className="uk-width-3-4">Điểm từng câu</span>
+                <span className="uk-display-inline-block ">
+                  {diemTungCauTracNghiem}
                 </span>
-                <div
-                  className="uk-display-inline-block uk-width-1-5"
-                  style={{ marginLeft: "-50px" }}
-                >
-                  <span className="uk-display-inline-block ">
-                    {diemTungCauTracNghiem}
-                  </span>
-                </div>
               </div>
-            </div>
+            </ResponsiveGradingQuestionsWrapper>
 
-            <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
-              <div className="uk-width-1-4@s uk-display-inline-block">
-                <span className="uk-display-inline-block uk-width-3-5">
-                  Số câu hỏi tự luận
-                </span>
-                <div
-                  className="uk-display-inline-block uk-width-1-5"
-                  style={{ marginLeft: "10px" }}
-                >
-                  <span className="uk-display-inline-block uk-width-1-5">
-                    {soLuongTuLuan}
-                  </span>
-                </div>
+            <ResponsiveGradingQuestionsWrapper className="uk-flex-row uk-flex-between uk-margin-bottom">
+              <div className="uk-width-1-3@s uk-flex">
+                <span className="uk-width-3-4">Số câu hỏi tự luận</span>
+                <span className="uk-width-1-4">{soLuongTuLuan}</span>
               </div>
 
-              <div className="uk-width-1-4@s uk-display-inline-block">
-                <span className="uk-display-inline-block uk-width-2-5">
-                  Nhập điểm
-                </span>
-                <div className="uk-display-inline-block uk-width-2-5">
+              <div className="uk-width-1-3@s uk-flex">
+                <span className="uk-width-3-4">Nhập điểm</span>
+                <div className="uk-width-1-4">
                   <input
                     id="diemtuluan"
                     className="uk-input uk-form-width-small"
@@ -633,20 +608,13 @@ const ExamAdd = ({ examId }) => {
                 </div>
               </div>
 
-              <div className="uk-width-1-4@s uk-display-inline-block">
-                <span className="uk-display-inline-block uk-width-3-5">
-                  Điểm từng câu
+              <div className="uk-width-1-3@s uk-flex extended-margin-left">
+                <span className="uk-width-3-4">Điểm từng câu</span>
+                <span className="uk-display-inline-block ">
+                  {diemTungCauTuLuan}
                 </span>
-                <div
-                  className="uk-display-inline-block uk-width-1-5"
-                  style={{ marginLeft: "-50px" }}
-                >
-                  <span className="uk-display-inline-block ">
-                    {diemTungCauTuLuan}
-                  </span>
-                </div>
               </div>
-            </div>
+            </ResponsiveGradingQuestionsWrapper>
 
             {/* exam list creation */}
             <div className="uk-margin uk-grid-small uk-child-width-auto uk-grid">
