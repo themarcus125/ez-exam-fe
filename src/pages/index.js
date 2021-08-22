@@ -6,6 +6,7 @@ import { Helmet } from "react-helmet";
 import logo from "../asset/images/logo.png";
 import { getUser } from "../utils/auth";
 import { userRoleToPath } from "../utils/constants";
+import { ResponsiveFlexWrapper } from "../utils/ui";
 
 const IndexPage = () => {
   useEffect(() => {
@@ -35,7 +36,7 @@ const IndexPage = () => {
           style={{ backgroundColor: "#FFFFFF" }}
         >
           <div className="uk-navbar-left uk-margin-small-left">
-            <Link to="/">
+            <Link className="logo-image" to="/">
               <img src={logo} alt="Logo" width="200" height="80" />
             </Link>
           </div>
@@ -51,7 +52,7 @@ const IndexPage = () => {
           </div>
         </nav>
         <div className="uk-padding" style={{ flexGrow: 1 }}>
-          <div className="uk-flex uk-height-1-1">
+          <ResponsiveFlexWrapper className="uk-height-1-1">
             <div
               className="uk-padding uk-padding-remove-vertical"
               style={{ flex: 2 }}
@@ -76,8 +77,9 @@ const IndexPage = () => {
                 </p>
               </div>
             </div>
-            <div style={{ flex: 3 }}>
+            <div style={{ flex: 3, height: "400px" }}>
               <iframe
+                title="video"
                 src="https://www.youtube.com/embed/dQw4w9WgXcQ"
                 frameBorder="0"
                 uk-video="automute: true"
@@ -89,7 +91,7 @@ const IndexPage = () => {
                 }}
               ></iframe>
             </div>
-          </div>
+          </ResponsiveFlexWrapper>
         </div>
       </div>
     </>
