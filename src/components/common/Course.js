@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "gatsby";
-import {
-  getAPIWithToken,
-  postAPIWithToken,
-  deleteAPIWithToken,
-} from "../../utils/api";
+import { getAPIWithToken } from "../../utils/api";
 import { getToken, getUser } from "../../utils/auth";
 import Config from "../../utils/config";
 
 const Course = () => {
-  const [token, setToken] = useState(null);
   const [monHoc, setMonHoc] = useState([]);
   const [meta, setMeta] = useState(null);
   const [key, setKey] = useState("");
@@ -21,8 +16,11 @@ const Course = () => {
 
   const getMonHoc = async (crPage) => {
     setLoading(true);
+    const token = await getToken();
     const lstMonHoc = await getAPIWithToken(
-      `/chuyende/layDanhSachChuyenDe?limit=10&page=${crPage}&keywork=${key}`,
+      `/chuyende/layDanhSachChuyenDe?limit=10&page=${crPage}&keyword=${
+        key && key
+      }`,
       token,
     );
 
@@ -31,30 +29,9 @@ const Course = () => {
     setLoading(false);
   };
 
-  const xoaMonHoc = async (id) => {
-    const response = await deleteAPIWithToken(
-      `/chuyende/xoaChuyenDe?id=${id}`,
-      token,
-    );
-
-    if (response?.status === 200) {
-      alert("Xóa môn học thành công.");
-      await getMonHoc(meta?.currentPage);
-    } else {
-      alert("Đã xảy ra lỗi. Xóa môn học thất bại.");
-    }
-  };
-
-  useEffect(async () => {
-    const token = await getToken();
-    if (token) {
-      setToken(token);
-    }
-  }, []);
-
   useEffect(async () => {
     await getMonHoc(1);
-  }, [token]);
+  }, []);
 
   for (let i = 1; i <= meta?.lastPage; i++) {
     lstPage.push(i);
@@ -105,7 +82,9 @@ const Course = () => {
         <table className="uk-table uk-table-striped uk-table-middle">
           <thead>
             <tr>
+              <th className="uk-width-large">Mã môn học</th>
               <th className="uk-width-large">Môn học</th>
+              <th className="uk-width-large">Trạng thái</th>
               <th className="uk-width-small"></th>
             </tr>
           </thead>
@@ -114,7 +93,11 @@ const Course = () => {
               monHoc?.length > 0 &&
               monHoc.map((item, index) => (
                 <tr key={index}>
+                  <td>{item.maChuyenDe}</td>
                   <td>{item.tenChuyenDe}</td>
+                  <td>
+                    {item.trangThai === 0 ? "Đang sử dụng" : "Không sử dụng"}
+                  </td>
                   <td>
                     <ul class="uk-subnav-pill">
                       <a
@@ -127,18 +110,9 @@ const Course = () => {
                       <div uk-dropdown="mode: click">
                         <ul class="uk-nav uk-dropdown-nav">
                           <li>
-                            <Link to={`${url}/exam/${item.id}`}>
-                              Xem chi tiết
+                            <Link to={`${url}/course/${item.id}`}>
+                              Sửa thông tin
                             </Link>
-                          </li>
-                          <li>
-                            <a
-                              onClick={() => {
-                                xoaMonHoc(item.id);
-                              }}
-                            >
-                              Xóa môn học
-                            </a>
                           </li>
                         </ul>
                       </div>
