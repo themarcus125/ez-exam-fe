@@ -21,7 +21,7 @@ const ExamineeDashboard = () => {
         />
         <PrivateRoute
           role={role}
-          path="/exam-taker"
+          path="/exam-taker/:roomId"
           component={ExamTaker}
           title="Vào thi"
         />
