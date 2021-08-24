@@ -7,6 +7,7 @@ import Config from "../../utils/config";
 const Course = () => {
   const [monHoc, setMonHoc] = useState([]);
   const [meta, setMeta] = useState(null);
+  const [trangThai, setTrangThai] = useState(0);
   const [key, setKey] = useState("");
   const [loading, setLoading] = useState(false);
   let lstPage = [];
@@ -20,7 +21,7 @@ const Course = () => {
     const lstMonHoc = await getAPIWithToken(
       `/chuyende/layDanhSachChuyenDe?limit=10&page=${crPage}&keyword=${
         key && key
-      }`,
+      }&trangThai=${trangThai}`,
       token,
     );
 
@@ -44,7 +45,33 @@ const Course = () => {
       </p>
 
       <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
-        <div className="uk-width-3-5 uk-flex uk-flex-between">
+        <div className="uk-width-2-5 uk-flex uk-flex-between">
+          <label className="uk-form-label uk-width-1-5 uk-flex uk-flex-middle">
+            Trạng thái
+          </label>
+          <select
+            className="uk-select"
+            value={trangThai}
+            onChange={(e) => setTrangThai(e.target.value)}
+          >
+            <option value={0}>Tất cả</option>
+            <option value={1}>Đang sử dụng</option>
+            <option value={2}>Không sử dụng</option>
+          </select>
+        </div>
+
+        <button
+          className="uk-button"
+          style={{ backgroundColor: "#32d296", color: "#FFF" }}
+        >
+          <Link to="./add" style={{ color: "#FFFFFF", textDecoration: "none" }}>
+            Thêm mới
+          </Link>
+        </button>
+      </div>
+
+      <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
+        <div className="uk-width-5-5 uk-flex uk-flex-between">
           <input
             className="uk-search-input uk-width-4-5"
             type="search"
@@ -67,15 +94,6 @@ const Course = () => {
             Tìm kiếm
           </button>
         </div>
-
-        <button
-          className="uk-button"
-          style={{ backgroundColor: "#32d296", color: "#FFF" }}
-        >
-          <Link to="./add" style={{ color: "#FFFFFF", textDecoration: "none" }}>
-            Thêm mới
-          </Link>
-        </button>
       </div>
 
       <div className="uk-margin-top uk-overflow-auto" style={{ height: 400 }}>
