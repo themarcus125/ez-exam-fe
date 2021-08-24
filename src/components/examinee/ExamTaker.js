@@ -11,7 +11,7 @@ import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
 import { getToken, getUser } from "../../utils/auth";
 import Config from "../../utils/config";
 import { ToastContainer, toast } from "react-toastify";
-import loadable from "@loadable/component";
+// import loadable from "@loadable/component";
 // const LoadableEditor = loadable(() => import("../common/Editor"));
 
 import { CKEditor } from "@ckeditor/ckeditor5-react";
@@ -25,8 +25,9 @@ const ExamTakerPage = ({ roomId }) => {
   const [objInfoRoom, setObjInfoRoom] = useState({});
   const [lstQuestion, setLstQuestion] = useState([]);
   const [lstAnswer, setLstAnswer] = useState([]);
-  const [title, setTitle] = useState(null);
-
+  const [notes, setNotes] = useState("");
+  const [timeExam, setTimeExam] = useState(0);
+  const [isDisabled, setIsDisabled] = useState(true);
 
   // const { isPermissionApproved: webcamApproved, webcamRecorderObject } =
   //   useWebcamRecorder();
@@ -52,6 +53,12 @@ const ExamTakerPage = ({ roomId }) => {
   //   }
   // }, [isPermissionApproved]);
 
+  // const onSubmit = () => {
+  //   webcamRecorderObject.stop();
+  //   screenRecorderObject.stop();
+  //   navigate(`/examinee/exam-taker`);
+  // };
+
   useEffect(() => {
     getQuestion();
   }, []);
@@ -66,6 +73,11 @@ const ExamTakerPage = ({ roomId }) => {
     setLstQuestion(tmp_objInfo?.data?.dsCauhoi);
   };
 
+  const changeClassCSS = (idTag) => {
+    var tagButton = document.getElementById(idTag);
+    tagButton.classList.add("uk-button-primary");
+  }
+
   const handleChangeAnswer = (e) => {
     if (e.target.checked) {
       let objAnswer = {
@@ -79,15 +91,15 @@ const ExamTakerPage = ({ roomId }) => {
       } else {
         lstAnswer.push(objAnswer);
       }
+      changeClassCSS("btn" + objAnswer.maCauHoi);
     }
   };
 
-  const handleChangeTitle = (event, editor) => {
-    setTitle(editor.getData());
+  const handleChangeNotes = (e) => {
+    setNotes(e.target.value);
   };
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
+  const onSendExam = async () => {
     const token = await getToken();
     if (roomId) {
       try {
@@ -95,7 +107,7 @@ const ExamTakerPage = ({ roomId }) => {
           "/sinhvien/nopbai",
           {
             maCTPhong: objInfoRoom.maCTPhong,
-            ghiChu: "",
+            ghiChu: notes,
             baiThi: lstAnswer
           },
           token,
@@ -112,18 +124,31 @@ const ExamTakerPage = ({ roomId }) => {
     }
   }
 
-  // const onSubmit = () => {
-  //   webcamRecorderObject.stop();
-  //   screenRecorderObject.stop();
-  //   navigate(`/examinee/exam-taker`);
-  // };
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    if (confirm('Bạn chắc chắn nộp bài ?')) {
+      if (parseInt(timeExam) <= parseInt(objInfoRoom.thoiGianLam / 2)) {
+        onSendExam();
+      }
+      else {
+        toast.warning("Chưa đến thời gian nộp bài !!!");
+      }
+    }
+  }
 
   // Renderer callback with condition
   const renderer = ({ hours, minutes, seconds, completed }) => {
     if (completed) {
-      // Render a completed state
+      onSendExam();
+      setIsDisabled(true);
       return "";
     } else {
+      //check time
+      let time = parseInt(hours * 60 + minutes);
+      setTimeExam(time);
+      if (time < parseInt(objInfoRoom.thoiGianLam / 2)) {
+        setIsDisabled(false);
+      }
       // Render a countdown
       return (
         <span className="countdown uk-width-1-2@m">
@@ -144,7 +169,13 @@ const ExamTakerPage = ({ roomId }) => {
           uk-grid=""
         >
           <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
-          <div className="uk-card uk-card-default uk-card-body uk-width-3-4@m">
+          <div className="uk-height-1-1 uk-card uk-card-default uk-card-body uk-width-3-4@m uk-scroll"
+            style={{
+              overflowY: 'scroll',
+              height: window.screen.height,
+              behavior: "smooth",
+              position: 'relative'
+            }}>
             <div className="uk-flex uk-flex-row">
               <h3 className="uk-card-title uk-width-1-1 uk-text-center uk-margin-medium-top">
                 <b>BÀI THI SINH VIÊN</b>
@@ -152,7 +183,7 @@ const ExamTakerPage = ({ roomId }) => {
             </div>
             {lstQuestion ? lstQuestion.map((element) => {
               return (
-                <div key={element.id}>
+                <div key={element.id} id={element.id}>
                   <div>
                     <div className="uk-card-body uk-padding-remove-bottom">
                       <div className="uk-form-label uk-card-title">
@@ -160,7 +191,7 @@ const ExamTakerPage = ({ roomId }) => {
                           {element.viTri}. {element.noiDung}
                         </b>
                       </div>
-                      <div className="uk-form-controls uk-margin-small-left">
+                      <div className="uk-form-controls uk-margin-small-top uk-margin-small-left">
                         {element.loaiCauHoi === 1 ?
                           element.dsDapAn.map((item, key) => (
                             <div key={item.id}>
@@ -173,31 +204,42 @@ const ExamTakerPage = ({ roomId }) => {
                                   onChange={handleChangeAnswer}
                                   title={element.id}
                                 />
-                                {" "}{item.noiDung}
+                                {" " + item.noiDung}
                               </label>
                             </div>
                           ))
                           :
                           <div style={{ border: "1px solid black" }}>
                             <CKEditor
-                                editor={ClassicEditor}
-                                data={title}
-                                id={element.id}
-                                onChange={handleChangeTitle}
-                                config={{
-                                  toolbar: [
-                                    "heading",
-                                    "|",
-                                    "bold",
-                                    "italic",
-                                    "link",
-                                    "bulletedList",
-                                    "numberedList",
-                                    "blockQuote",
-                                  ],
-                                }}
-                                // disabled={readOnly}
-                              />
+                              editor={ClassicEditor}
+                              id={element.id}
+                              onChange={(event, editor) => {
+                                let objAnswer = {
+                                  maCauHoi: element.id,
+                                  maDapAn: null,
+                                  dapAnTL: editor.getData()
+                                }
+                                let indexAnswer = lstAnswer.findIndex(el => el.maCauHoi === objAnswer.maCauHoi);
+                                if (indexAnswer !== -1) {
+                                  lstAnswer[indexAnswer].dapAnTL = objAnswer.dapAnTL;
+                                } else {
+                                  lstAnswer.push(objAnswer);
+                                }
+                                changeClassCSS("btn" + objAnswer.maCauHoi);
+                              }}
+                              config={{
+                                toolbar: [
+                                  "heading",
+                                  "|",
+                                  "bold",
+                                  "italic",
+                                  "link",
+                                  "bulletedList",
+                                  "numberedList",
+                                  "blockQuote",
+                                ],
+                              }}
+                            />
                           </div>
                         }
                       </div>
@@ -205,11 +247,13 @@ const ExamTakerPage = ({ roomId }) => {
                   </div>
                 </div>
               );
-            }): ""}
+            }) : ""}
             <p className="uk-card-title uk-width-1-1 uk-text-center uk-margin-medium-bottom">
               <button
+                id="btnSendExam"
                 className="uk-button uk-button-primary"
                 onClick={onSubmit}
+                disabled={isDisabled}
               >
                 Nộp Bài
               </button>
@@ -283,74 +327,25 @@ const ExamTakerPage = ({ roomId }) => {
                     <label className="uk-form-label uk-margin-small-right">
                       <b>Thời gian bắt đầu thi: </b>
                     </label>
-                    <label className="uk-form-label">{objInfoRoom?.ngayThi}</label>
+                    <label className="uk-form-label">{objInfoRoom?.thoiGianBatDauThi}</label>
                   </div>
                 </div>
                 <hr className="uk-divider-icon" />
-                <div className="uk-margin-medium">
-                  <div className="uk-flex uk-flex-between uk-margin-small-bottom">
-                    <a
-                      className="uk-button uk-button-default uk-button-small"
-                      href="#"
-                    >
-                      01
-                    </a>
-                    <a
-                      className="uk-button uk-button-default uk-button-small"
-                      href="#"
-                    >
-                      02
-                    </a>
-                    <a
-                      className="uk-button uk-button-default uk-button-small"
-                      href="#"
-                    >
-                      03
-                    </a>
-                    <a
-                      className="uk-button uk-button-default uk-button-small"
-                      href="#"
-                    >
-                      04
-                    </a>
-                    <a
-                      className="uk-button uk-button-default uk-button-small"
-                      href="#"
-                    >
-                      05
-                    </a>
-                  </div>
-                  <div className="uk-flex uk-flex-between uk-margin-small-bottom">
-                    <a
-                      className="uk-button uk-button-default uk-button-small"
-                      href="#"
-                    >
-                      06
-                    </a>
-                    <a
-                      className="uk-button uk-button-default uk-button-small"
-                      href="#"
-                    >
-                      07
-                    </a>
-                    <a
-                      className="uk-button uk-button-default uk-button-small"
-                      href="#"
-                    >
-                      08
-                    </a>
-                    <a
-                      className="uk-button uk-button-default uk-button-small"
-                      href="#"
-                    >
-                      09
-                    </a>
-                    <a
-                      className="uk-button uk-button-default uk-button-small"
-                      href="#"
-                    >
-                      10
-                    </a>
+                <div className="uk-margin-small">
+                  <div className="uk-width-1-1 uk-flex uk-flex-row uk-flex-between">
+                    {lstQuestion ? lstQuestion.map((element) => {
+                      return (
+                        <div key={element.id} className="uk-width-1-5 uk-margin-small-bottom uk-scroll">
+                          <a id={"btn" + element.id}
+                            style={{ width: 40, height: 28 }}
+                            className="uk-flex uk-flex-center uk-button uk-button-default uk-button-small uk-scroll"
+                            href={"#" + element.id}
+                          >
+                            {element.viTri}
+                          </a>
+                        </div>
+                      )
+                    }) : ""}
                   </div>
                 </div>
                 <hr className="uk-divider-icon" />
@@ -365,6 +360,7 @@ const ExamTakerPage = ({ roomId }) => {
                       className="uk-textarea"
                       rows="4"
                       placeholder=""
+                      onChange={handleChangeNotes}
                     ></textarea>
                   </div>
                 </div>
@@ -378,8 +374,7 @@ const ExamTakerPage = ({ roomId }) => {
 
   return (
     <div className="uk-height-1-1 uk-background-muted">
-      {objInfoRoom ? renderExamTaker() : <span>fail</span>}
-      {/* {objInfoRoom ? renderExamTaker() : <span uk-spinner="ratio: 4.5"></span>} */}
+      {objInfoRoom ? renderExamTaker() : <span uk-spinner="ratio: 4.5"></span>}
     </div>
   );
 };
