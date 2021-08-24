@@ -1,14 +1,33 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "gatsby";
 import styled, { css } from "styled-components";
 
+import { getAPIWithToken } from "../../utils/api";
+import { getToken } from "../../utils/auth";
+
 const ExamGrading = () => {
+  const loadData = async () => {
+    const token = await getToken();
+    const response = await getAPIWithToken(
+      `/baithi/layChiTietBaiThi?maCTPhong=38`,
+      token,
+    );
+    console.log("res", response);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
   return (
     <div className="uk-padding">
       <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
         Bài thi của sinh viên
       </p>
-      <div class="uk-flex uk-child-width-expand@s uk-margin-bottom" uk-grid>
+      <div
+        className="uk-flex uk-child-width-expand@s uk-margin-bottom"
+        uk-grid="true"
+      >
         <span>
           <Title>MSSV</Title>
           <Value>200302</Value>
@@ -22,7 +41,10 @@ const ExamGrading = () => {
           <Value>PT00343</Value>
         </span>
       </div>
-      <div class="uk-flex uk-child-width-expand@s uk-margin-bottom" uk-grid>
+      <div
+        className="uk-flex uk-child-width-expand@s uk-margin-bottom"
+        uk-grid="true"
+      >
         <span>
           <Title>Ngày thi</Title>
           <Value>12/07/2021</Value>
@@ -134,7 +156,8 @@ const ExamGrading = () => {
           </tr>
           <tr>
             <td colSpan={2}>
-              <Link>Kiểm tra video</Link>
+              {/* <Link>Kiểm tra video</Link> */}
+              <span>Kiểm tra video</span>
             </td>
           </tr>
         </tbody>
