@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import UIKit from "uikit/dist/js/uikit.min.js";
-const DEFAULT_PW = process.env.DEFAULT_PW;
 
 import { navigate } from "../../utils/common";
 import {
@@ -15,6 +13,7 @@ import LoadingOverlay from "../common/LoadingOverlay";
 const AdminAccountForm = ({ userId }) => {
   const [isLoading, setisLoading] = useState(true);
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState();
   const [role, setRole] = useState(2);
   const [status, setStatus] = useState(userStatus.ACTIVE);
@@ -35,6 +34,7 @@ const AdminAccountForm = ({ userId }) => {
     setUsername(response.data.tenDangNhap);
     setName(response.data.tenNguoiDung);
     setStatus(response.data.trangThai);
+    setEmail(response.data.email ?? "");
     setRole(response.data.phan_quyen?.[0]?.id ?? 2);
     setLoading(false);
   };
@@ -51,6 +51,7 @@ const AdminAccountForm = ({ userId }) => {
           {
             tenNguoiDung: name,
             trangThai: status,
+            email,
           },
           token,
         );
@@ -65,9 +66,9 @@ const AdminAccountForm = ({ userId }) => {
           "/register",
           {
             tenNguoiDung: name,
-            matKhau: DEFAULT_PW,
             trangThai: status,
             loai: role,
+            email,
           },
           token,
         );
@@ -99,7 +100,7 @@ const AdminAccountForm = ({ userId }) => {
     <div className="uk-flex uk-margin-top uk-flex-center">
       <div className="uk-width-1-2@m uk-background-default uk-border-rounded uk-padding">
         <form className="uk-form" onSubmit={onSubmit}>
-          <p className="uk-text-large uk-text-bold uk-text-center uk-text-success">
+          <p className="title uk-text-large uk-text-uppercase uk-text-bold uk-text-center uk-text-success">
             {`${userId ? "Sửa thông tin" : "Tạo"} tài khoản`}
           </p>
 
@@ -135,6 +136,24 @@ const AdminAccountForm = ({ userId }) => {
                 value={name}
                 type="text"
                 onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
+            <label
+              className="uk-form-label uk-width-1-5"
+              htmlFor="form-stacked-text"
+            >
+              Email
+            </label>
+            <div className="uk-form-controls uk-display-inline-block uk-width-4-5">
+              <input
+                className="uk-input"
+                value={email}
+                type="text"
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -182,9 +201,8 @@ const AdminAccountForm = ({ userId }) => {
           {!userId && (
             <div className="uk-flex uk-flex-center uk-text-center uk-margin-bottom uk-text-primary">
               <small>
-                {`Lưu ý: Mật khẩu mặc định là ${DEFAULT_PW}`}
-                <br />
-                Hãy đổi mật khẩu ở lần đăng nhập đầu tiên
+                Lưu ý: Mã tài khoản và mật khẩu sẽ được gửi tới email của người
+                dùng
               </small>
             </div>
           )}
@@ -193,7 +211,9 @@ const AdminAccountForm = ({ userId }) => {
             {userId && (
               <button
                 type="button"
-                className="uk-button uk-margin-top uk-margin-right"
+                className={`uk-button uk-margin-top uk-margin-right ${
+                  loading ? "uk-disabled" : ""
+                }`}
                 style={{ backgroundColor: "#32d296", color: "#FFF" }}
                 onClick={onResetPassword}
               >

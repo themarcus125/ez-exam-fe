@@ -1,4 +1,9 @@
-import React, { useState, forwardRef, useImperativeHandle } from "react";
+import React, {
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from "react";
 
 const charNumberStart = 65;
 
@@ -25,6 +30,9 @@ const MultipleChoiceQuestionBlock = (props, ref) => {
             type: 0,
           },
         ];
+  const correctAnswer = useRef(
+    defaultAnswerList.findIndex((answer) => answer.type === 1),
+  );
   const [answerList, setAnswerList] = useState(defaultAnswerList);
   const [title, setTitle] = useState(defaultQuestion);
   const [isPublic, setIsPublic] = useState(false);
@@ -77,14 +85,15 @@ const MultipleChoiceQuestionBlock = (props, ref) => {
     const index = answerList.findIndex((answer) => answer.id === answerId);
 
     if (index !== -1) {
-      setAnswerList([
-        ...answerList.slice(0, index),
-        {
-          ...answerList[index],
-          type: e.target.checked ? 1 : 0,
-        },
-        ...answerList.slice(index + 1),
-      ]);
+      correctAnswer.current = index;
+      setAnswerList(
+        answerList.map((answer) => {
+          return {
+            ...answer,
+            type: answer.id === answerId ? 1 : 0,
+          };
+        }),
+      );
     }
   };
 
@@ -177,7 +186,7 @@ const MultipleChoiceQuestionBlock = (props, ref) => {
                       <input
                         className="uk-checkbox"
                         type="checkbox"
-                        checked={answer.type === 1}
+                        checked={index === correctAnswer.current}
                         onChange={(e) => onCheckCorrectAnswer(e, answer.id)}
                         disabled={readOnly}
                       />{" "}
