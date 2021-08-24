@@ -15,6 +15,7 @@ import QuestionList from "../components/common/QuestionList";
 import ExamRoom from "../components/common/ExamRoom";
 import Course from "../components/common/Course";
 import CourseAdd from "../components/common/CourseAdd";
+import CourseAddExaminee from "../components/common/CourseAddExaminee";
 
 const AdminDashboard = () => {
   const role = ADMIN_ROLE;
@@ -110,6 +111,12 @@ const AdminDashboard = () => {
           path="/course/:courseId"
           component={CourseAdd}
           title="Cập nhật môn học"
+        />
+        <PrivateRoute
+          role={role}
+          path="/course/addexaminee"
+          component={CourseAddExaminee}
+          title="Thêm môn học cho sinh viên"
         />
       </Router>
     </AdminLayout>

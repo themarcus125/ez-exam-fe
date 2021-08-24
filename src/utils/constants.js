@@ -124,7 +124,17 @@ export const navBarCategories = {
     },
     {
       title: "Môn học",
-      path: "/course",
+      path: "",
+      subCategories: [
+        {
+          title: "Danh sách môn học",
+          path: "/course",
+        },
+        {
+          title: "Thêm môn học cho sinh viên",
+          path: "/course/addexaminee",
+        },
+      ],
     },
     {
       title: "Tài khoản",
