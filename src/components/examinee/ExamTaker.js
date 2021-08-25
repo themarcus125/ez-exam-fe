@@ -11,6 +11,7 @@ import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
 import { getToken, getUser } from "../../utils/auth";
 import Config from "../../utils/config";
 import { ToastContainer, toast } from "react-toastify";
+const token = getUser()?.tk ?? "";
 // import loadable from "@loadable/component";
 // const LoadableEditor = loadable(() => import("../common/Editor"));
 
@@ -21,13 +22,12 @@ const ExamTakerPage = ({ roomId }) => {
   // const [isPermissionApproved, setIsPermissionApproved] = useState(false);
   // const [data, setData] = useState(null);
   // const location = useLocation();
-  const userLogin = getUser();
   const [objInfoRoom, setObjInfoRoom] = useState({});
   const [lstQuestion, setLstQuestion] = useState([]);
   const [lstAnswer, setLstAnswer] = useState([]);
   const [notes, setNotes] = useState("");
-  const [timeExam, setTimeExam] = useState(0);
   const [isDisabled, setIsDisabled] = useState(true);
+  let timeExam = 0;
 
   // const { isPermissionApproved: webcamApproved, webcamRecorderObject } =
   //   useWebcamRecorder();
@@ -64,13 +64,14 @@ const ExamTakerPage = ({ roomId }) => {
   }, []);
 
   const getQuestion = async () => {
-    const token = await getToken();
-    const tmp_objInfo = await getAPIWithToken(
-      `/sinhvien/layBaiThi?idPhongThi=${roomId}`,
-      token,
-    );
-    setObjInfoRoom(tmp_objInfo?.data);
-    setLstQuestion(tmp_objInfo?.data?.dsCauhoi);
+    if (token && roomId) {
+      const tmp_objInfo = await getAPIWithToken(
+        `/sinhvien/layBaiThi?idPhongThi=${roomId}`,
+        token,
+      );
+      setObjInfoRoom(tmp_objInfo?.data);
+      setLstQuestion(tmp_objInfo?.data?.dsCauhoi);
+    }
   };
 
   const changeClassCSS = (idTag) => {
@@ -100,8 +101,7 @@ const ExamTakerPage = ({ roomId }) => {
   };
 
   const onSendExam = async () => {
-    const token = await getToken();
-    if (roomId) {
+    if (token && roomId) {
       try {
         const res = await postAPIWithToken(
           "/sinhvien/nopbai",
@@ -115,6 +115,7 @@ const ExamTakerPage = ({ roomId }) => {
         const { data } = await res.json();
         if ((res.status === 200) & (data !== undefined)) {
           toast.success("Nộp bài thành công !!!");
+          navigate(`/examinee`);
         } else {
           toast.error("Nộp bài thất bại !!!");
         }
@@ -143,18 +144,20 @@ const ExamTakerPage = ({ roomId }) => {
       setIsDisabled(true);
       return "";
     } else {
-      //check time
-      let time = parseInt(hours * 60 + minutes);
-      setTimeExam(time);
-      if (time < parseInt(objInfoRoom.thoiGianLam / 2)) {
-        setIsDisabled(false);
-      }
       // Render a countdown
       return (
         <span className="countdown uk-width-1-2@m">
           {hours}:{minutes}:{seconds}
         </span>
       );
+    }
+  };
+
+  const onTick = ({ hours, minutes, seconds, completed }) => {
+    //check time
+    timeExam = parseInt(hours * 60 + minutes);
+    if (timeExam < parseInt(objInfoRoom.thoiGianLam / 2)) {
+      setIsDisabled(false);
     }
   };
 
@@ -268,9 +271,10 @@ const ExamTakerPage = ({ roomId }) => {
                     {objInfoRoom?.thoiGianLam ?
                       <Countdown
                         date={Date.now() + parseInt(objInfoRoom.thoiGianLam) * 60000}
-                        intervalDelay={0}
+                        intervalDelay={1000}
                         precision={3}
                         renderer={renderer}
+                        onTick={onTick}
                       />
                       : ""
                     }
