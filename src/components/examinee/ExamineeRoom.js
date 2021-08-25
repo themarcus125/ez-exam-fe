@@ -34,7 +34,7 @@ const ExamRoom = () => {
                         lstExamRoom?.map((item) => {
                             return (
                                 <div key={item.id}>
-                                    <a href={`/examinee/exam-taker/${item.id}`} style={{ "text-decoration": "none" }}>
+                                    <a href={`/examinee/permiss-exam-room/${item.id}`} style={{ "text-decoration": "none" }}>
                                         <div className="uk-card uk-card-default uk-flex uk-flex-row uk-flex-between examineeroom_grid">
                                             <span className="icon uk-width-1-3@m" uk-icon="home"></span>
                                             <hr className="uk-divider-vertical"></hr>

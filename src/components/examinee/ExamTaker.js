@@ -1,27 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "@reach/router";
-import queryString from "query-string";
 import { navigate } from "../../utils/common";
-import { EXAMINEE_ROLE } from "../../utils/roles";
+import Countdown from "react-countdown";
 import useWebcamRecorder from "../../hooks/useWebcamRecorder";
 import useScreenRecorder from "../../hooks/useScreenRecorder";
-import Countdown from "react-countdown";
 import moment from "moment";
 import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
 import { getToken, getUser } from "../../utils/auth";
-import Config from "../../utils/config";
 import { ToastContainer, toast } from "react-toastify";
-const token = getUser()?.tk ?? "";
-// import loadable from "@loadable/component";
-// const LoadableEditor = loadable(() => import("../common/Editor"));
-
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+const token = getUser()?.tk ?? "";
 
 const ExamTakerPage = ({ roomId }) => {
-  // const [isPermissionApproved, setIsPermissionApproved] = useState(false);
-  // const [data, setData] = useState(null);
-  // const location = useLocation();
+  const [isPermissionApproved, setIsPermissionApproved] = useState(false);
+  const { isPermissionApproved: webcamApproved, webcamRecorderObject } = useWebcamRecorder();
+  const { isPermissionApproved: screenRecApproved, screenRecorderObject } = useScreenRecorder();
   const [objInfoRoom, setObjInfoRoom] = useState({});
   const [lstQuestion, setLstQuestion] = useState([]);
   const [lstAnswer, setLstAnswer] = useState([]);
@@ -29,39 +22,23 @@ const ExamTakerPage = ({ roomId }) => {
   const [isDisabled, setIsDisabled] = useState(true);
   let timeExam = 0;
 
-  // const { isPermissionApproved: webcamApproved, webcamRecorderObject } =
-  //   useWebcamRecorder();
-  // const { isPermissionApproved: screenRecApproved, screenRecorderObject } =
-  //   useScreenRecorder();
-
-  // useEffect(() => {
-  //   if (webcamApproved && screenRecApproved) {
-  //     setIsPermissionApproved(true);
-  //   }
-  // }, [webcamApproved, screenRecApproved]);
-
-  // useEffect(() => {
-  //   if (isPermissionApproved) {
-  //     const queriedExamId = roomId; //queryString.parse(location.search)?.id;
-  //     if (queriedExamId) {
-  //       // Set data by requesting questionaire with current test id from server
-  //       setData(mockData["examtest"]);
-  //     }
-  //     if (!queriedExamId) {
-  //       navigate(`/examinee/exam-taker`);
-  //     }
-  //   }
-  // }, [isPermissionApproved]);
-
-  // const onSubmit = () => {
-  //   webcamRecorderObject.stop();
-  //   screenRecorderObject.stop();
-  //   navigate(`/examinee/exam-taker`);
-  // };
+  useEffect(() => {
+    if (webcamApproved && screenRecApproved) {
+      setIsPermissionApproved(true);
+    }
+  }, [webcamApproved, screenRecApproved]);
 
   useEffect(() => {
-    getQuestion();
-  }, []);
+    if (isPermissionApproved) {
+      if (roomId) {
+        // Set data by requesting questionaire with current test id from server
+        getQuestion();
+      }
+      if (!roomId) {
+        navigate(`/examinee/exam-room`);
+      }
+    }
+  }, [isPermissionApproved]);
 
   const getQuestion = async () => {
     if (token && roomId) {
@@ -102,6 +79,9 @@ const ExamTakerPage = ({ roomId }) => {
 
   const onSendExam = async () => {
     if (token && roomId) {
+      //stop webcam, screen
+      webcamRecorderObject.stop();
+      screenRecorderObject.stop();
       try {
         const res = await postAPIWithToken(
           "/sinhvien/nopbai",
@@ -384,7 +364,3 @@ const ExamTakerPage = ({ roomId }) => {
 };
 
 export default ExamTakerPage;
-
-const activeText = {
-  color: "#FFF",
-};

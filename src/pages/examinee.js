@@ -7,6 +7,7 @@ import ExamTaker from "../components/examinee/ExamTaker";
 import PrivateRoute from "../components/common/PrivateRoute";
 import ExamineeHome from "../components/examinee/ExamineeHome";
 import ExamineeRoom from "../components/examinee/ExamineeRoom";
+import CheckPermissionRoom from "../components/examinee/CheckPermissionRoom";
 
 const ExamineeDashboard = () => {
   const role = EXAMINEE_ROLE;
@@ -30,6 +31,12 @@ const ExamineeDashboard = () => {
           path="/exam-room"
           component={ExamineeRoom}
           title="Phòng thi"
+        />
+        <PrivateRoute
+          role={role}
+          path="/permiss-exam-room/:roomId"
+          component={CheckPermissionRoom}
+          title="Kiểm tra quyền"
         />
       </Router>
     </ExamineeLayout>
