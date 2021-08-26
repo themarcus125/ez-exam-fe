@@ -1,10 +1,12 @@
 import React, { useState, useRef } from "react";
+import styled from "styled-components";
 import EssayQuestionBlock from "./EssayQuestionBlock";
 
 import MultipleChoiceQuestionBlock from "./MultipleChoiceQuestionBlock";
 import { questionType, questionLevel } from "../../utils/constants";
 import { postAPIWithToken } from "../../utils/api";
 import { getUser } from "../../utils/auth";
+import ControlBar from "./ControlBar";
 
 const token = getUser()?.tk ?? "";
 
@@ -19,7 +21,7 @@ const QuestionAdd = () => {
   const hasError = useRef(false);
 
   const buttonClass = (t) =>
-    `uk-button uk-padding ${
+    `uk-button uk-padding uk-padding-remove-vertical ${
       type === t ? "uk-button-primary" : "uk-button-link"
     }`;
 
@@ -64,7 +66,6 @@ const QuestionAdd = () => {
 
   const onSave = async () => {
     hasError.current = false;
-    const questionList = [];
     let refs = [];
     if (type === questionType.MULTIPLE_CHOICE) {
       refs = multipleChoiceRefs.current;
@@ -72,7 +73,7 @@ const QuestionAdd = () => {
       refs = essayRefs.current;
     }
 
-    refs.forEach((ref) => {
+    const questionList = refs.reduce((arr, ref) => {
       if (ref !== null) {
         const data = ref.getData();
         if (data.error) {
@@ -81,9 +82,10 @@ const QuestionAdd = () => {
           return;
         }
 
-        questionList.push(data);
+        arr.push(data);
+        return arr;
       }
-    });
+    }, []);
 
     if (hasError.current) {
       return;
@@ -114,11 +116,8 @@ const QuestionAdd = () => {
   };
 
   return (
-    <div className="uk-flex uk-flex-row uk-flex-1">
-      <div
-        className="uk-flex uk-flex-column uk-height-1-1"
-        style={{ width: 200 }}
-      >
+    <div className="uk-flex uk-flex-column uk-flex-1">
+      <div className="uk-flex uk-flex-row uk-height-1-1">
         <button
           className={buttonClass(questionType.MULTIPLE_CHOICE)}
           onClick={() => onToggle(questionType.MULTIPLE_CHOICE)}
@@ -133,61 +132,46 @@ const QuestionAdd = () => {
         </button>
       </div>
       <div
-        className="uk-padding uk-padding-remove-bottom uk-height-1-1 uk-flex-1"
+        className="uk-padding uk-height-1-1 uk-flex-1"
         style={{ overflowY: "auto" }}
       >
-        <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
-          Thêm câu hỏi
-        </p>
-        <div className="uk-flex uk-flex-row uk-flex-between uk-margin-medium-bottom">
-          <div className="uk-width-1-6@s uk-display-inline-block">
-            <span className="uk-display-inline-block uk-width-2-5">
-              Môn học
-            </span>
-            <div className="uk-display-inline-block uk-width-3-5">
-              <select
-                className="uk-select uk-width-1-1"
-                style={{
-                  border: "solid 0.5px #666",
-                }}
-              >
-                <option>Phần mềm</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="uk-width-1-6@s uk-display-inline-block">
-            <span className="uk-display-inline-block uk-width-2-5">Chương</span>
-            <div className="uk-display-inline-block uk-width-3-5">
-              <select
-                className="uk-select uk-width-1-1"
-                style={{
-                  border: "solid 0.5px #666",
-                }}
-              >
-                <option>Chương 1</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="uk-width-1-6@s uk-display-inline-block">
-            <span className="uk-display-inline-block uk-width-2-5">Mức độ</span>
-            <div className="uk-display-inline-block uk-width-3-5">
-              <select
-                className="uk-select uk-width-1-1"
-                style={{
-                  border: "solid 0.5px #666",
-                }}
-                value={level}
-                onChange={onChangeLevel}
-              >
-                <option value={questionLevel.EASY}>Dễ</option>
-                <option value={questionLevel.MEDIUM}>Trung bình</option>
-                <option value={questionLevel.HARD}>Khó</option>
-              </select>
-            </div>
-          </div>
-        </div>
+        <ControlBar
+          title="Thêm câu hỏi"
+          controlRow={() => (
+            <>
+              <div className="uk-text">
+                <FilterLabel>Môn học</FilterLabel>
+                <div className="uk-display-inline-block">
+                  <FilterSelector
+                    className="uk-select uk-width-1-1"
+                    style={{
+                      border: "solid 0.5px #666",
+                    }}
+                  >
+                    <option>Phần mềm</option>
+                  </FilterSelector>
+                </div>
+              </div>
+              <div className="uk-text-right">
+                <FilterLabel>Mức độ</FilterLabel>
+                <div className="uk-display-inline-block">
+                  <FilterSelector
+                    className="uk-select uk-width-1-1"
+                    style={{
+                      border: "solid 0.5px #666",
+                    }}
+                    value={level}
+                    onChange={onChangeLevel}
+                  >
+                    <option value={questionLevel.EASY}>Dễ</option>
+                    <option value={questionLevel.MEDIUM}>Trung bình</option>
+                    <option value={questionLevel.HARD}>Khó</option>
+                  </FilterSelector>
+                </div>
+              </div>
+            </>
+          )}
+        />
 
         {type === questionType.MULTIPLE_CHOICE ? (
           <div>
@@ -246,3 +230,16 @@ const QuestionAdd = () => {
 };
 
 export default QuestionAdd;
+
+const FilterSelector = styled.select`
+  width: 200px;
+`;
+
+const FilterLabel = styled.span`
+  margin-right: 20px;
+  @media (max-width: 1000px) {
+    display: block;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+`;

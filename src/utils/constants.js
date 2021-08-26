@@ -54,10 +54,6 @@ export const navBarCategories = {
       title: "Kiểm tra kết quả thi",
       path: "/",
     },
-    {
-      title: "Thống kê",
-      path: "/",
-    },
   ],
   sinhvien: [
     {

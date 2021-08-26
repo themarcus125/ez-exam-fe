@@ -42,24 +42,6 @@ const AdminDashboard = () => {
         />
         <PrivateRoute
           role={role}
-          path="/exam"
-          component={Exam}
-          title="Đề thi"
-        />
-        <PrivateRoute
-          role={role}
-          path="/exam/add"
-          component={ExamAdd}
-          title="Thêm đề thi"
-        />
-        <PrivateRoute
-          role={role}
-          path="/exam/:examId"
-          component={ExamAdd}
-          title="Cập nhật đề thi"
-        />
-        <PrivateRoute
-          role={role}
           path="/account/add-from-file"
           component={AccountFromFile}
           title="Thêm tài khoản từ file"

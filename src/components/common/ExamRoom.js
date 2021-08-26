@@ -5,6 +5,7 @@ import moment from "moment";
 import { getAPIWithToken } from "../../utils/api";
 import { getToken, getUser } from "../../utils/auth";
 import Config from "../../utils/config";
+import ControlBar from "./ControlBar";
 
 const USER_PER_PAGE = 10;
 const ExamRoom = () => {
@@ -31,8 +32,8 @@ const ExamRoom = () => {
       if (token) {
         const response = await getAPIWithToken(
           `/phongthi?timkiem=${search}&mamonhoc=${subject}
-          &tungay=${moment(startDate,).format("YYYY-MM-DD")}
-          &denngay=${moment(endDate).format("YYYY-MM-DD",)}
+          &tungay=${moment(startDate).format("YYYY-MM-DD")}
+          &denngay=${moment(endDate).format("YYYY-MM-DD")}
           &giaovien=${teacher}`,
           token,
         );
@@ -120,124 +121,122 @@ const ExamRoom = () => {
       className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
       style={{ overflowY: "auto" }}
     >
-      <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
-        Danh sách phòng thi
-      </p>
-      <div
-        className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom"
-      // style={{ marginLeft: 50, marginRight: 50 }}
-      >
-        <div className="uk-width-1-4@s uk-display-inline-block uk-padding-small">
-          <span className="uk-display-inline-block uk-width-1-4">Môn học</span>
-          <div className="uk-display-inline-block uk-width-3-4">
-            <select
-              className="uk-select uk-width-1-1"
-              style={{
-                border: "solid 0.5px #666",
-              }}
-              onChange={handleChangeSubject}
-              value={subject}
-              onBlur={() => { }}
-            >
-              <option disabled></option>
-              {lstSubject
-                ? lstSubject.map((item, key) => (
-                  <option key={key} value={item.id}>
-                    {item.tenChuyenDe}
-                  </option>
-                ))
-                : null}
-            </select>
-          </div>
-        </div>
-        {role === "admin" ?
-          <div className="uk-width-1-4@s uk-display-inline-block uk-padding-small">
-            <span className="uk-display-inline-block uk-width-1-4">Giáo viên</span>
-            <div className="uk-display-inline-block uk-width-3-4">
-              <select
-                className="uk-select uk-width-1-1"
-                style={{
-                  border: "solid 0.5px #666",
-                }}
-                onChange={handleChangeTeacher}
-                value={teacher}
-                onBlur={() => { }}
-              >
-                <option disabled></option>
-                {lstTeacher
-                  ? lstTeacher.map((item, key) => (
-                    <option key={key} value={item.id}>
-                      {item.tenNguoiDung}
-                    </option>
-                  ))
-                  : null}
-              </select>
+      <ControlBar
+        title="Danh sách phòng thi"
+        controlRow={() => (
+          <>
+            <div className="uk-width-1-4@l uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-1-4">
+                Môn học
+              </span>
+              <div className="uk-display-inline-block uk-width-3-4">
+                <select
+                  className="uk-select uk-width-1-1"
+                  style={{
+                    border: "solid 0.5px #666",
+                  }}
+                  onChange={handleChangeSubject}
+                  value={subject}
+                  onBlur={() => {}}
+                >
+                  <option disabled></option>
+                  {lstSubject
+                    ? lstSubject.map((item, key) => (
+                        <option key={key} value={item.id}>
+                          {item.tenChuyenDe}
+                        </option>
+                      ))
+                    : null}
+                </select>
+              </div>
             </div>
-          </div> : ""
-        }
-        <div className="uk-width-1-4@s uk-display-inline-block uk-padding-small">
-          <span className="uk-display-inline-block uk-width-1-4">Từ ngày</span>
-          <div className="uk-display-inline-block uk-width-3-4">
-            <DatePicker
-              className="uk-select uk-width-1-1"
-              style={{
-                border: "solid 0.5px #666",
-              }}
-              selected={startDate}
-              onChange={handleChangeStartDate}
-              selectsStart
-              startDate={startDate}
-              endDate={endDate}
-              dateFormat="dd/MM/yyyy"
-            />
-          </div>
-        </div>
-        <div className="uk-width-1-4@s uk-display-inline-block uk-padding-small">
-          <span className="uk-display-inline-block uk-width-1-4">Đến ngày</span>
-          <div className="uk-display-inline-block uk-width-3-4">
-            <DatePicker
-              className="uk-select uk-width-1-1"
-              style={{
-                border: "solid 0.5px #666",
-              }}
-              selected={endDate}
-              onChange={handleChangeEndDate}
-              selectsEnd
-              startDate={startDate}
-              endDate={endDate}
-              minDate={startDate}
-              dateFormat="dd/MM/yyyy"
-            />
-          </div>
-        </div>
-      </div>
+            {role === "admin" ? (
+              <div className="uk-width-1-4@l uk-display-inline-block">
+                <span className="uk-display-inline-block uk-width-1-4">
+                  Giáo viên
+                </span>
+                <div className="uk-display-inline-block uk-width-3-4">
+                  <select
+                    className="uk-select uk-width-1-1"
+                    style={{
+                      border: "solid 0.5px #666",
+                    }}
+                    onChange={handleChangeTeacher}
+                    value={teacher}
+                    onBlur={() => {}}
+                  >
+                    <option disabled></option>
+                    {lstTeacher
+                      ? lstTeacher.map((item, key) => (
+                          <option key={key} value={item.id}>
+                            {item.tenNguoiDung}
+                          </option>
+                        ))
+                      : null}
+                  </select>
+                </div>
+              </div>
+            ) : null}
+            <div className="uk-width-1-4@l uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-1-4">
+                Từ ngày
+              </span>
+              <div className="uk-display-inline-block uk-width-3-4">
+                <DatePicker
+                  className="uk-select uk-width-1-1 black-border"
+                  style={{
+                    border: "solid 0.5px #666",
+                  }}
+                  selected={startDate}
+                  onChange={handleChangeStartDate}
+                  selectsStart
+                  startDate={startDate}
+                  endDate={endDate}
+                  dateFormat="dd/MM/yyyy"
+                />
+              </div>
+            </div>
+            <div className="uk-width-1-4@l uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-1-4">
+                Đến ngày
+              </span>
+              <div className="uk-display-inline-block uk-width-3-4">
+                <DatePicker
+                  className="uk-select uk-width-1-1 black-border"
+                  style={{
+                    border: "solid 0.5px #666",
+                  }}
+                  selected={endDate}
+                  onChange={handleChangeEndDate}
+                  selectsEnd
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={startDate}
+                  dateFormat="dd/MM/yyyy"
+                />
+              </div>
+            </div>
 
-      <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
-        <div className="uk-width-3-5 uk-flex uk-flex-between">
-          <input
-            className="uk-search-input uk-width-4-5"
-            type="search"
-            placeholder="Tìm kiếm"
-            value={search}
-            onChange={handleChangeSearch}
-            style={{
-              border: "solid 0.5px #666",
-            }}
-          />
-          <button
-            className={`uk-button ${loading ? "uk-disabled" : ""}`}
-            style={{ ...myButton, ...activeText }}
-            onClick={onSearch}
-          >
-            Tìm kiếm
-          </button>
-        </div>
-        {role !== "admin" ?
-          <Link className="uk-button" to={`${url}/examroom/add`} style={{ ...myButton, ...activeText }}>
-            Tạo phòng thi
-          </Link> : ""}
-      </div>
-      <div className="uk-margin-top uk-overflow-auto" style={{ height: 400 }}>
+            {role !== "admin" ? (
+              <div className="uk-width-1-4@l uk-display-inline-block uk-text-right">
+                <Link
+                  className="uk-button"
+                  to={`${url}/examroom/add`}
+                  style={{ ...myButton, ...activeText }}
+                >
+                  Tạo phòng thi
+                </Link>
+              </div>
+            ) : null}
+          </>
+        )}
+        isSearchEnabled
+        searchString={search}
+        onSearchStringChanged={handleChangeSearch}
+        onSearchButtonClicked={onSearch}
+      />
+      {loading && <div className="uk-flex uk-flex-center" uk-spinner=""></div>}
+      <div className="uk-margin-top uk-overflow-auto">
         <table className="uk-table uk-table-striped uk-table-middle">
           <thead>
             <tr>
@@ -256,14 +255,26 @@ const ExamRoom = () => {
               lstExamRoom[currentPage - 1]?.map((item) => {
                 return (
                   <tr key={item.id}>
-                    <td value={item.maPhong}>{item.tenPhong}</td>
-                    <td value={item.maMonHoc}>{item.tenMonHoc}</td>
-                    <td value={item.maBoDe}>{item.maBoDe}</td>
-                    <td>{item.siSo}</td>
-                    <td>{moment(item.ngayThi).format("DD/MM/YYYY")}</td>
-                    <td>{item.thoiGianBatDauPhong}</td>
-                    <td>{item.thoiGianBatDauThi}</td>
-                    <td>
+                    <td data-label="Mã phòng" value={item.maPhong}>
+                      {item.tenPhong}
+                    </td>
+                    <td data-label="Môn học" value={item.maMonHoc}>
+                      {item.tenMonHoc}
+                    </td>
+                    <td data-label="Mã bộ đề" value={item.maBoDe}>
+                      {item.maBoDe}
+                    </td>
+                    <td data-label="Số lượng">{item.siSo}</td>
+                    <td data-label="Ngày thi">
+                      {moment(item.ngayThi).format("DD/MM/YYYY")}
+                    </td>
+                    <td data-label="Thời gian bắt đầu phòng">
+                      {item.thoiGianBatDauPhong}
+                    </td>
+                    <td data-label="Thời gian bắt đầu thi">
+                      {item.thoiGianBatDauThi}
+                    </td>
+                    <td data-label="Tùy chỉnh">
                       <ul className="uk-subnav-pill">
                         <a style={{ activeText }}>
                           <span uk-icon="table"></span>
@@ -276,15 +287,23 @@ const ExamRoom = () => {
                             <li>
                               <a>Xem danh sách bài thi</a>
                             </li>
-                            {role !== "admin" && Date.parse(moment(moment(item.ngayThi).format("DD/MM/YYYY") + " " + item.thoiGianBatDauThi, "DD/MM/YYYY hh:mm")) > Date.parse(new Date())
-                              ?
+                            {role !== "admin" &&
+                            Date.parse(
+                              moment(
+                                moment(item.ngayThi).format("DD/MM/YYYY") +
+                                  " " +
+                                  item.thoiGianBatDauThi,
+                                "DD/MM/YYYY hh:mm",
+                              ),
+                            ) > Date.parse(new Date()) ? (
                               <li>
                                 <Link to={`${url}/examroom/${item.id}`}>
                                   Sửa thông tin
                                 </Link>
                               </li>
-                              : ""
-                            }
+                            ) : (
+                              ""
+                            )}
                           </ul>
                         </div>
                       </ul>
@@ -294,9 +313,6 @@ const ExamRoom = () => {
               })}
           </tbody>
         </table>
-        {loading && (
-          <div className="uk-flex uk-flex-center" uk-spinner=""></div>
-        )}
       </div>
       <ul className="uk-pagination uk-flex-center" uk-margin="">
         <li className={`${currentPage === 1 ? "uk-disabled" : ""}`}>
@@ -330,8 +346,9 @@ const ExamRoom = () => {
           },
         )}
         <li
-          className={`${currentPage === numOfPage.current ? "uk-disabled" : ""
-            }`}
+          className={`${
+            currentPage === numOfPage.current ? "uk-disabled" : ""
+          }`}
         >
           <button
             className="uk-button uk-button-default uk-button-small"
