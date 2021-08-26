@@ -71,54 +71,6 @@ export const navBarCategories = {
   ],
   admin: [
     {
-      title: "Ngân hàng câu hỏi",
-      path: "",
-      subCategories: [
-        {
-          title: "Thêm câu hỏi",
-          path: "/questionaire/add",
-        },
-        {
-          title: "Danh sách câu hỏi",
-          path: "/questionaire",
-        },
-        {
-          title: "Danh sách môn học",
-          path: "/",
-        },
-        {
-          title: "Danh sách đã lưu",
-          path: "/",
-        },
-      ],
-    },
-    {
-      title: "Quản lý đề thi",
-      path: "",
-      subCategories: [
-        {
-          title: "Danh sách đề thi",
-          path: "/exam",
-        },
-        {
-          title: "Tạo đề thi",
-          path: "/exam/add",
-        },
-      ],
-    },
-    {
-      title: "Danh sách phòng thi",
-      path: "/examroom",
-    },
-    {
-      title: "Kiểm tra kết quả thi",
-      path: "/",
-    },
-    {
-      title: "Thống kê",
-      path: "/",
-    },
-    {
       title: "Môn học",
       path: "",
       subCategories: [

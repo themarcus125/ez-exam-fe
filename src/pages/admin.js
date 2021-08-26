@@ -54,30 +54,6 @@ const AdminDashboard = () => {
         />
         <PrivateRoute
           role={role}
-          path="/questionaire"
-          component={Question}
-          title="Danh sách câu hỏi"
-        />
-        <PrivateRoute
-          role={role}
-          path="/questionaire/add"
-          component={QuestionAdd}
-          title="Thêm câu hỏi"
-        />
-        <PrivateRoute
-          role={role}
-          path="/question-list"
-          component={QuestionList}
-          title="Bộ câu hỏi"
-        />
-        <PrivateRoute
-          role={role}
-          path="/examroom"
-          component={ExamRoom}
-          title="Phòng thi"
-        />
-        <PrivateRoute
-          role={role}
           path="/course"
           component={Course}
           title="Môn học"
