@@ -82,14 +82,13 @@ const AdminAccountForm = ({ userId }) => {
 
   const onResetPassword = async () => {
     try {
-      // Currently doesn't work. Not sure why, will ask BE team later
-      // await putAPIWithToken(
-      //   `/users/${userId}`,
-      //   {
-      //     matKhau: DEFAULT_PW,
-      //   },
-      //   token,
-      // );
+      await postAPIWithToken(
+        "/users/reset-password",
+        {
+          id: userId,
+        },
+        token,
+      );
       alert("Reset mật khẩu thành công");
     } catch (error) {
       alert("Đã xảy ra lỗi không thể reset mật khẩu");
