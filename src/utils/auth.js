@@ -79,6 +79,7 @@ export const handleLogin = async (
       username: data?.user?.tenDangNhap,
       role,
       tk: data?.token,
+      id: data?.user?.id,
     });
     onSuccess(Config.urlPath[role].url);
   } catch (err) {

@@ -32,7 +32,7 @@ const IndexPage = () => {
         <nav
           id="navbar"
           className="uk-navbar-container"
-          uk-navbar
+          uk-navbar="true"
           style={{ backgroundColor: "#FFFFFF" }}
         >
           <div className="uk-navbar-left uk-margin-small-left">

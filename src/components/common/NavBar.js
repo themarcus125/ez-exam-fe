@@ -116,7 +116,7 @@ const NavBar = () => {
               <div className="uk-navbar-dropdown">
                 <ul className="uk-nav uk-navbar-dropdown-nav">
                   <li>
-                    <Link to={`/${rootPath}`}>Tài khoản</Link>
+                    <Link to={`/${rootPath}/my-info`}>Tài khoản</Link>
                   </li>
                   <li>
                     <a href="logout" onClick={onLogout}>
