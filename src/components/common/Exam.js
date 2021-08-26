@@ -8,6 +8,7 @@ import {
 import { getToken, getUser } from "../../utils/auth";
 import moment from "moment";
 import Config from "../../utils/config";
+import ControlBar from "./ControlBar";
 
 const limit = 10;
 
@@ -20,7 +21,7 @@ const Exam = () => {
   const [denNgay, setDenNgay] = useState("");
   const [key, setKey] = useState("");
   const [loading, setLoading] = useState(false);
-  let lstPage = [];
+  const lstPage = [];
 
   const role = getUser()?.role ?? "";
   const url = Config.urlPath[role]?.url;
@@ -133,106 +134,96 @@ const Exam = () => {
 
   return (
     <div className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1">
-      <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
-        Danh sách đề thi
-      </p>
+      <ControlBar
+        title="Danh sách đề thi"
+        controlRow={() => (
+          <>
+            <div className="uk-width-1-4@l uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-1-4">
+                Môn học
+              </span>
+              <div className="uk-display-inline-block uk-width-3-4">
+                <select
+                  className="uk-select uk-width-1-1 black-border"
+                  value={maMonHoc}
+                  onChange={(e) => {
+                    setMaMonHoc(e.target.value);
+                  }}
+                  onBlur={() => {}}
+                >
+                  <option disabled></option>
+                  {monHocs &&
+                    monHocs.map((item, index) => (
+                      <option value={item.id} key={index}>
+                        {item.tenChuyenDe}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </div>
 
-      <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
-        <div className="uk-width-1-4@s uk-display-inline-block">
-          <span className="uk-display-inline-block uk-width-1-5">Môn học</span>
-          <div
-            className="uk-display-inline-block uk-width-3-5"
-            style={{ marginLeft: "10px" }}
-          >
-            <select
-              className="uk-select uk-width-1-1"
-              style={{
-                border: "solid 0.5px #666",
-              }}
-              value={maMonHoc}
-              onChange={(e) => {
-                setMaMonHoc(e.target.value);
-              }}
-            >
-              <option disabled></option>
-              {monHocs &&
-                monHocs.map((item, index) => (
-                  <option value={item.id} key={index}>
-                    {item.tenChuyenDe}
-                  </option>
-                ))}
-            </select>
-          </div>
-        </div>
+            <div className="uk-width-1-4@l uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-1-4">
+                Từ ngày
+              </span>
+              <div className="uk-display-inline-block uk-width-3-4">
+                <input
+                  className="uk-input uk-width-1-1 black-border"
+                  type="date"
+                  format="YYYY-MM-DD"
+                  onChange={(e) => {
+                    setTuNgay(e.target.value);
+                  }}
+                />
+              </div>
+            </div>
 
-        <div className="uk-width-1-4@s uk-display-inline-block">
-          <span className="uk-display-inline-block uk-width-1-5">Từ ngày</span>
-          <div className="uk-display-inline-block uk-width-3-5">
-            <input
-              className="uk-input uk-width-1-1"
-              type="date"
-              format="YYYY-MM-DD"
-              onChange={(e) => {
-                setTuNgay(e.target.value);
-              }}
-            />
-          </div>
-        </div>
+            <div className="uk-width-1-4@l uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-1-4">
+                Đến ngày
+              </span>
+              <div className="uk-display-inline-block uk-width-3-4">
+                <input
+                  className="uk-input uk-width-1-1 black-border"
+                  type="date"
+                  format="YYYY-MM-DD"
+                  onChange={(e) => {
+                    setDenNgay(e.target.value);
+                  }}
+                />
+              </div>
+            </div>
+            <div className="uk-width-1-4@l uk-text-right">
+              <button
+                className="uk-button"
+                style={{
+                  backgroundColor: "#32d296",
+                  color: "#FFF",
+                  width: "150px",
+                }}
+              >
+                <Link
+                  to="./add"
+                  style={{ color: "#FFFFFF", textDecoration: "none" }}
+                >
+                  Thêm mới
+                </Link>
+              </button>
+            </div>
+          </>
+        )}
+        isSearchEnabled={true}
+        searchString={key}
+        onSearchStringChanged={(e) => {
+          setKey(e.target.value);
+        }}
+        onSearchButtonClicked={async () => {
+          await getDeThi();
+        }}
+      />
 
-        <div className="uk-width-1-4@s uk-display-inline-block">
-          <span className="uk-display-inline-block uk-width-2-5">Đến ngày</span>
-          <div
-            className="uk-display-inline-block uk-width-3-5"
-            style={{ marginLeft: "-50px" }}
-          >
-            <input
-              className="uk-input uk-width-1-1"
-              type="date"
-              format="YYYY-MM-DD"
-              onChange={(e) => {
-                setDenNgay(e.target.value);
-              }}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
-        <div className="uk-width-3-5 uk-flex uk-flex-between">
-          <input
-            className="uk-search-input uk-width-4-5"
-            type="search"
-            placeholder="Tìm kiếm"
-            style={{
-              border: "solid 0.5px #666",
-            }}
-            onChange={(e) => {
-              setKey(e.target.value);
-            }}
-          />
-
-          <button
-            className={`uk-button ${loading ? "uk-disabled" : ""}`}
-            style={{ backgroundColor: "#32d296", color: "#FFF" }}
-            onClick={async () => {
-              await getDeThi();
-            }}
-          >
-            Tìm kiếm
-          </button>
-        </div>
-
-        <button
-          className="uk-button"
-          style={{ backgroundColor: "#32d296", color: "#FFF" }}
-        >
-          <Link to="./add" style={{ color: "#FFFFFF", textDecoration: "none" }}>
-            Thêm mới
-          </Link>
-        </button>
-      </div>
-
-      <div className="uk-margin-top uk-overflow-auto" style={{ height: 400 }}>
+      {loading && <div className="uk-flex uk-flex-center" uk-spinner=""></div>}
+      <div className="uk-margin-top uk-overflow-auto">
         <table className="uk-table uk-table-striped uk-table-middle">
           <thead>
             <tr>
@@ -250,13 +241,15 @@ const Exam = () => {
               deThis.length > 0 &&
               deThis.map((item, index) => (
                 <tr key={index}>
-                  <td>{item.maBoDe}</td>
-                  <td>{item.maDe}</td>
-                  <td>{item.tieuDe}</td>
-                  <td>{item.tenChuyenDe}</td>
-                  <td>{moment(item.ngayTao).format("DD/MM/YYYY")}</td>
-                  <td>
-                    <ul class="uk-subnav-pill">
+                  <td data-label="Mã bộ đề">{item.maBoDe}</td>
+                  <td data-label="Mã đề">{item.maDe}</td>
+                  <td data-label="Tên đề thi">{item.tieuDe}</td>
+                  <td data-label="Môn học">{item.tenChuyenDe}</td>
+                  <td data-label="Ngày tạo">
+                    {moment(item.ngayTao).format("DD/MM/YYYY")}
+                  </td>
+                  <td data-label="Tùy chỉnh">
+                    <ul className="uk-subnav-pill">
                       <a
                         style={{
                           color: "#FFF",
@@ -265,7 +258,7 @@ const Exam = () => {
                         <span uk-icon="table"></span>
                       </a>
                       <div uk-dropdown="mode: click">
-                        <ul class="uk-nav uk-dropdown-nav">
+                        <ul className="uk-nav uk-dropdown-nav">
                           <li>
                             <a
                               onClick={() => {
@@ -297,9 +290,6 @@ const Exam = () => {
               ))}
           </tbody>
         </table>
-        {loading && (
-          <div className="uk-flex uk-flex-center" uk-spinner=""></div>
-        )}
       </div>
 
       <ul className="uk-pagination uk-flex-center" uk-margin>

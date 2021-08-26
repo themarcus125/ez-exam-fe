@@ -54,10 +54,6 @@ export const navBarCategories = {
       title: "Kiểm tra kết quả thi",
       path: "/",
     },
-    {
-      title: "Thống kê",
-      path: "/",
-    },
   ],
   sinhvien: [
     {
@@ -112,7 +108,7 @@ export const navBarCategories = {
     },
     {
       title: "Danh sách phòng thi",
-      path: "/examroom"
+      path: "/examroom",
     },
     {
       title: "Kiểm tra kết quả thi",
@@ -124,7 +120,17 @@ export const navBarCategories = {
     },
     {
       title: "Môn học",
-      path: "/",
+      path: "",
+      subCategories: [
+        {
+          title: "Danh sách môn học",
+          path: "/course",
+        },
+        {
+          title: "Thêm môn học cho sinh viên",
+          path: "/course/addexaminee",
+        },
+      ],
     },
     {
       title: "Tài khoản",

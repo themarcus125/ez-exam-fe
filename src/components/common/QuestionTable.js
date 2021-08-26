@@ -65,6 +65,7 @@ const QuestionTable = ({
 
   return (
     <Fragment>
+      {loading && <div className="uk-flex uk-flex-center" uk-spinner=""></div>}
       <div className="uk-margin-top" style={{ minHeight: 340 }}>
         <table className="uk-table uk-table-divider">
           <thead>
@@ -93,9 +94,9 @@ const QuestionTable = ({
                         </CheckBoxColumn>
                       )}
                       {type === questionType.MULTIPLE_CHOICE ? (
-                        <td>{question.noiDung}</td>
+                        <td data-label="Câu hỏi">{question.noiDung}</td>
                       ) : (
-                        <td>
+                        <td data-label="Câu hỏi">
                           <div
                             dangerouslySetInnerHTML={{
                               __html: question.noiDung,
@@ -103,7 +104,7 @@ const QuestionTable = ({
                           ></div>
                         </td>
                       )}
-                      <td>
+                      <td data-label="Tùy chỉnh">
                         {type !== questionType.ESSAY && (
                           <a
                             title="Xem đáp án"
@@ -112,12 +113,12 @@ const QuestionTable = ({
                             uk-toggle={`target: .answer-${question.id}`}
                           ></a>
                         )}
-                        <a
+                        {/* <a
                           title="Lưu vào ngân hàng câu hỏi"
                           className="uk-icon-link uk-margin-small-right"
                           uk-icon="cloud-upload"
                           uk-toggle="target: #modal-center"
-                        ></a>
+                        ></a> */}
                       </td>
                     </tr>
                     {question.dsDapAn.map((answer, index) => {
@@ -138,16 +139,10 @@ const QuestionTable = ({
               })}
           </tbody>
         </table>
-        {loading && (
-          <div className="uk-flex uk-flex-center" uk-spinner=""></div>
-        )}
         <div id="modal-center" className="uk-flex-top" uk-modal="true">
           <div className="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
             <div>
-              <a
-                className="uk-modal-close-default"
-                uk-close=""
-              ></a>
+              <a className="uk-modal-close-default" uk-close=""></a>
             </div>
             <p className="uk-text-large uk-text-center">
               Chọn bộ câu hỏi muốn lưu

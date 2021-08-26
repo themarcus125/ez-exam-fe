@@ -5,6 +5,7 @@ import PaginationButtonGroup from "../common/PaginationButtonGroup";
 import { getUser } from "../../utils/auth";
 import { getAPIWithToken } from "../../utils/api";
 import { userType, userStatus } from "../../utils/constants";
+import ControlBar from "../common/ControlBar";
 
 const USER_PER_PAGE = 6;
 
@@ -82,82 +83,78 @@ const AdminAccounts = () => {
       className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
       style={{ overflowY: "auto" }}
     >
-      <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
-        Danh sách tài khoản
-      </p>
-      <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
-        <div className="uk-width-1-4@s uk-display-inline-block">
-          <span className="uk-display-inline-block uk-width-2-5">
-            Loại tài khoản
-          </span>
-          <div className="uk-display-inline-block uk-width-3-5">
-            <select
-              className="uk-select uk-width-1-1"
-              style={{
-                border: "solid 0.5px #666",
-              }}
-              onChange={onChangeType}
-              value={type}
-            >
-              <option value={userType.GIAOVIEN}>Giáo viên</option>
-              <option value={userType.SINHVIEN}>Học sinh</option>
-            </select>
-          </div>
-        </div>
+      <ControlBar
+        title="Danh sách tài khoản"
+        controlRow={() => (
+          <>
+            <div className="uk-width-1-3@l uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-1-4">
+                Loại tài khoản
+              </span>
+              <div className="uk-display-inline-block uk-width-3-4">
+                <select
+                  className="uk-select uk-width-1-1"
+                  style={{
+                    border: "solid 0.5px #666",
+                  }}
+                  onChange={onChangeType}
+                  value={type}
+                  onBlur={() => {}}
+                >
+                  <option value={userType.GIAOVIEN}>Giáo viên</option>
+                  <option value={userType.SINHVIEN}>Học sinh</option>
+                </select>
+              </div>
+            </div>
 
-        <div className="uk-width-1-4@s uk-display-inline-block">
-          <span className="uk-display-inline-block uk-width-1-5 uk-margin-right">
-            Trạng thái
-          </span>
-          <div className="uk-display-inline-block uk-width-3-5">
-            <select
-              className="uk-select uk-width-1-1"
-              style={{
-                border: "solid 0.5px #666",
-              }}
-              onChange={onChangeStatus}
-              value={status}
-            >
-              <option value={userStatus.ACTIVE}>Đang hoạt động</option>
-              <option value={userStatus.INACTIVE}>Ngừng hoạt động</option>
-            </select>
-          </div>
-        </div>
+            <div className="uk-width-1-3@l uk-display-inline-block">
+              <span className="uk-display-inline-block uk-width-1-4">
+                Trạng thái
+              </span>
+              <div className="uk-display-inline-block uk-width-3-4">
+                <select
+                  className="uk-select uk-width-1-1"
+                  style={{
+                    border: "solid 0.5px #666",
+                  }}
+                  onChange={onChangeStatus}
+                  value={status}
+                  onBlur={() => {}}
+                >
+                  <option value={userStatus.ACTIVE}>Đang hoạt động</option>
+                  <option value={userStatus.INACTIVE}>Ngừng hoạt động</option>
+                </select>
+              </div>
+            </div>
 
-        <div className="uk-width-1-4@s uk-display-inline-block">
-          <div className="uk-flex uk-flex-right uk-flex-middle uk-height-1-1">
-            <Link
-              to="add"
-              className="uk-button uk-margin-right"
-              style={activeButton}
-            >
-              Thêm mới
-            </Link>
-            <Link to="add-from-file" className="uk-button" style={activeButton}>
-              Thêm từ tập tin
-            </Link>
-          </div>
-        </div>
-      </div>
-      <div className="uk-flex uk-flex-row uk-flex-center">
-        <div className="uk-width-3-5 uk-flex uk-flex-between">
-          <input
-            className="uk-search-input uk-width-4-5"
-            type="search"
-            placeholder="Tìm kiếm (Mã tài khoản hoặc họ tên)"
-            style={{
-              border: "solid 0.5px #666",
-              padding: 10,
-            }}
-            value={searchString}
-            onChange={onChangeSearch}
-          />
-          <button className="uk-button" style={activeButton} onClick={onSearch}>
-            Tìm kiếm
-          </button>
-        </div>
-      </div>
-      <div className="uk-margin-top" style={{ height: 400 }}>
+            <div className="uk-width-1-3@l uk-display-inline-block">
+              <div className="uk-flex uk-flex-right uk-flex-middle uk-height-1-1">
+                <Link
+                  to="add"
+                  className="uk-button uk-margin-right"
+                  style={activeButton}
+                >
+                  Thêm mới
+                </Link>
+                <Link
+                  to="add-from-file"
+                  className="uk-button"
+                  style={activeButton}
+                >
+                  Thêm từ tập tin
+                </Link>
+              </div>
+            </div>
+          </>
+        )}
+        isSearchEnabled={true}
+        searchPlaceholder="Tìm kiếm (Mã tài khoản hoặc họ tên)"
+        searchString={searchString}
+        onSearchStringChanged={onChangeSearch}
+        onSearchButtonClicked={onSearch}
+      />
+      {loading && <div className="uk-flex uk-flex-center" uk-spinner=""></div>}
+      <div className="uk-margin-top">
         <table className="uk-table uk-table-striped uk-table-middle">
           <thead>
             <tr>
@@ -174,15 +171,15 @@ const AdminAccounts = () => {
                 const role = user.phan_quyen?.[0]?.quyen;
                 return (
                   <tr key={user.tenDangNhap}>
-                    <td>{user.tenDangNhap}</td>
-                    <td>{user.tenNguoiDung}</td>
-                    <td>
+                    <td data-label="Mã tài khoản">{user.tenDangNhap}</td>
+                    <td data-label="Họ tên">{user.tenNguoiDung}</td>
+                    <td data-label="Loại tài khoản">
                       {role === userType.GIAOVIEN ? "Giáo viên" : "Học sinh"}
                     </td>
-                    <td>{`${
+                    <td data-label="Trạng thái">{`${
                       user.trangThai === 0 ? "Đang" : "Ngừng"
                     } hoạt động`}</td>
-                    <td>
+                    <td data-label="Tùy chỉnh">
                       <Link
                         title="Chỉnh sửa"
                         className="uk-icon-link uk-margin-small-right"
@@ -195,9 +192,6 @@ const AdminAccounts = () => {
               })}
           </tbody>
         </table>
-        {loading && (
-          <div className="uk-flex uk-flex-center" uk-spinner=""></div>
-        )}
       </div>
       <ul className="uk-pagination uk-flex-center" uk-margin="">
         <PaginationButtonGroup
