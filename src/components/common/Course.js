@@ -3,6 +3,7 @@ import { Link } from "gatsby";
 import { getAPIWithToken } from "../../utils/api";
 import { getToken, getUser } from "../../utils/auth";
 import Config from "../../utils/config";
+import ControlBar from "./ControlBar";
 
 const Course = () => {
   const [monHoc, setMonHoc] = useState([]);
@@ -38,65 +39,61 @@ const Course = () => {
     lstPage.push(i);
   }
 
+  const onChangeSearch = (e) => {
+    setKey(e.target.value);
+  };
+
+  const onSearch = () => {
+    getMonHoc(1);
+  };
+
   return (
-    <div className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1">
-      <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
-        Danh sách môn học
-      </p>
+    <div
+      className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
+      style={{ overflowY: "auto" }}
+    >
+      <ControlBar
+        title="DANH SÁCH MÔN HỌC"
+        controlRow={() => (
+          <>
+            <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
+              <div className="uk-width-2-5 uk-flex uk-flex-between">
+                <label className="uk-form-label uk-width-1-5 uk-flex uk-flex-middle">
+                  Trạng thái
+                </label>
+                <select
+                  className="uk-select"
+                  value={trangThai}
+                  onChange={(e) => setTrangThai(e.target.value)}
+                >
+                  <option value={0}>Tất cả</option>
+                  <option value={1}>Đang sử dụng</option>
+                  <option value={2}>Không sử dụng</option>
+                </select>
+              </div>
 
-      <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
-        <div className="uk-width-2-5 uk-flex uk-flex-between">
-          <label className="uk-form-label uk-width-1-5 uk-flex uk-flex-middle">
-            Trạng thái
-          </label>
-          <select
-            className="uk-select"
-            value={trangThai}
-            onChange={(e) => setTrangThai(e.target.value)}
-          >
-            <option value={0}>Tất cả</option>
-            <option value={1}>Đang sử dụng</option>
-            <option value={2}>Không sử dụng</option>
-          </select>
-        </div>
+              <button
+                className="uk-button"
+                style={{ backgroundColor: "#32d296", color: "#FFF" }}
+              >
+                <Link
+                  to="./add"
+                  style={{ color: "#FFFFFF", textDecoration: "none" }}
+                >
+                  Thêm mới
+                </Link>
+              </button>
+            </div>
+          </>
+        )}
+        isSearchEnabled={true}
+        searchPlaceholder="Tìm kiếm (Tên môn học)"
+        searchString={key}
+        onSearchStringChanged={onChangeSearch}
+        onSearchButtonClicked={onSearch}
+      />
 
-        <button
-          className="uk-button"
-          style={{ backgroundColor: "#32d296", color: "#FFF" }}
-        >
-          <Link to="./add" style={{ color: "#FFFFFF", textDecoration: "none" }}>
-            Thêm mới
-          </Link>
-        </button>
-      </div>
-
-      <div className="uk-flex uk-flex-row uk-flex-between uk-margin-bottom">
-        <div className="uk-width-5-5 uk-flex uk-flex-between">
-          <input
-            className="uk-search-input uk-width-4-5"
-            type="search"
-            placeholder="Tìm kiếm"
-            style={{
-              border: "solid 0.5px #666",
-            }}
-            onChange={(e) => {
-              setKey(e.target.value);
-            }}
-          />
-
-          <button
-            className={`uk-button ${loading ? "uk-disabled" : ""}`}
-            style={{ backgroundColor: "#32d296", color: "#FFF" }}
-            onClick={() => {
-              getMonHoc(1);
-            }}
-          >
-            Tìm kiếm
-          </button>
-        </div>
-      </div>
-
-      <div className="uk-margin-top uk-overflow-auto" style={{ height: 400 }}>
+      <div className="uk-margin-top">
         <table className="uk-table uk-table-striped uk-table-middle">
           <thead>
             <tr>
@@ -111,12 +108,12 @@ const Course = () => {
               monHoc?.length > 0 &&
               monHoc.map((item, index) => (
                 <tr key={index}>
-                  <td>{item.maChuyenDe}</td>
-                  <td>{item.tenChuyenDe}</td>
-                  <td>
+                  <td data-label="Mã môn học">{item.maChuyenDe}</td>
+                  <td data-label="Môn học">{item.tenChuyenDe}</td>
+                  <td data-label="Trạng thái">
                     {item.trangThai === 0 ? "Đang sử dụng" : "Không sử dụng"}
                   </td>
-                  <td>
+                  <td data-label="Tùy chỉnh">
                     <ul class="uk-subnav-pill">
                       <a
                         style={{

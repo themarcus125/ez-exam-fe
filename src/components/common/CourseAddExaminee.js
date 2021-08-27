@@ -4,6 +4,7 @@ import Modal, { showModal, hideModal } from "./Modal";
 import PaginationButtonGroup from "./PaginationButtonGroup";
 import { getToken } from "../../utils/auth";
 import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
+import ControlBar from "./ControlBar";
 
 const USER_PER_PAGE = 6;
 const COURSE_PER_PAGE = 5;
@@ -172,30 +173,17 @@ const CourseAddExaminee = () => {
       className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
       style={{ overflowY: "auto" }}
     >
-      <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
-        Danh sách sinh viên
-      </p>
+      <ControlBar
+        title="DANH SÁCH SINH VIÊN"
+        controlRow={() => <></>}
+        isSearchEnabled={true}
+        searchPlaceholder="Tìm kiếm (Mã tài khoản hoặc họ tên)"
+        searchString={searchString}
+        onSearchStringChanged={onChangeSearch}
+        onSearchButtonClicked={onSearch}
+      />
 
-      <div className="uk-flex uk-flex-row uk-flex-center">
-        <div className="uk-width-5-5 uk-flex uk-flex-between">
-          <input
-            className="uk-search-input uk-width-4-5"
-            type="search"
-            placeholder="Tìm kiếm (Mã tài khoản hoặc họ tên)"
-            style={{
-              border: "solid 0.5px #666",
-              padding: 10,
-            }}
-            value={searchString}
-            onChange={onChangeSearch}
-          />
-          <button className="uk-button" style={activeButton} onClick={onSearch}>
-            Tìm kiếm
-          </button>
-        </div>
-      </div>
-
-      <div className="uk-margin-top" style={{ height: 400 }}>
+      <div className="uk-margin-top">
         <table className="uk-table uk-table-striped uk-table-middle">
           <thead>
             <tr>
@@ -210,10 +198,10 @@ const CourseAddExaminee = () => {
               users[currentPage - 1]?.map((user) => {
                 return (
                   <tr key={user.tenDangNhap}>
-                    <td>{user.tenDangNhap}</td>
-                    <td>{user.tenNguoiDung}</td>
-                    <td>Email</td>
-                    <td>
+                    <td data-label="Mã sinh viên">{user.tenDangNhap}</td>
+                    <td data-label="Tên sinh viên">{user.tenNguoiDung}</td>
+                    <td data-label="Email">{user.email}</td>
+                    <td data-label="Tùy chỉnh">
                       <span
                         uk-icon="plus-circle"
                         style={{ cursor: "pointer" }}
@@ -247,7 +235,7 @@ const CourseAddExaminee = () => {
         description={`Sinh viên: ${stdName}`}
         onSave={onSave}
       >
-        <div className="uk-margin-top" style={{ height: 400 }}>
+        <div className="uk-margin-top">
           <table className="uk-table uk-table-striped uk-table-middle">
             <thead>
               <tr>
@@ -261,9 +249,9 @@ const CourseAddExaminee = () => {
                 allCourse[currentPageCrs - 1]?.map((item) => {
                   return (
                     <tr key={item.id}>
-                      <td>{item.maChuyenDe}</td>
-                      <td>{item.tenChuyenDe}</td>
-                      <td>
+                      <td data-label="Mã môn học">{item.maChuyenDe}</td>
+                      <td data-label="Tên môn học">{item.tenChuyenDe}</td>
+                      <td data-label="Tùy chỉnh">
                         <input
                           className="uk-checkbox"
                           type="checkbox"
@@ -307,12 +295,3 @@ const CourseAddExaminee = () => {
 };
 
 export default CourseAddExaminee;
-
-const paginationButton = {
-  width: 40,
-};
-
-const activeButton = {
-  color: "#FFF",
-  backgroundColor: "#32d296",
-};

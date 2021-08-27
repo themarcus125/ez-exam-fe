@@ -72,86 +72,84 @@ const CourseAdd = ({ courseId }) => {
   }, []);
 
   return (
-    <>
-      <div className="uk-flex uk-margin-top uk-flex-center">
-        <div className="uk-width-1-2 uk-background-default uk-border-rounded uk-padding">
-          <form className="uk-form" onSubmit={onSubmit}>
-            <p className="uk-text-large uk-text-bold uk-text-center uk-text-success">
-              {`${courseId ? "Sửa thông tin" : "Thêm mới"} môn học`}
-            </p>
+    <div className="uk-flex uk-margin-top uk-flex-center">
+      <div className="uk-width-1-2@m uk-background-default uk-border-rounded uk-padding">
+        <form className="uk-form" onSubmit={onSubmit}>
+          <p className="uk-text-large uk-text-bold uk-text-center uk-text-success">
+            {`${courseId ? "SỬA THÔNG TIN" : "THÊM MỚI"} MÔN HỌC`}
+          </p>
 
-            {courseId && (
-              <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
-                <label
-                  className="uk-form-label uk-width-1-5"
-                  htmlFor="form-stacked-text"
-                >
-                  Mã môn học
-                </label>
-                <div className="uk-form-controls uk-display-inline-block uk-width-4-5">
-                  <input
-                    className="uk-input"
-                    value={maChuyenDe}
-                    type="text"
-                    disabled
-                  />
-                </div>
-              </div>
-            )}
-
+          {courseId && (
             <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
               <label
                 className="uk-form-label uk-width-1-5"
                 htmlFor="form-stacked-text"
               >
-                Tên môn học
+                Mã môn học
               </label>
               <div className="uk-form-controls uk-display-inline-block uk-width-4-5">
                 <input
                   className="uk-input"
-                  value={tenChuyenDe}
+                  value={maChuyenDe}
                   type="text"
-                  onChange={(e) => setTenChuyenDe(e.target.value)}
-                  required
+                  disabled
                 />
               </div>
             </div>
+          )}
 
-            <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
-              <label
-                className="uk-form-label uk-width-1-5"
-                htmlFor="form-stacked-select"
-              >
-                Trạng thái
-              </label>
-              <div className="uk-form-controls uk-display-inline-block uk-width-4-5">
-                <select
-                  className="uk-select"
-                  value={trangThai}
-                  onChange={(e) => setTrangThai(e.target.value)}
-                >
-                  <option value={0}>Đang sử dụng</option>
-                  <option value={1}>Không sử dụng</option>
-                </select>
-              </div>
+          <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
+            <label
+              className="uk-form-label uk-width-1-5"
+              htmlFor="form-stacked-text"
+            >
+              Tên môn học
+            </label>
+            <div className="uk-form-controls uk-display-inline-block uk-width-4-5">
+              <input
+                className="uk-input"
+                value={tenChuyenDe}
+                type="text"
+                onChange={(e) => setTenChuyenDe(e.target.value)}
+                required
+              />
             </div>
+          </div>
 
-            <div className="uk-flex uk-flex-center">
-              <button
-                type="submit"
-                className={`uk-button uk-margin-top ${
-                  loading ? "uk-disabled" : ""
-                }`}
-                style={{ backgroundColor: "#32d296", color: "#FFF" }}
+          <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
+            <label
+              className="uk-form-label uk-width-1-5"
+              htmlFor="form-stacked-select"
+            >
+              Trạng thái
+            </label>
+            <div className="uk-form-controls uk-display-inline-block uk-width-4-5">
+              <select
+                className="uk-select"
+                value={trangThai}
+                onChange={(e) => setTrangThai(e.target.value)}
               >
-                Lưu
-              </button>
+                <option value={0}>Đang sử dụng</option>
+                <option value={1}>Không sử dụng</option>
+              </select>
             </div>
-          </form>
-        </div>
-        <LoadingOverlay isLoading={loading} />
+          </div>
+
+          <div className="uk-flex uk-flex-center">
+            <button
+              type="submit"
+              className={`uk-button uk-margin-top ${
+                loading ? "uk-disabled" : ""
+              }`}
+              style={{ backgroundColor: "#32d296", color: "#FFF" }}
+            >
+              Lưu
+            </button>
+          </div>
+        </form>
       </div>
-    </>
+      <LoadingOverlay isLoading={loading} />
+    </div>
   );
 };
 
