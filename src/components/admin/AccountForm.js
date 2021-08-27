@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { navigate } from "../../utils/common";
 import {
-  postAPIFormWithToken,
+  postAPIWithToken,
   getAPIWithToken,
   putAPIWithToken,
 } from "../../utils/api";
@@ -82,6 +82,7 @@ const AdminAccountForm = ({ userId }) => {
 
   const onResetPassword = async () => {
     try {
+      const token = await getToken();
       await postAPIWithToken(
         "/users/reset-password",
         {
