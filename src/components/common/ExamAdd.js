@@ -190,7 +190,6 @@ const ExamAdd = ({ examId }) => {
   };
 
   useEffect(() => {
-    console.log(questionList);
     if (questionList?.length > 0) {
       const questionCounter = questionList.reduce(
         (counter, question) => {
@@ -282,8 +281,39 @@ const ExamAdd = ({ examId }) => {
     return result;
   };
 
+  const validateForm = () => {
+    if (tenDeThi === "") {
+      alert("Tên đề thi không được để trống");
+      return false;
+    }
+    if (maChuyenDe === "") {
+      alert("Môn học không được để trống");
+      return false;
+    }
+    if (thoiGianLam === "") {
+      alert("Thời gian làm bài không được để trống");
+      return false;
+    }
+    if (questionList?.length === 0) {
+      alert("Đề thi phải có ít nhất một câu hỏi");
+      return false;
+    }
+    if (soLuongTracNghiem !== 0 && diemTracNghiem === 0) {
+      alert("Điểm trắc nghiệm không được để trống");
+      return false;
+    }
+    if (soLuongTuLuan !== 0 && diemTuLuan === 0) {
+      alert("Điểm tự luận không được để trống");
+      return false;
+    }
+    return true;
+  };
+
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
     const questionDataList = getQuestionDataFromDOM(e);
     const respondPostNewQuestions = await onPostNewQuestions(questionDataList);
     const updatedQuestionList = appendAdditionalPropsToQuestionList(
@@ -451,7 +481,7 @@ const ExamAdd = ({ examId }) => {
     <>
       <div className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1">
         {/* label */}
-        <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
+        <p className="uk-text-large uk-text-center uk-text-bold uk-text-success text-uppercase">
           {examId ? "Cập nhật đề thi" : "Tạo đề thi"}
         </p>
 

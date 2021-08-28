@@ -66,6 +66,10 @@ button:disabled {
   border: 0.5px solid #666 !important;
 }
 
+.text-uppercase {
+  text-transform: uppercase;
+}
+
 @media only screen and (max-width: 1000px) {
   .control-row-item-label {
     display: block;
