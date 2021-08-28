@@ -8,10 +8,9 @@ const EssayQuestionBlock = (props, ref) => {
     onRemove,
     publicButtonDisabled = false,
     readOnly,
-    defaultQuestionProp,
+    defaultQuestionProp = "",
   } = props;
-  const defaultQuestion = defaultQuestionProp ? defaultQuestionProp : "";
-  const [title, setTitle] = useState(defaultQuestion);
+  const [title, setTitle] = useState(defaultQuestionProp);
 
   useImperativeHandle(ref, () => ({
     getData: () => {

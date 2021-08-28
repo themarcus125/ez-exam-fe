@@ -61,7 +61,7 @@ export const navBarCategories = {
       path: "/exam-room",
     },
     {
-      title: "Thực hiệm kiểm tra",
+      title: "Thực hiện kiểm tra",
       path: "/exam-taker",
     },
     {
