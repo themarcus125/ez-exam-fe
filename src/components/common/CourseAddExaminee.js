@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import Modal, { showModal, hideModal } from "./Modal";
 
 import PaginationButtonGroup from "./PaginationButtonGroup";
@@ -44,7 +45,7 @@ const CourseAddExaminee = () => {
         setLoading(false);
       }
     } catch (error) {
-      alert("Đã có lỗi xảy ra trong quá trình lấy danh sách sinh viên.");
+      toast.error("Đã có lỗi xảy ra trong quá trình lấy danh sách sinh viên.");
     }
   };
 
@@ -70,7 +71,7 @@ const CourseAddExaminee = () => {
         setLoadingMd(false);
       }
     } catch (error) {
-      alert("Đã có lỗi xảy ra trong quá trình lấy danh sách môn học.");
+      toast.error("Đã có lỗi xảy ra trong quá trình lấy danh sách môn học.");
     }
   };
 
@@ -84,7 +85,7 @@ const CourseAddExaminee = () => {
         setLoadingMd(false);
       }
     } catch (error) {
-      alert(
+      toast.error(
         "Đã có lỗi xảy ra trong quá trình lấy danh sách môn học của sinh viên.",
       );
     }
@@ -161,10 +162,10 @@ const CourseAddExaminee = () => {
         },
         token,
       );
-      alert("Thêm môn học cho sinh viên thành công");
+      toast.success("Thêm môn học cho sinh viên thành công");
       hideModal();
     } catch (error) {
-      alert("Đã xảy ra lỗi. Không thể thêm môn học cho sinh viên");
+      toast.error("Đã xảy ra lỗi. Không thể thêm môn học cho sinh viên");
     }
   };
 
@@ -173,6 +174,8 @@ const CourseAddExaminee = () => {
       className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
       style={{ overflowY: "auto" }}
     >
+      <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
+
       <ControlBar
         title="DANH SÁCH SINH VIÊN"
         controlRow={() => <></>}
