@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { navigate } from "../../utils/common";
 import {
-  postAPIFormWithToken,
+  postAPIWithToken,
   getAPIWithToken,
   putAPIWithToken,
 } from "../../utils/api";
@@ -82,14 +82,14 @@ const AdminAccountForm = ({ userId }) => {
 
   const onResetPassword = async () => {
     try {
-      // Currently doesn't work. Not sure why, will ask BE team later
-      // await putAPIWithToken(
-      //   `/users/${userId}`,
-      //   {
-      //     matKhau: DEFAULT_PW,
-      //   },
-      //   token,
-      // );
+      const token = await getToken();
+      await postAPIWithToken(
+        "/users/reset-password",
+        {
+          id: userId,
+        },
+        token,
+      );
       alert("Reset mật khẩu thành công");
     } catch (error) {
       alert("Đã xảy ra lỗi không thể reset mật khẩu");

@@ -34,27 +34,29 @@ const ExamRoom = () => {
                         lstExamRoom?.map((item) => {
                             return (
                                 <div key={item.id}>
-                                    <div className="uk-card uk-card-default uk-flex uk-flex-row uk-flex-between examineeroom_grid">
-                                        <span className="icon uk-width-1-3@m" uk-icon="home"></span>
-                                        <hr className="uk-divider-vertical"></hr>
-                                        <div className="uk-width-2-3@m">
-                                            <div>
-                                                <label className="uk-form-label uk-margin-small-right" style={{ fontSize: "large" }}><b>{item.tenPhong}</b></label>
-                                            </div>
-                                            <div>
-                                                <label className="uk-form-label uk-margin-small-right">Ngày thi:</label>
-                                                <label className="uk-form-label"><b>{moment(item.ngayThi).format("DD/MM/YYYY")}</b></label>
-                                            </div>
-                                            <div>
-                                                <label className="uk-form-label uk-margin-small-right">Môn học:</label>
-                                                <label className="uk-form-label"><b>{item.tenMonHoc}</b></label>
-                                            </div>
-                                            <div>
-                                                <label className="uk-form-label uk-margin-small-right">Giờ thi:</label>
-                                                <label className="uk-form-label"><b>{item.thoiGianBatDauThi}</b></label>
+                                    <a href={`/examinee/permiss-exam-room/${item.id}`} style={{ "text-decoration": "none" }}>
+                                        <div className="uk-card uk-card-default uk-flex uk-flex-row uk-flex-between examineeroom_grid">
+                                            <span className="icon uk-width-1-3@m" uk-icon="home"></span>
+                                            <hr className="uk-divider-vertical"></hr>
+                                            <div className="uk-width-2-3@m">
+                                                <div>
+                                                    <label className="uk-form-label uk-margin-small-right" style={{ fontSize: "large" }}><b>{item.tenPhong}</b></label>
+                                                </div>
+                                                <div>
+                                                    <label className="uk-form-label uk-margin-small-right">Ngày thi:</label>
+                                                    <label className="uk-form-label"><b>{moment(item.ngayThi).format("DD/MM/YYYY")}</b></label>
+                                                </div>
+                                                <div>
+                                                    <label className="uk-form-label uk-margin-small-right">Môn học:</label>
+                                                    <label className="uk-form-label"><b>{item.tenMonHoc}</b></label>
+                                                </div>
+                                                <div>
+                                                    <label className="uk-form-label uk-margin-small-right">Giờ thi:</label>
+                                                    <label className="uk-form-label"><b>{item.thoiGianBatDauThi}</b></label>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 </div>
                             );
                         })}

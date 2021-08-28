@@ -72,7 +72,17 @@ export const navBarCategories = {
   admin: [
     {
       title: "Môn học",
-      path: "/",
+      path: "",
+      subCategories: [
+        {
+          title: "Danh sách môn học",
+          path: "/course",
+        },
+        {
+          title: "Thêm môn học cho sinh viên",
+          path: "/course/addexaminee",
+        },
+      ],
     },
     {
       title: "Tài khoản",

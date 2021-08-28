@@ -27,9 +27,11 @@ const QuestionTable = ({
   }, [currentPage]);
 
   useEffect(() => {
-    setCurrentPage(1);
-    numOfPage.current = 1;
-    getData();
+    if (type && level) {
+      setCurrentPage(1);
+      numOfPage.current = 1;
+      getData();
+    }
   }, [type, level]);
 
   useEffect(() => {
@@ -38,12 +40,16 @@ const QuestionTable = ({
 
   const getData = async () => {
     setLoading(true);
-    const response = await getAPIWithToken(
-      `/cauhoi/layDanhSachCauHoi?limit=${QUESTION_PER_PAGE}&page=${currentPage}&&loaiCauHoi=${type}&&doKho=${level}`,
-      token,
-    );
-    setQuestionList(response.data.dsCauHoi);
-    numOfPage.current = response.data.meta.to;
+    try {
+      const response = await getAPIWithToken(
+        `/cauhoi/layDanhSachCauHoi?limit=${QUESTION_PER_PAGE}&page=${currentPage}&&loaiCauHoi=${type}&&doKho=${level}`,
+        token,
+      );
+      setQuestionList(response?.data?.dsCauHoi);
+      numOfPage.current = response?.data?.meta.to;
+    } catch (error) {
+      alert("Đã có lỗi xảy ra, không thể lấy danh sách môn học");
+    }
     setLoading(false);
   };
 
@@ -67,17 +73,17 @@ const QuestionTable = ({
     <Fragment>
       {loading && <div className="uk-flex uk-flex-center" uk-spinner=""></div>}
       <div className="uk-margin-top" style={{ minHeight: 340 }}>
-        <table className="uk-table uk-table-divider">
-          <thead>
-            <tr>
-              {isSelectable && <th></th>}
-              <th>Câu hỏi</th>
-              <th className="uk-width-small"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {!loading &&
-              questionList.map((question) => {
+        {!loading && questionList?.length > 0 && (
+          <table className="uk-table uk-table-divider">
+            <thead>
+              <tr>
+                {isSelectable && <th></th>}
+                <th>Câu hỏi</th>
+                <th className="uk-width-small"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {questionList?.map((question) => {
                 return (
                   <Fragment key={question.id}>
                     <tr>
@@ -137,12 +143,22 @@ const QuestionTable = ({
                   </Fragment>
                 );
               })}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        )}
+        {console.log(loading, questionList)}
+        {!loading && (!questionList || questionList?.length === 0) && (
+          <p>
+            Không có câu hỏi nào được tìm thấy cho môn học bạn đã chọn. Vui lòng
+            chọn một môn học khác và thử lại.
+          </p>
+        )}
         <div id="modal-center" className="uk-flex-top" uk-modal="true">
           <div className="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
             <div>
-              <a className="uk-modal-close-default" uk-close=""></a>
+              <a className="uk-modal-close-default" uk-close="">
+                Close
+              </a>
             </div>
             <p className="uk-text-large uk-text-center">
               Chọn bộ câu hỏi muốn lưu
