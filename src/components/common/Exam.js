@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import { Link } from "gatsby";
 import {
   getAPIWithToken,
@@ -100,10 +101,10 @@ const Exam = () => {
     );
 
     if (response?.status === 200) {
-      alert("Tạo bản sao thành công.");
+      toast.success("Tạo bản sao thành công.");
       await getDeThi(meta?.currentPage);
     } else {
-      alert("Đã xảy ra lỗi. Tạo bản sao thất bại.");
+      toast.error("Đã xảy ra lỗi. Tạo bản sao thất bại.");
     }
   };
 
@@ -116,10 +117,10 @@ const Exam = () => {
     );
 
     if (response?.status === 200) {
-      alert("Xóa đề thi thành công.");
+      toast.success("Xóa đề thi thành công.");
       await getDeThi(meta?.currentPage);
     } else {
-      alert("Đã xảy ra lỗi. Xóa đề thi thất bại.");
+      toast.error("Đã xảy ra lỗi. Xóa đề thi thất bại.");
     }
   };
 
@@ -134,6 +135,8 @@ const Exam = () => {
 
   return (
     <div className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1">
+      <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
+
       <ControlBar
         title="Danh sách đề thi"
         controlRow={() => (

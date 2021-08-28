@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import {
   getAPIWithToken,
   postAPIWithToken,
@@ -28,9 +29,9 @@ const CourseAdd = ({ courseId }) => {
           },
           token,
         );
-        alert("Chỉnh sửa môn học thành công");
+        toast.success("Chỉnh sửa môn học thành công");
       } catch (error) {
-        alert("Đã xảy ra lỗi. Không thể chỉnh sửa môn học");
+        toast.error("Đã xảy ra lỗi. Không thể chỉnh sửa môn học");
       }
     } else {
       try {
@@ -42,9 +43,9 @@ const CourseAdd = ({ courseId }) => {
           },
           token,
         );
-        alert("Thêm môn học thành công");
+        toast.success("Thêm môn học thành công");
       } catch (error) {
-        alert("Đã xảy ra lỗi. Không thể thêm môn học");
+        toast.error("Đã xảy ra lỗi. Không thể thêm môn học");
       }
     }
   };
@@ -78,6 +79,11 @@ const CourseAdd = ({ courseId }) => {
           <p className="uk-text-large uk-text-bold uk-text-center uk-text-success">
             {`${courseId ? "SỬA THÔNG TIN" : "THÊM MỚI"} MÔN HỌC`}
           </p>
+
+          <ToastContainer
+            autoClose={3000}
+            position={toast.POSITION.TOP_RIGHT}
+          />
 
           {courseId && (
             <div className="uk-margin uk-flex uk-flex-row uk-flex-middle">
