@@ -446,6 +446,7 @@ const ExamAdd = ({ examId }) => {
                     onRemove={() => onRemoveQuestion(question)}
                     publicButtonDisabled
                     readOnly={!themMoi}
+                    defaultQuestionProp={noiDung}
                   />
                 );
               default:
@@ -700,7 +701,7 @@ const ExamAdd = ({ examId }) => {
       </div>
       <LoadingOverlay isLoading={loading} />
       <QuestionSelectModal
-        type={maChuyenDe || 1}
+        course={maChuyenDe || 1}
         level={doKho || 1}
         onSave={onSaveQuestionsFromQuestionaire}
       />

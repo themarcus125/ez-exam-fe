@@ -204,7 +204,7 @@ const ExamTakerPage = ({ roomId }) => {
                               <div style={{ border: "1px solid black" }}>
                                 <LoadableEditor
                                   id={element.id}
-                                  onChange={(event, editor) => {
+                                  onChangeTitle={(event, editor) => {
                                     const objAnswer = {
                                       maCauHoi: element.id,
                                       maDapAn: null,

@@ -1,18 +1,95 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "gatsby";
 import styled, { css } from "styled-components";
+import moment from "moment";
+import { ToastContainer, toast } from "react-toastify";
 
-import { getAPIWithToken } from "../../utils/api";
+import LoadingOverlay from "../common/LoadingOverlay";
+
+import { getAPIWithToken, putAPIWithToken } from "../../utils/api";
 import { getToken } from "../../utils/auth";
+import { questionType } from "../../utils/constants";
 
 const ExamGrading = () => {
+  const [test, setTest] = useState({});
+  const [loading, setloading] = useState(true);
+  const [dsCauHoiTL, setDSCauHoiTL] = useState([]);
+  const tongDiemTL = useRef(0);
+  const tongDiemTN = useRef(0);
+
   const loadData = async () => {
+    setloading(true);
     const token = await getToken();
     const response = await getAPIWithToken(
-      `/baithi/layChiTietBaiThi?maCTPhong=38`,
+      `/baithi/layChiTietBaiThi?maCTPhong=331`,
       token,
     );
-    console.log("res", response);
+    console.log(response);
+    if (response.message === "error") {
+      toast.error("Thí sinh chưa tham gia kì thi");
+      return;
+    }
+
+    const {
+      diemTungCauTracNghiem,
+      diemTungCauTuLuan,
+      soLuongTracNghiem,
+      soLuongTuLuan,
+      dsCauhoi,
+    } = response.data;
+    tongDiemTL.current = diemTungCauTuLuan * soLuongTuLuan;
+    tongDiemTN.current = diemTungCauTracNghiem * soLuongTracNghiem;
+    setDSCauHoiTL(
+      dsCauhoi
+        .filter((cauHoi) => cauHoi.loaiCauHoi === questionType.ESSAY)
+        .map((cauHoi) => {
+          return {
+            idBaiThi: cauHoi.idBaiThi,
+            diemDatDuoc: cauHoi.diemDatDuoc,
+          };
+        }),
+    );
+    setTest(response.data);
+    setloading(false);
+  };
+
+  const onSubmit = async () => {
+    if (!test?.soLuongTuLuan) {
+      toast.info("Không có câu hỏi tự luận");
+      return;
+    }
+
+    // const token = await getToken();
+    // const res = await putAPIWithToken(
+    //   `/baithi/suaKetQuaThi`,
+    //   {
+    //     // maCTPhong: 313,
+    //     // diemTracNghiem: test?.diemTracNghiem,
+    //     // diemTuLuan: 1,
+    //     // baiThi:[
+    //     //     {
+    //     //         idBaiThi: 2,
+    //     //         diemDatDuoc: 1
+    //     //     }
+    //     // ]
+    //   },
+    //   token,
+    // );
+  };
+
+  const gradeEssayQuestion = (e, idBaiThi) => {
+    const index = dsCauHoiTL.findIndex(
+      (cauHoi) => cauHoi.idBaiThi === idBaiThi,
+    );
+
+    setDSCauHoiTL([
+      ...dsCauHoiTL.slice(0, index),
+      {
+        ...dsCauHoiTL[index],
+        diemDatDuoc: +e.target.value,
+      },
+      ...dsCauHoiTL.slice(index + 1),
+    ]);
   };
 
   useEffect(() => {
@@ -24,21 +101,22 @@ const ExamGrading = () => {
       <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
         Bài thi của sinh viên
       </p>
+      <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
       <div
         className="uk-flex uk-child-width-expand@s uk-margin-bottom"
         uk-grid="true"
       >
         <span>
           <Title>MSSV</Title>
-          <Value>200302</Value>
+          <Value>{test?.mssv}</Value>
         </span>
         <span>
           <Title>Họ tên</Title>
-          <Value>Nguyễn Ngọc Mai</Value>
+          <Value>{test?.tenNguoiDung}</Value>
         </span>
         <span>
           <Title>Phòng thi</Title>
-          <Value>PT00343</Value>
+          <Value>{test?.maPhong}</Value>
         </span>
       </div>
       <div
@@ -47,85 +125,116 @@ const ExamGrading = () => {
       >
         <span>
           <Title>Ngày thi</Title>
-          <Value>12/07/2021</Value>
+          <Value>{moment(test?.ngayThi).format("DD/MM/YYYY")}</Value>
         </span>
         <span>
           <Title>Thời gian bắt đầu thi</Title>
-          <Value>9:30</Value>
+          <Value>{moment(test?.thoiGianBatDauLamBai).format("HH:mm")}</Value>
         </span>
         <span>
           <Title>Thời gian nộp bài</Title>
-          <Value>11:30</Value>
+          <Value>{moment(test?.thoiGianNopBai).format("HH:mm")}</Value>
         </span>
       </div>
       <div className="uk-margin-bottom">
-        <Title lineBreak>Ghi chú</Title>
-        <Value>
-          Em không thể thêm phân số được Em không thể thêm phân số được Em không
-          thể thêm phân số được Em không thể thêm phân số được Em không thể thêm
-          phân số được Em không thể thêm phân số được Em không thể thêm phân số
-          được Em không thể thêm phân số được
-        </Value>
+        <Title lineBreak>Ghi chú của sinh viên</Title>
+        <Value>{test?.ghiChu}</Value>
+      </div>
+      <div className="uk-margin-bottom">
+        <Title lineBreak>Ghi chú của giảng viên</Title>
+        <textarea
+          className="uk-textarea"
+          rows="5"
+          style={{ resize: "none", marginTop: 10 }}
+        ></textarea>
       </div>
 
-      <div className="uk-margin-bottom">
-        <QuestionRow className="uk-flex">
-          <span className="uk-flex uk-flex-1 uk-margin-right">
-            1. Đâu là ngôn ngữ lập trình?
-          </span>
-          <MarkContainer className="uk-flex uk-flex-middle">
-            <PointInput className="uk-input" value="1" readOnly />
-            <Line>/</Line>
-            <span>1 điểm</span>
-          </MarkContainer>
-        </QuestionRow>
-        <div>
-          <AnswerRow className="uk-flex uk-flex-row">
-            <div>
-              <input className="uk-radio" type="radio" />
-            </div>
-            <AnswerText>Java</AnswerText>
-          </AnswerRow>
-        </div>
-        <div
-          className="uk-panel uk-panel-scrollable"
-          style={{ resize: "none", height: 200 }}
-        >
-          <p>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s
-            with the release of Letraset sheets containing Lorem Ipsum passages,
-            and more recently with desktop publishing software like Aldus
-            PageMaker including versions of Lorem Ipsum.
-          </p>
-          <p>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s
-            with the release of Letraset sheets containing Lorem Ipsum passages,
-            and more recently with desktop publishing software like Aldus
-            PageMaker including versions of Lorem Ipsum.
-          </p>
-          <p>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s
-            with the release of Letraset sheets containing Lorem Ipsum passages,
-            and more recently with desktop publishing software like Aldus
-            PageMaker including versions of Lorem Ipsum.
-          </p>
-        </div>
-      </div>
+      {test?.dsCauhoi?.map((question) => {
+        const {
+          loaiCauHoi,
+          dsDapAn = [],
+          viTri,
+          noiDung,
+          dapAnTL,
+          diemDatDuoc,
+          diemTungCau,
+          id,
+          idBaiThi,
+        } = question;
+        switch (loaiCauHoi) {
+          case questionType.MULTIPLE_CHOICE:
+            return (
+              <div key={id} className="uk-margin-bottom">
+                <QuestionRow className="uk-flex">
+                  <span className="uk-flex uk-flex-1 uk-margin-right">
+                    {`${viTri}. ${noiDung}`}
+                  </span>
+                  <MarkContainer className="uk-flex uk-flex-middle">
+                    <PointInput
+                      className="uk-input"
+                      value={diemDatDuoc}
+                      readOnly
+                    />
+                    <Line>/</Line>
+                    <span>{`${diemTungCau} điểm`}</span>
+                  </MarkContainer>
+                </QuestionRow>
+                <div>
+                  {dsDapAn.map((answer) => {
+                    return (
+                      <AnswerRow
+                        key={answer.id}
+                        className="uk-flex uk-flex-row"
+                        correct={answer.loaiDapAn === 1}
+                      >
+                        <div>
+                          <input
+                            className="uk-radio"
+                            type="radio"
+                            checked={answer.thiSinhChon}
+                            readOnly
+                          />
+                        </div>
+                        <AnswerText>{answer.noiDung}</AnswerText>
+                      </AnswerRow>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          case questionType.ESSAY:
+            const diem = dsCauHoiTL.find(
+              (cauHoi) => cauHoi.idBaiThi === idBaiThi,
+            );
+            return (
+              <div key={id} className="uk-margin-bottom">
+                <QuestionRow className="uk-flex">
+                  <span className="uk-flex uk-flex-1 uk-margin-right">
+                    {`${viTri}. ${noiDung}`}
+                  </span>
+                  <MarkContainer className="uk-flex uk-flex-middle">
+                    <PointInput
+                      className="uk-input"
+                      value={diem}
+                      type="number"
+                      onChange={(e) => gradeEssayQuestion(e, idBaiThi)}
+                    />
+                    <Line>/</Line>
+                    <span>1 điểm</span>
+                  </MarkContainer>
+                </QuestionRow>
+                <div
+                  className="uk-panel uk-panel-scrollable"
+                  style={{ resize: "none", height: 200 }}
+                >
+                  <p>{dapAnTL}</p>
+                </div>
+              </div>
+            );
+          default:
+            return null;
+        }
+      })}
 
       <table className="uk-table-small">
         <thead></thead>
@@ -135,7 +244,9 @@ const ExamGrading = () => {
               <Title>Điểm trắc nghiệm</Title>
             </td>
             <td>
-              <Value>1/1 điểm</Value>
+              <Value>{`${test?.diemTracNghiem?.toFixed(
+                2,
+              )} / ${tongDiemTN.current.toFixed(2)} điểm`}</Value>
             </td>
           </tr>
           <tr>
@@ -143,7 +254,9 @@ const ExamGrading = () => {
               <Title>Điểm tự luận</Title>
             </td>
             <td>
-              <Value>1/2 điểm</Value>
+              <Value>{`${test?.diemTuLuan?.toFixed(
+                2,
+              )} / ${tongDiemTL.current.toFixed(2)} điểm`}</Value>
             </td>
           </tr>
           <tr>
@@ -151,7 +264,9 @@ const ExamGrading = () => {
               <Title>Tổng điểm</Title>
             </td>
             <td>
-              <Value>2/3 điểm</Value>
+              <Value>{`${test?.diem} / ${(
+                tongDiemTN.current + tongDiemTL.current
+              ).toFixed(2)} điểm`}</Value>
             </td>
           </tr>
           <tr>
@@ -167,10 +282,12 @@ const ExamGrading = () => {
         <button
           className="uk-button"
           style={{ backgroundColor: "#32d296", color: "#FFFFFF" }}
+          onClick={onSubmit}
         >
           Lưu
         </button>
       </div>
+      <LoadingOverlay isLoading={loading} />
     </div>
   );
 };
@@ -217,6 +334,11 @@ const AnswerText = styled.span`
 
 const AnswerRow = styled.div`
   margin-bottom: 5px;
+  ${(props) =>
+    props.correct &&
+    css`
+      background: #32d296;
+    `}
 `;
 
 const QuestionRow = styled.div`

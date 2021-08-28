@@ -11,6 +11,7 @@ const QUESTION_PER_PAGE = 10;
 const token = getUser()?.tk ?? "";
 
 const QuestionTable = ({
+  course,
   type,
   level,
   isSelectable,
@@ -27,12 +28,12 @@ const QuestionTable = ({
   }, [currentPage]);
 
   useEffect(() => {
-    if (type && level) {
+    if (type && level && course) {
       setCurrentPage(1);
       numOfPage.current = 1;
       getData();
     }
-  }, [type, level]);
+  }, [type, level, course]);
 
   useEffect(() => {
     UIKit.modal("#modal-center");
