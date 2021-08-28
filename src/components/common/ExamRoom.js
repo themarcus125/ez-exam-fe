@@ -285,7 +285,9 @@ const ExamRoom = () => {
                               <a>Báo cáo tổng hợp</a>
                             </li>
                             <li>
-                              <a>Xem danh sách bài thi</a>
+                              <Link to={`${item.id}/records`}>
+                                Xem danh sách bài thi
+                              </Link>
                             </li>
                             {role !== "admin" &&
                             Date.parse(

@@ -10,7 +10,7 @@ import { getAPIWithToken, putAPIWithToken } from "../../utils/api";
 import { getToken } from "../../utils/auth";
 import { questionType } from "../../utils/constants";
 
-const ExamGrading = () => {
+const ExamGrading = ({ id }) => {
   const [test, setTest] = useState({});
   const [loading, setloading] = useState(true);
   const [dsCauHoiTL, setDSCauHoiTL] = useState([]);
@@ -21,7 +21,7 @@ const ExamGrading = () => {
     setloading(true);
     const token = await getToken();
     const response = await getAPIWithToken(
-      `/baithi/layChiTietBaiThi?maCTPhong=331`,
+      `/baithi/layChiTietBaiThi?maCTPhong=${id}`,
       token,
     );
     console.log(response);
