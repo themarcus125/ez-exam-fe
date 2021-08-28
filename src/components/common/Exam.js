@@ -194,21 +194,21 @@ const Exam = () => {
               </div>
             </div>
             <div className="uk-width-1-4@l uk-text-right">
-              <button
-                className="uk-button"
-                style={{
-                  backgroundColor: "#32d296",
-                  color: "#FFF",
-                  width: "150px",
-                }}
+              <Link
+                to="./add"
+                style={{ color: "#FFFFFF", textDecoration: "none" }}
               >
-                <Link
-                  to="./add"
-                  style={{ color: "#FFFFFF", textDecoration: "none" }}
+                <button
+                  className="uk-button"
+                  style={{
+                    backgroundColor: "#32d296",
+                    color: "#FFF",
+                    width: "150px",
+                  }}
                 >
                   Thêm mới
-                </Link>
-              </button>
+                </button>
+              </Link>
             </div>
           </>
         )}
