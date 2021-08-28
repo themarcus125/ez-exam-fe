@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { navigate } from "gatsby";
 import {
   getAPIWithToken,
   postAPIWithToken,
@@ -290,8 +291,12 @@ const ExamAdd = ({ examId }) => {
       alert("Môn học không được để trống");
       return false;
     }
-    if (thoiGianLam === "") {
+    if (thoiGianLam === "" || thoiGianLam === 0) {
       alert("Thời gian làm bài không được để trống");
+      return false;
+    }
+    if (moTaDeThi === "") {
+      alert("Ghi chú đề thi không được để trống");
       return false;
     }
     if (questionList?.length === 0) {
@@ -376,6 +381,7 @@ const ExamAdd = ({ examId }) => {
 
       if (responseTaoDeThi?.status === 200) {
         alert("Tạo đề thi thành công.");
+        navigate("../");
       } else {
         alert("Đã xảy ra lỗi. Tạo đề thi thất bại.");
       }
