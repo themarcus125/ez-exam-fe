@@ -8,6 +8,9 @@ import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
 import { getUser } from "../../utils/auth";
 import { ToastContainer, toast } from "react-toastify";
 const token = getUser()?.tk ?? "";
+const dateCountDown = Date.now();
+// Data
+import mockData from "../../mockData/examtest.json";
 
 const LoadableEditor = loadable(() => import("../../components/common/Editor"));
 
@@ -43,14 +46,16 @@ const ExamTakerPage = ({ roomId }) => {
   }, [isPermissionApproved]);
 
   const getQuestion = async () => {
-    if (token && roomId) {
-      const tmp_objInfo = await getAPIWithToken(
-        `/sinhvien/layBaiThi?idPhongThi=${roomId}`,
-        token,
-      );
-      setObjInfoRoom(tmp_objInfo?.data);
-      setLstQuestion(tmp_objInfo?.data?.dsCauhoi);
-    }
+    // if (token && roomId) {
+    //   const tmp_objInfo = await getAPIWithToken(
+    //     `/sinhvien/layBaiThi?idPhongThi=${roomId}`,
+    //     token,
+    //   );
+    //   setObjInfoRoom(tmp_objInfo?.data);
+    //   setLstQuestion(tmp_objInfo?.data?.dsCauhoi);
+    // }
+    setObjInfoRoom(mockData["data"]);
+    setLstQuestion(mockData["data"].dsCauhoi);
   };
 
   const changeClassCSS = (idTag) => {
@@ -158,8 +163,7 @@ const ExamTakerPage = ({ roomId }) => {
             autoClose={3000}
             position={toast.POSITION.TOP_RIGHT}
           />
-          <div
-            className="uk-height-1-1 uk-card uk-card-default uk-card-body uk-width-3-4@m uk-scroll"
+          <div className="uk-height-1-1 uk-card uk-card-default uk-card-body uk-width-3-4@m uk-scroll"
             style={{
               overflowY: "scroll",
               height: window.screen.height,
@@ -174,63 +178,63 @@ const ExamTakerPage = ({ roomId }) => {
             </div>
             {lstQuestion
               ? lstQuestion.map((element) => {
-                  return (
-                    <div key={element.id} id={element.id}>
-                      <div>
-                        <div className="uk-card-body uk-padding-remove-bottom">
-                          <div className="uk-form-label uk-card-title">
-                            <b>
-                              {element.viTri}. {element.noiDung}
-                            </b>
-                          </div>
-                          <div className="uk-form-controls uk-margin-small-top uk-margin-small-left">
-                            {element.loaiCauHoi === 1 ? (
-                              element.dsDapAn.map((item, key) => (
-                                <div key={item.id}>
-                                  <label>
-                                    <input
-                                      className="uk-radio"
-                                      type="radio"
-                                      name={`radio${element.id}`}
-                                      value={item.id}
-                                      onChange={handleChangeAnswer}
-                                      title={element.id}
-                                    />
-                                    {" " + item.noiDung}
-                                  </label>
-                                </div>
-                              ))
-                            ) : (
-                              <div style={{ border: "1px solid black" }}>
-                                <LoadableEditor
-                                  id={element.id}
-                                  onChange={(event, editor) => {
-                                    const objAnswer = {
-                                      maCauHoi: element.id,
-                                      maDapAn: null,
-                                      dapAnTL: editor.getData(),
-                                    };
-                                    const indexAnswer = lstAnswer.findIndex(
-                                      (el) =>
-                                        el.maCauHoi === objAnswer.maCauHoi,
-                                    );
-                                    if (indexAnswer !== -1) {
-                                      lstAnswer[indexAnswer].dapAnTL =
-                                        objAnswer.dapAnTL;
-                                    } else {
-                                      lstAnswer.push(objAnswer);
-                                    }
-                                    changeClassCSS("btn" + objAnswer.maCauHoi);
-                                  }}
-                                />
+                return (
+                  <div key={element.id} id={element.id}>
+                    <div>
+                      <div className="uk-card-body uk-padding-remove-bottom">
+                        <div className="uk-form-label uk-card-title">
+                          <b>
+                            {element.viTri}. {element.noiDung}
+                          </b>
+                        </div>
+                        <div className="uk-form-controls uk-margin-small-top uk-margin-small-left">
+                          {element.loaiCauHoi === 1 ? (
+                            element.dsDapAn.map((item, key) => (
+                              <div key={item.id}>
+                                <label>
+                                  <input
+                                    className="uk-radio"
+                                    type="radio"
+                                    name={`radio${element.id}`}
+                                    value={item.id}
+                                    onChange={handleChangeAnswer}
+                                    title={element.id}
+                                  />
+                                  {" " + item.noiDung}
+                                </label>
                               </div>
-                            )}
-                          </div>
+                            ))
+                          ) : (
+                            <div style={{ border: "1px solid black" }}>
+                              <LoadableEditor
+                                id={element.id}
+                                onChangeTitle={(event, editor) => {
+                                  const objAnswer = {
+                                    maCauHoi: element.id,
+                                    maDapAn: null,
+                                    dapAnTL: editor.getData(),
+                                  };
+                                  const indexAnswer = lstAnswer.findIndex(
+                                    (el) =>
+                                      el.maCauHoi === objAnswer.maCauHoi,
+                                  );
+                                  if (indexAnswer !== -1) {
+                                    lstAnswer[indexAnswer].dapAnTL =
+                                      objAnswer.dapAnTL;
+                                  } else {
+                                    lstAnswer.push(objAnswer);
+                                  }
+                                  changeClassCSS("btn" + objAnswer.maCauHoi);
+                                }}
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
-                  );
-                })
+                  </div>
+                );
+              })
               : ""}
             <p className="uk-card-title uk-width-1-1 uk-text-center uk-margin-medium-bottom">
               <button
@@ -243,7 +247,7 @@ const ExamTakerPage = ({ roomId }) => {
               </button>
             </p>
           </div>
-          <div className="uk-card uk-card-default uk-card-body uk-width-1-4@m">
+          <div className="uk-height-1-1 uk-card uk-card-default uk-card-body uk-width-1-4@m">
             <div className="uk-grid uk-padding-small">
               <div className="uk-width-1-1 uk-margin-bottom">
                 <div className="uk-margin-medium">
@@ -252,7 +256,7 @@ const ExamTakerPage = ({ roomId }) => {
                     {objInfoRoom?.thoiGianLam ? (
                       <Countdown
                         date={
-                          Date.now() + parseInt(objInfoRoom.thoiGianLam) * 60000
+                          dateCountDown + parseInt(objInfoRoom.thoiGianLam) * 60000
                         }
                         intervalDelay={1000}
                         precision={3}
@@ -337,22 +341,22 @@ const ExamTakerPage = ({ roomId }) => {
                   <div className="uk-width-1-1 uk-flex uk-flex-row uk-flex-between">
                     {lstQuestion
                       ? lstQuestion.map((element) => {
-                          return (
-                            <div
-                              key={element.id}
-                              className="uk-width-1-5 uk-margin-small-bottom uk-scroll"
+                        return (
+                          <div
+                            key={element.id}
+                            className="uk-width-1-5 uk-margin-small-bottom uk-scroll"
+                          >
+                            <a
+                              id={"btn" + element.id}
+                              style={{ width: 40, height: 28 }}
+                              className="uk-flex uk-flex-center uk-button uk-button-default uk-button-small uk-scroll"
+                              href={"#" + element.id}
                             >
-                              <a
-                                id={"btn" + element.id}
-                                style={{ width: 40, height: 28 }}
-                                className="uk-flex uk-flex-center uk-button uk-button-default uk-button-small uk-scroll"
-                                href={"#" + element.id}
-                              >
-                                {element.viTri}
-                              </a>
-                            </div>
-                          );
-                        })
+                              {element.viTri}
+                            </a>
+                          </div>
+                        );
+                      })
                       : ""}
                   </div>
                 </div>

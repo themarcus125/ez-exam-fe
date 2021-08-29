@@ -1,81 +1,167 @@
 {
-    "examtest": [
-        {
-            "id": 1,
-            "stt": 1,
-            "question": "Câu hỏi số 1",
-            "answer": {
-                "A": "Đáp án 1",
-                "B": "Đáp án 2",
-                "C": "Đáp án 3",
-                "D": "Đáp án 4"
+    "code": 1,
+    "message": "successful",
+    "error": null,
+    "data": {
+        "maCTPhong": 428,
+        "maPhong": "P000014",
+        "maDe": "TSL0001",
+        "tenChuyenDe": "Kiến trúc máy tính",
+        "tieuDe": "Đề thi Kiến trúc máy tính giữa kì 1",
+        "ngayThi": "2021-08-31",
+        "thoiGianBatDauThi": "23:30",
+        "thoiGianLam": 120,
+        "moTaDeThi": "Đề thi Kiến trúc máy tính giữa kì 1, ĐH KHTN ĐHQG TP.HCM",
+        "mssv": "hcmus000004",
+        "tenNguoiDung": "Phan Huy Cường",
+        "soCauHoi": 5,
+        "dsCauhoi": [
+            {
+                "id": 11,
+                "viTri": 1,
+                "loaiCauHoi": 1,
+                "noiDung": "Cấu trúc cơ bản của máy tính gồm",
+                "nhieuDapAn": false,
+                "dsDapAn": [
+                    {
+                        "id": 41,
+                        "noiDung": "Bộ xử lý, thiết bị nhập xuất, bộ nhớ ngoài, bộ nhớ trong",
+                        "viTri": 1
+                    },
+                    {
+                        "id": 42,
+                        "noiDung": "Bộ nhớ chính, thiết bị nhập xuất, bộ xử lý",
+                        "viTri": 2
+                    },
+                    {
+                        "id": 43,
+                        "noiDung": "Bộ xử lý, bộ nhớ chính, hệ thống vào ra, liên kết hệ thống",
+                        "viTri": 3
+                    },
+                    {
+                        "id": 44,
+                        "noiDung": "Bộ nhớ chính, thiết bị ngoại vi, bộ xử lý",
+                        "viTri": 4
+                    }
+                ]
+            },
+            {
+                "id": 12,
+                "viTri": 2,
+                "loaiCauHoi": 1,
+                "noiDung": "Cấu trúc lệnh gồm",
+                "nhieuDapAn": false,
+                "dsDapAn": [
+                    {
+                        "id": 45,
+                        "noiDung": "Mã lệnh + Địa chỉ toán hạng đích",
+                        "viTri": 1
+                    },
+                    {
+                        "id": 46,
+                        "noiDung": "Mã lệnh + Địa chỉ toán hạng",
+                        "viTri": 2
+                    },
+                    {
+                        "id": 47,
+                        "noiDung": "Mã lệnh + Toán hạng",
+                        "viTri": 3
+                    },
+                    {
+                        "id": 48,
+                        "noiDung": "Mã lệnh + Tên lệnh",
+                        "viTri": 4
+                    }
+                ]
+            },
+            {
+                "id": 13,
+                "viTri": 3,
+                "loaiCauHoi": 1,
+                "noiDung": "Chữ S trong SDRAM viết tắt chữ gì?",
+                "nhieuDapAn": false,
+                "dsDapAn": [
+                    {
+                        "id": 49,
+                        "noiDung": "Static",
+                        "viTri": 1
+                    },
+                    {
+                        "id": 50,
+                        "noiDung": "Synchronous",
+                        "viTri": 2
+                    },
+                    {
+                        "id": 51,
+                        "noiDung": "Single",
+                        "viTri": 3
+                    },
+                    {
+                        "id": 52,
+                        "noiDung": "Synchronize",
+                        "viTri": 4
+                    }
+                ]
+            },
+            {
+                "id": 14,
+                "viTri": 4,
+                "loaiCauHoi": 1,
+                "noiDung": "Chương trình điều khiển hệ thống được lưu trữ tại",
+                "nhieuDapAn": false,
+                "dsDapAn": [
+                    {
+                        "id": 53,
+                        "noiDung": "CD",
+                        "viTri": 1
+                    },
+                    {
+                        "id": 54,
+                        "noiDung": "HDD",
+                        "viTri": 2
+                    },
+                    {
+                        "id": 55,
+                        "noiDung": "RAM",
+                        "viTri": 3
+                    },
+                    {
+                        "id": 56,
+                        "noiDung": "ROM",
+                        "viTri": 4
+                    }
+                ]
+            },
+            {
+                "id": 15,
+                "viTri": 5,
+                "loaiCauHoi": 1,
+                "noiDung": "Có bao nhiêu cách lưu trữ các byte của dữ liệu trong bộ nhớ",
+                "nhieuDapAn": false,
+                "dsDapAn": [
+                    {
+                        "id": 57,
+                        "noiDung": "1",
+                        "viTri": 1
+                    },
+                    {
+                        "id": 58,
+                        "noiDung": "2",
+                        "viTri": 2
+                    },
+                    {
+                        "id": 59,
+                        "noiDung": "3",
+                        "viTri": 3
+                    },
+                    {
+                        "id": 60,
+                        "noiDung": "4",
+                        "viTri": 4
+                    }
+                ]
             }
-        },
-        {
-            "id": 2,
-            "stt": 2,
-            "question": "Câu hỏi số 2",
-            "answer": {
-                "A": "Đáp án 1",
-                "B": "Đáp án 2",
-                "C": "Đáp án 3",
-                "D": "Đáp án 4"
-            }
-        },
-        {
-            "id": 3,
-            "stt": 3,
-            "question": "Câu hỏi số 3",
-            "answer": {
-                "A": "Đáp án 1",
-                "B": "Đáp án 2",
-                "C": "Đáp án 3",
-                "D": "Đáp án 4"
-            }
-        },
-        {
-            "id": 4,
-            "stt": 4,
-            "question": "Câu hỏi số 4",
-            "answer": {
-                "A": "Đáp án 1",
-                "B": "Đáp án 2",
-                "C": "Đáp án 3",
-                "D": "Đáp án 4"
-            }
-        },
-        {
-            "id": 5,
-            "stt": 5,
-            "question": "Câu hỏi số 5",
-            "answer": {
-                "A": "Đáp án 1",
-                "B": "Đáp án 2",
-                "C": "Đáp án 3",
-                "D": "Đáp án 4"
-            }
-        },
-        {
-            "id": 6,
-            "stt": 6,
-            "question": "Câu hỏi số 6",
-            "answer": {
-                "A": "Đáp án 1",
-                "B": "Đáp án 2",
-                "C": "Đáp án 3",
-                "D": "Đáp án 4"
-            }
-        },
-        {
-            "id": 7,
-            "stt": 7,
-            "question": "Câu hỏi số 7",
-            "answer": {
-                "A": "Đáp án 1",
-                "B": "Đáp án 2",
-                "C": "Đáp án 3",
-                "D": "Đáp án 4"
-            }
-        }
-    ]
+        ]
+    },
+    "timestamp": 1630211723
 }
