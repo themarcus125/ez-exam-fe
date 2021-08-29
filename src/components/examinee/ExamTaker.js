@@ -9,9 +9,6 @@ import { getUser } from "../../utils/auth";
 import { ToastContainer, toast } from "react-toastify";
 const token = getUser()?.tk ?? "";
 const dateCountDown = Date.now();
-// Data
-import mockData from "../../mockData/examtest.json";
-
 const LoadableEditor = loadable(() => import("../../components/common/Editor"));
 
 const ExamTakerPage = ({ roomId }) => {
@@ -46,16 +43,14 @@ const ExamTakerPage = ({ roomId }) => {
   }, [isPermissionApproved]);
 
   const getQuestion = async () => {
-    // if (token && roomId) {
-    //   const tmp_objInfo = await getAPIWithToken(
-    //     `/sinhvien/layBaiThi?idPhongThi=${roomId}`,
-    //     token,
-    //   );
-    //   setObjInfoRoom(tmp_objInfo?.data);
-    //   setLstQuestion(tmp_objInfo?.data?.dsCauhoi);
-    // }
-    setObjInfoRoom(mockData["data"]);
-    setLstQuestion(mockData["data"].dsCauhoi);
+    if (token && roomId) {
+      const tmp_objInfo = await getAPIWithToken(
+        `/sinhvien/layBaiThi?idPhongThi=${roomId}`,
+        token,
+      );
+      setObjInfoRoom(tmp_objInfo?.data);
+      setLstQuestion(tmp_objInfo?.data?.dsCauhoi);
+    }
   };
 
   const changeClassCSS = (idTag) => {
