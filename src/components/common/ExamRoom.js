@@ -6,6 +6,7 @@ import { getAPIWithToken } from "../../utils/api";
 import { getToken, getUser } from "../../utils/auth";
 import Config from "../../utils/config";
 import ControlBar from "./ControlBar";
+import { ToastContainer, toast } from "react-toastify";
 
 const USER_PER_PAGE = 10;
 const ExamRoom = () => {
@@ -48,7 +49,7 @@ const ExamRoom = () => {
         setLoading(false);
       }
     } catch (error) {
-      alert("Đã có lỗi xảy ra trong quá trình lấy danh sách phòng thi.");
+      toast.error("Lấy danh sách phòng thi thất bại !!!");
     }
   };
 
@@ -121,6 +122,10 @@ const ExamRoom = () => {
       className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
       style={{ overflowY: "auto" }}
     >
+      <ToastContainer
+        autoClose={3000}
+        position={toast.POSITION.TOP_RIGHT}
+      />
       <ControlBar
         title="Danh sách phòng thi"
         controlRow={() => (
@@ -137,15 +142,15 @@ const ExamRoom = () => {
                   }}
                   onChange={handleChangeSubject}
                   value={subject}
-                  onBlur={() => {}}
+                  onBlur={() => { }}
                 >
                   <option disabled></option>
                   {lstSubject
                     ? lstSubject.map((item, key) => (
-                        <option key={key} value={item.id}>
-                          {item.tenChuyenDe}
-                        </option>
-                      ))
+                      <option key={key} value={item.id}>
+                        {item.tenChuyenDe}
+                      </option>
+                    ))
                     : null}
                 </select>
               </div>
@@ -163,15 +168,15 @@ const ExamRoom = () => {
                     }}
                     onChange={handleChangeTeacher}
                     value={teacher}
-                    onBlur={() => {}}
+                    onBlur={() => { }}
                   >
                     <option disabled></option>
                     {lstTeacher
                       ? lstTeacher.map((item, key) => (
-                          <option key={key} value={item.id}>
-                            {item.tenNguoiDung}
-                          </option>
-                        ))
+                        <option key={key} value={item.id}>
+                          {item.tenNguoiDung}
+                        </option>
+                      ))
                       : null}
                   </select>
                 </div>
@@ -290,14 +295,14 @@ const ExamRoom = () => {
                               </Link>
                             </li>
                             {role !== "admin" &&
-                            Date.parse(
-                              moment(
-                                moment(item.ngayThi).format("DD/MM/YYYY") +
+                              Date.parse(
+                                moment(
+                                  moment(item.ngayThi).format("DD/MM/YYYY") +
                                   " " +
                                   item.thoiGianBatDauThi,
-                                "DD/MM/YYYY hh:mm",
-                              ),
-                            ) > Date.parse(new Date()) ? (
+                                  "DD/MM/YYYY hh:mm",
+                                ),
+                              ) > Date.parse(new Date()) ? (
                               <li>
                                 <Link to={`${url}/examroom/${item.id}`}>
                                   Sửa thông tin
@@ -348,9 +353,8 @@ const ExamRoom = () => {
           },
         )}
         <li
-          className={`${
-            currentPage === numOfPage.current ? "uk-disabled" : ""
-          }`}
+          className={`${currentPage === numOfPage.current ? "uk-disabled" : ""
+            }`}
         >
           <button
             className="uk-button uk-button-default uk-button-small"
