@@ -12,6 +12,9 @@ const dateCountDown = Date.now();
 
 const LoadableEditor = loadable(() => import("../../components/common/Editor"));
 
+// Data
+// import mockData from "../../mockData/examtest.json";
+
 const ExamTakerPage = ({ roomId }) => {
   const [isPermissionApproved, setIsPermissionApproved] = useState(false);
   const { isPermissionApproved: webcamApproved, webcamRecorderObject } =
@@ -52,6 +55,8 @@ const ExamTakerPage = ({ roomId }) => {
       setObjInfoRoom(tmp_objInfo?.data);
       setLstQuestion(tmp_objInfo?.data?.dsCauhoi);
     }
+    // setObjInfoRoom(mockData["data"]);
+    // setLstQuestion(mockData["data"].dsCauhoi);
   };
 
   const changeClassCSS = (idTag) => {
@@ -131,7 +136,7 @@ const ExamTakerPage = ({ roomId }) => {
       // Render a countdown
       return (
         <span className="countdown uk-width-1-2@m">
-          {hours}:{minutes}:{seconds}
+          {(hours < 10 ? "0" + hours : hours)}:{(minutes < 10 ? "0" + minutes : minutes)}:{(seconds < 10 ? "0" + seconds : seconds)}
         </span>
       );
     }
@@ -175,63 +180,63 @@ const ExamTakerPage = ({ roomId }) => {
             </div>
             {lstQuestion
               ? lstQuestion.map((element) => {
-                  return (
-                    <div key={element.id} id={element.id}>
-                      <div>
-                        <div className="uk-card-body uk-padding-remove-bottom">
-                          <div className="uk-form-label uk-card-title">
-                            <b>
-                              {element.viTri}. {element.noiDung}
-                            </b>
-                          </div>
-                          <div className="uk-form-controls uk-margin-small-top uk-margin-small-left">
-                            {element.loaiCauHoi === 1 ? (
-                              element.dsDapAn.map((item, key) => (
-                                <div key={item.id}>
-                                  <label>
-                                    <input
-                                      className="uk-radio"
-                                      type="radio"
-                                      name={`radio${element.id}`}
-                                      value={item.id}
-                                      onChange={handleChangeAnswer}
-                                      title={element.id}
-                                    />
-                                    {" " + item.noiDung}
-                                  </label>
-                                </div>
-                              ))
-                            ) : (
-                              <div style={{ border: "1px solid black" }}>
-                                <LoadableEditor
-                                  id={element.id}
-                                  onChangeTitle={(event, editor) => {
-                                    const objAnswer = {
-                                      maCauHoi: element.id,
-                                      maDapAn: null,
-                                      dapAnTL: editor.getData(),
-                                    };
-                                    const indexAnswer = lstAnswer.findIndex(
-                                      (el) =>
-                                        el.maCauHoi === objAnswer.maCauHoi,
-                                    );
-                                    if (indexAnswer !== -1) {
-                                      lstAnswer[indexAnswer].dapAnTL =
-                                        objAnswer.dapAnTL;
-                                    } else {
-                                      lstAnswer.push(objAnswer);
-                                    }
-                                    changeClassCSS("btn" + objAnswer.maCauHoi);
-                                  }}
-                                />
+                return (
+                  <div key={element.id} id={element.id}>
+                    <div>
+                      <div className="uk-card-body uk-padding-remove-bottom">
+                        <div className="uk-form-label uk-card-title">
+                          <b>
+                            {element.viTri}. {element.noiDung}
+                          </b>
+                        </div>
+                        <div className="uk-form-controls uk-margin-small-top uk-margin-small-left">
+                          {element.loaiCauHoi === 1 ? (
+                            element.dsDapAn.map((item, key) => (
+                              <div key={item.id}>
+                                <label>
+                                  <input
+                                    className="uk-radio"
+                                    type="radio"
+                                    name={`radio${element.id}`}
+                                    value={item.id}
+                                    onChange={handleChangeAnswer}
+                                    title={element.id}
+                                  />
+                                  {" " + item.noiDung}
+                                </label>
                               </div>
-                            )}
-                          </div>
+                            ))
+                          ) : (
+                            <div style={{ border: "1px solid black" }}>
+                              <LoadableEditor
+                                id={element.id}
+                                onChangeTitle={(event, editor) => {
+                                  const objAnswer = {
+                                    maCauHoi: element.id,
+                                    maDapAn: null,
+                                    dapAnTL: editor.getData(),
+                                  };
+                                  const indexAnswer = lstAnswer.findIndex(
+                                    (el) =>
+                                      el.maCauHoi === objAnswer.maCauHoi,
+                                  );
+                                  if (indexAnswer !== -1) {
+                                    lstAnswer[indexAnswer].dapAnTL =
+                                      objAnswer.dapAnTL;
+                                  } else {
+                                    lstAnswer.push(objAnswer);
+                                  }
+                                  changeClassCSS("btn" + objAnswer.maCauHoi);
+                                }}
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
-                  );
-                })
+                  </div>
+                );
+              })
               : ""}
             <p className="uk-card-title uk-width-1-1 uk-text-center uk-margin-medium-bottom">
               <button
@@ -338,22 +343,22 @@ const ExamTakerPage = ({ roomId }) => {
                   <div className="uk-width-1-1 uk-flex uk-flex-row uk-flex-between">
                     {lstQuestion
                       ? lstQuestion.map((element) => {
-                          return (
-                            <div
-                              key={element.id}
-                              className="uk-width-1-5 uk-margin-small-bottom uk-scroll"
+                        return (
+                          <div
+                            key={element.id}
+                            className="uk-width-1-5 uk-margin-small-bottom uk-scroll"
+                          >
+                            <a
+                              id={"btn" + element.id}
+                              style={{ width: 40, height: 28 }}
+                              className="uk-flex uk-flex-center uk-button uk-button-default uk-button-small uk-scroll"
+                              href={"#" + element.id}
                             >
-                              <a
-                                id={"btn" + element.id}
-                                style={{ width: 40, height: 28 }}
-                                className="uk-flex uk-flex-center uk-button uk-button-default uk-button-small uk-scroll"
-                                href={"#" + element.id}
-                              >
-                                {element.viTri}
-                              </a>
-                            </div>
-                          );
-                        })
+                              {element.viTri}
+                            </a>
+                          </div>
+                        );
+                      })
                       : ""}
                   </div>
                 </div>

@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { download, cleanUpStreamingRef } from "../utils/media";
+import { ToastContainer, toast } from "react-toastify";
 
 const useScreenRecorder = () => {
   const [isPermissionApproved, setIsPermissionApproved] = useState(false);
@@ -40,9 +41,7 @@ const useScreenRecorder = () => {
       }
     } catch (err) {
       /* handle the error */
-      alert(
-        "You're not approved to do the exam, please check your screen recording permission and try to reload.",
-      );
+      toast.warning("Vui lòng kiểm tra quyền ghi màn hình của bạn và thử tải lại !!!");
     }
   }, []);
 
