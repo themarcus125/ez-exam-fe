@@ -4,13 +4,14 @@ import {
   postAPIWithToken,
   putAPIWithToken,
 } from "../../utils/api";
-import { getToken } from "../../utils/auth";
+import { getToken, getUser } from "../../utils/auth";
 import { ToastContainer, toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import moment from "moment";
 import LoadingOverlay from "./LoadingOverlay";
 
 const ExamRoomAdd = ({ roomId }) => {
+  const role = getUser()?.role ?? "";
   const [loading, setLoading] = useState(true);
   const [roomName, setRoomName] = useState("");
   const [dateExam, setDateExam] = useState(new Date());
@@ -20,6 +21,9 @@ const ExamRoomAdd = ({ roomId }) => {
   const [subject, setSubject] = useState("");
   const [lstCodeExam, setLstCodeExam] = useState(null);
   const [codeExam, setCodeExam] = useState("");
+  const [lstStudent, setLstStudent] = useState(null);
+  const [isUpdated, setIsUpdated] = useState(false);
+  let _lstSubject = [];
 
   const getSubject = async () => {
     const token = await getToken();
@@ -28,6 +32,7 @@ const ExamRoomAdd = ({ roomId }) => {
       token,
     );
     setLstSubject(tmp_lstSubject.data);
+    _lstSubject = tmp_lstSubject.data;
   };
 
   const getCodeExam = async () => {
@@ -58,20 +63,39 @@ const ExamRoomAdd = ({ roomId }) => {
         `/phongthi?id=${roomId}`,
         token,
       );
-      const lstExamRoom = tmp_lstExamRoom?.data[0] ?? {};
-      if (lstExamRoom) {
-        setRoomName(lstExamRoom.maPhong);
-        setDateExam(new Date(lstExamRoom.ngayThi));
-        setSubject(lstExamRoom.maMonHoc);
-        setHourExamRoom(lstExamRoom.thoiGianBatDauPhong);
-        setHourStartExam(lstExamRoom.thoiGianBatDauThi);
-        setCodeExam(lstExamRoom.maBoDe);
+      const objExamRoom = tmp_lstExamRoom?.data[0] ?? {};
+      if (objExamRoom) {
+        setRoomName(objExamRoom.maPhong);
+        setDateExam(new Date(objExamRoom.ngayThi));
+        setSubject(objExamRoom.maMonHoc);
+        setHourExamRoom(objExamRoom.thoiGianBatDauPhong);
+        setHourStartExam(objExamRoom.thoiGianBatDauThi);
+        setCodeExam(objExamRoom.maBoDe);
+
+        console.log("sdf",Date.parse(new Date(objExamRoom.gioHeThong)));
+        console.log("1222",Date.parse(
+          moment(moment(objExamRoom.ngayThi).format("DD/MM/YYYY") + " " +
+            objExamRoom.thoiGianBatDauPhong, "DD/MM/YYYY hh:mm"),
+        ));
+        if (objExamRoom.trangThai !== 0 ||
+          Date.parse(
+            moment(moment(objExamRoom.ngayThi).format("DD/MM/YYYY") + " " +
+              objExamRoom.thoiGianBatDauPhong, "DD/MM/YYYY hh:mm"),
+          ) <= Date.parse(new Date(objExamRoom.gioHeThong))) {
+          setIsUpdated(true);
+        }
+        setTimeout(() => {
+          let objSubject = _lstSubject.find(element => element.id == objExamRoom.maMonHoc);
+          setLstStudent(objSubject?.nguoi_dung);
+        }, 1000);
       }
     }
     setLoading(false);
   };
 
   const handleChangeSubject = (e) => {
+    let objSubject = lstSubject.find(element => element.id == e.target.value);
+    setLstStudent(objSubject?.nguoi_dung);
     setSubject(e.target.value);
   };
 
@@ -159,7 +183,7 @@ const ExamRoomAdd = ({ roomId }) => {
         style={{ overflowY: "auto" }}
       >
         <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
-          {roomId ? "Chỉnh sửa phòng thi" : "Tạo phòng thi"}
+          {roomId ? "Chi tiết phòng thi" : "Tạo phòng thi"}
         </p>
 
         <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
@@ -305,18 +329,51 @@ const ExamRoomAdd = ({ roomId }) => {
                 </div>
               </div>
             </div>
-            <div className="uk-flex uk-flex-center">
-              <div className="uk-card-body">
-                <button
-                  className={`uk-button`}
-                  style={{ backgroundColor: "#32d296", color: "#FFF" }}
-                >
-                  Lưu
-                </button>
+            {role !== "admin" ? (
+              <div className="uk-flex uk-flex-center">
+                <div className="uk-card-body">
+                  <button
+                    className={`uk-button`}
+                    style={{ backgroundColor: "#32d296", color: "#FFF" }}
+                    disabled={isUpdated}
+                  >
+                    Lưu
+                  </button>
+                </div>
               </div>
-            </div>
+            ) : null}
           </fieldset>
         </form>
+        {/* {loading && <div className="uk-flex uk-flex-center" uk-spinner=""></div>} */}
+        <div className="uk-margin-top uk-overflow-auto">
+          <table className="uk-table uk-table-striped uk-table-middle">
+            <thead>
+              <tr>
+                <th className="uk-width-medium">Mã sinh viên</th>
+                <th className="uk-width-large">Tên sinh viên</th>
+                <th className="uk-width-large">Email</th>
+              </tr>
+            </thead>
+            <tbody>
+              {!loading &&
+                lstStudent?.map((item) => {
+                  return (
+                    <tr key={item.id}>
+                      <td data-label="Mã sinh viên" value={item.tenDangNhap}>
+                        {item.tenDangNhap}
+                      </td>
+                      <td data-label="Tên sinh viên" value={item.tenNguoiDung}>
+                        {item.tenNguoiDung}
+                      </td>
+                      <td data-label="Email" value={item.email}>
+                        {item.email}
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
+        </div>
       </div>
       <LoadingOverlay isLoading={loading} />
     </>

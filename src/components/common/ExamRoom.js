@@ -294,23 +294,28 @@ const ExamRoom = () => {
                                 Xem danh sách bài thi
                               </Link>
                             </li>
-                            {role !== "admin" &&
+                            <li>
+                              <Link to={`${url}/examroom/${item.id}`}>
+                                Chi tiết phòng thi
+                              </Link>
+                            </li>
+                            {/* {role !== "admin" &&
                               Date.parse(
                                 moment(
                                   moment(item.ngayThi).format("DD/MM/YYYY") +
                                   " " +
                                   item.thoiGianBatDauThi,
-                                  "DD/MM/YYYY hh:mm",
+                                  "DD/MM/YYYY hh:mm"
                                 ),
                               ) > Date.parse(new Date()) ? (
                               <li>
                                 <Link to={`${url}/examroom/${item.id}`}>
-                                  Sửa thông tin
+                                  Chi tiết phòng thi
                                 </Link>
                               </li>
                             ) : (
                               ""
-                            )}
+                            )} */}
                           </ul>
                         </div>
                       </ul>
