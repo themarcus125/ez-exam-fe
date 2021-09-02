@@ -36,7 +36,7 @@ const ExamRoom = () => {
               return (
                 <div key={item.id}>
                   <Link
-                    to={`/examinee/permiss-exam-room/${item.id}`}
+                    to={`/examinee/exam-taker/${item.id}`}
                     style={{ "text-decoration": "none" }}
                   >
                     <div className="uk-card uk-card-default uk-flex uk-flex-row uk-flex-between examineeroom_grid">

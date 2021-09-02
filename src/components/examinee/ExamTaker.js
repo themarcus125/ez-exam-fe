@@ -5,17 +5,17 @@ import Countdown from "react-countdown";
 import useWebcamRecorder from "../../hooks/useWebcamRecorder";
 import useScreenRecorder from "../../hooks/useScreenRecorder";
 import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
-import { getUser } from "../../utils/auth";
+import { getUser, getToken } from "../../utils/auth";
 import { ToastContainer, toast } from "react-toastify";
 const token = getUser()?.tk ?? "";
 const dateCountDown = Date.now();
-
 const LoadableEditor = loadable(() => import("../../components/common/Editor"));
 
 // Data
 // import mockData from "../../mockData/examtest.json";
 
 const ExamTakerPage = ({ roomId }) => {
+  const [loading, setLoading] = useState(true);
   const [isPermissionApproved, setIsPermissionApproved] = useState(false);
   const { isPermissionApproved: webcamApproved, webcamRecorderObject } =
     useWebcamRecorder();
@@ -26,6 +26,9 @@ const ExamTakerPage = ({ roomId }) => {
   const [lstAnswer, setLstAnswer] = useState([]);
   const [notes, setNotes] = useState("");
   const [isDisabled, setIsDisabled] = useState(true);
+  const [isDisabledStartExam, setIsDisabledStartExam] = useState(true);
+  const [flag, setFlag] = useState(false);
+  const [roomName, setRoomName] = useState("");
   let timeExam = 0;
 
   useEffect(() => {
@@ -39,10 +42,13 @@ const ExamTakerPage = ({ roomId }) => {
       if (roomId) {
         // Set data by requesting questionaire with current test id from server
         getQuestion();
+        setIsDisabledStartExam(false);
       }
       if (!roomId) {
         navigate(`/examinee/exam-room`);
       }
+    } else {
+      getExamRoom();
     }
   }, [isPermissionApproved]);
 
@@ -150,6 +156,25 @@ const ExamTakerPage = ({ roomId }) => {
     }
   };
 
+  //check permit
+  const getExamRoom = async () => {
+    setLoading(true);
+    const token = await getToken();
+    if (token) {
+      const tmp_lstExamRoom = await getAPIWithToken(
+        `/phongthi?id=${roomId}`,
+        token,
+      );
+      const objExamRoom = tmp_lstExamRoom?.data[0] ?? {};
+      if (objExamRoom) {
+        setRoomName(objExamRoom.maPhong);
+      }
+    }
+    setLoading(false);
+  };
+  const onClickStartExam = () => {
+    setFlag(true);
+  };
   const renderExamTaker = () => {
     return (
       <div
@@ -386,9 +411,66 @@ const ExamTakerPage = ({ roomId }) => {
     );
   };
 
+  const renderCheckPermit = () => {
+    return (
+      <div
+        className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
+        style={{ overflowY: "auto" }}
+      >
+        <ToastContainer
+          autoClose={3000}
+          position={toast.POSITION.TOP_RIGHT}
+        />
+        {!loading && (
+          <div>
+            <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
+              Phòng thi: {roomName}
+            </p>
+            <div
+              className="uk-margin-bottom uk-flex uk-flex-row uk-flex-center"
+              style={{ marginLeft: 150, marginRight: 150 }}
+            >
+              <div className="uk-grid uk-margin-small uk-width-1-1 uk-flex uk-flex-row uk-flex-center" uk-grid="true">
+                <div className="uk-width-1-1 uk-text-left">
+                  <label className="uk-form-label" style={{ fontSize: "large" }}>
+                    Để đảm bảo chất lượng thi và tránh các vấn đề gian lận thi cử. Các sinh viên vui lòng mở Micro và Camera để giảng viên kiểm tra trước khi thi. Các sinh viên tuân thử đúng quy tắc thì mới có thể làm bài thi.
+                  </label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}>Trong quá trình thi các thí sinh:</label><br />
+                  <label className="uk-form-label uk-margin-left" style={{ fontSize: "large" }}><b>Bắt buộc:</b></label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b></label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b></label><br />
+                  <label className="uk-form-label uk-margin-left" style={{ fontSize: "large" }}><b>Không được phép:</b></label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b></label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b></label><br />
+                </div>
+                <div className="uk-flex uk-flex-center examroom_permiss">
+                  <span className="icon uk-margin-right uk-width-1-3@m" uk-icon="microphone"></span>
+                  <span className="icon uk-width-1-3@m" uk-icon="video-camera"></span>
+                </div>
+                <div className="uk-flex uk-flex-center uk-width-1-1">
+                  <button
+                    className={`uk-button`}
+                    style={{ backgroundColor: "#32d296", color: "#FFF" }}
+                    onClick={onClickStartExam}
+                    disabled={isDisabledStartExam}
+                  >
+                    Bắt đầu làm bài
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {loading && (
+          <div className="uk-flex uk-flex-center" uk-spinner=""></div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="uk-height-1-1 uk-background-muted">
-      {objInfoRoom ? renderExamTaker() : <span uk-spinner="ratio: 4.5"></span>}
+      {isPermissionApproved && flag ? (objInfoRoom ? renderExamTaker() : <span uk-spinner="ratio: 4.5"></span>) : renderCheckPermit()}
     </div>
   );
 };
