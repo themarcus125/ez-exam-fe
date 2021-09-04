@@ -6,6 +6,7 @@ import {
   postAPIWithToken,
   getAPIWithToken,
   putAPIWithToken,
+  postAPIFormWithToken,
 } from "../../utils/api";
 import { getToken } from "../../utils/auth";
 import { userStatus } from "../../utils/constants";
@@ -15,7 +16,7 @@ const AdminAccountForm = ({ userId }) => {
   const [isLoading, setisLoading] = useState(true);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState();
+  const [username, setUsername] = useState("");
   const [role, setRole] = useState(2);
   const [status, setStatus] = useState(userStatus.ACTIVE);
   const [loading, setLoading] = useState(false);
@@ -59,6 +60,7 @@ const AdminAccountForm = ({ userId }) => {
         toast.success("Chỉnh sửa tài khoản thành công");
       } catch (error) {
         toast.error("Đã xảy ra lỗi không thể chỉnh sửa tài khoản");
+        return;
       }
     } else {
       // Add
@@ -76,6 +78,7 @@ const AdminAccountForm = ({ userId }) => {
         toast.success("Thêm tài khoản thành công");
       } catch (error) {
         toast.error("Đã xảy ra lỗi không thể thêm tài khoản");
+        return;
       }
     }
     navigate("../");
@@ -120,6 +123,7 @@ const AdminAccountForm = ({ userId }) => {
                   value={username}
                   type="text"
                   disabled
+                  readOnly
                 />
               </div>
             </div>
@@ -154,7 +158,7 @@ const AdminAccountForm = ({ userId }) => {
               <input
                 className="uk-input"
                 value={email}
-                type="text"
+                type="email"
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
