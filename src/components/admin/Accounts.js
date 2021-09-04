@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "gatsby";
+import { ToastContainer, toast } from "react-toastify";
 
 import PaginationButtonGroup from "../common/PaginationButtonGroup";
 import { getUser } from "../../utils/auth";
@@ -38,7 +39,7 @@ const AdminAccounts = () => {
         setLoading(false);
       }
     } catch (error) {
-      alert("Đã có lỗi xảy ra trong quá trình lấy danh sách tài khoản.");
+      toast.error("Đã có lỗi xảy ra trong quá trình lấy danh sách tài khoản.");
     }
   };
 
@@ -83,6 +84,7 @@ const AdminAccounts = () => {
       className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
       style={{ overflowY: "auto" }}
     >
+      <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
       <ControlBar
         title="Danh sách tài khoản"
         controlRow={() => (
