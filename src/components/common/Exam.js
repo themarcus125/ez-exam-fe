@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Link } from "gatsby";
+import DatePicker from "react-datepicker";
 import {
   getAPIWithToken,
   postAPIWithToken,
@@ -39,8 +40,8 @@ const Exam = () => {
     const lstDeThi = await getAPIWithToken(
       `/dethi/layDanhSachBoDeThi?limit=${limit}&page=${crPage}&maChuyenDe=${
         maMonHoc && maMonHoc
-      }&tuNgay=${tuNgay && tuNgay}&denNgay=${
-        denNgay && denNgay
+      }&tuNgay=${tuNgay && moment(tuNgay).format("YYYY-MM-DD")}&denNgay=${
+        denNgay && moment(denNgay).format("YYYY-MM-DD")
       }&keywork=${key}`,
       token,
     );
@@ -170,13 +171,16 @@ const Exam = () => {
                 Từ ngày
               </span>
               <div className="uk-display-inline-block uk-width-3-4">
-                <input
-                  className="uk-input uk-width-1-1 black-border"
-                  type="date"
-                  format="YYYY-MM-DD"
-                  onChange={(e) => {
-                    setTuNgay(e.target.value);
+                <DatePicker
+                  className="uk-select uk-width-1-1 black-border"
+                  style={{
+                    border: "solid 0.5px #666",
                   }}
+                  selected={tuNgay}
+                  onChange={(date) => {
+                    setTuNgay(date);
+                  }}
+                  dateFormat="dd/MM/yyyy"
                 />
               </div>
             </div>
@@ -186,13 +190,16 @@ const Exam = () => {
                 Đến ngày
               </span>
               <div className="uk-display-inline-block uk-width-3-4">
-                <input
-                  className="uk-input uk-width-1-1 black-border"
-                  type="date"
-                  format="YYYY-MM-DD"
-                  onChange={(e) => {
-                    setDenNgay(e.target.value);
+                <DatePicker
+                  className="uk-select uk-width-1-1 black-border"
+                  style={{
+                    border: "solid 0.5px #666",
                   }}
+                  selected={denNgay}
+                  onChange={(date) => {
+                    setDenNgay(date);
+                  }}
+                  dateFormat="dd/MM/yyyy"
                 />
               </div>
             </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import ClassicEditor from "ckeditor5-classic-with-mathtype";
 
 const Editor = ({ id, title, onChangeTitle, readOnly }) => {
   return (
@@ -12,6 +12,9 @@ const Editor = ({ id, title, onChangeTitle, readOnly }) => {
       config={{
         toolbar: [
           "heading",
+          "|",
+          "MathType",
+          "ChemType",
           "|",
           "bold",
           "italic",

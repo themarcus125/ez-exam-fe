@@ -122,10 +122,7 @@ const ExamRoom = () => {
       className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
       style={{ overflowY: "auto" }}
     >
-      <ToastContainer
-        autoClose={3000}
-        position={toast.POSITION.TOP_RIGHT}
-      />
+      <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
       <ControlBar
         title="Danh sách phòng thi"
         controlRow={() => (
@@ -142,15 +139,15 @@ const ExamRoom = () => {
                   }}
                   onChange={handleChangeSubject}
                   value={subject}
-                  onBlur={() => { }}
+                  onBlur={() => {}}
                 >
                   <option disabled></option>
                   {lstSubject
                     ? lstSubject.map((item, key) => (
-                      <option key={key} value={item.id}>
-                        {item.tenChuyenDe}
-                      </option>
-                    ))
+                        <option key={key} value={item.id}>
+                          {item.tenChuyenDe}
+                        </option>
+                      ))
                     : null}
                 </select>
               </div>
@@ -168,15 +165,15 @@ const ExamRoom = () => {
                     }}
                     onChange={handleChangeTeacher}
                     value={teacher}
-                    onBlur={() => { }}
+                    onBlur={() => {}}
                   >
                     <option disabled></option>
                     {lstTeacher
                       ? lstTeacher.map((item, key) => (
-                        <option key={key} value={item.id}>
-                          {item.tenNguoiDung}
-                        </option>
-                      ))
+                          <option key={key} value={item.id}>
+                            {item.tenNguoiDung}
+                          </option>
+                        ))
                       : null}
                   </select>
                 </div>
@@ -341,8 +338,9 @@ const ExamRoom = () => {
           },
         )}
         <li
-          className={`${currentPage === numOfPage.current ? "uk-disabled" : ""
-            }`}
+          className={`${
+            currentPage === numOfPage.current ? "uk-disabled" : ""
+          }`}
         >
           <button
             className="uk-button uk-button-default uk-button-small"
