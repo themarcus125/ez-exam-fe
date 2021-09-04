@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { navigate } from "gatsby";
+import { ToastContainer, toast } from "react-toastify";
 import {
   getAPIWithToken,
   postAPIWithToken,
@@ -86,7 +87,7 @@ const ExamAdd = ({ examId }) => {
         const data = ref.getData();
         if (data?.error) {
           hasError.current = true;
-          alert(data.error);
+          toast.error(data.error);
           return null;
         }
         data
@@ -178,10 +179,10 @@ const ExamAdd = ({ examId }) => {
           ...questionList,
           ...setMaValueFromIDValue(filteredNewQuestionsFromBatch),
         ]);
-        return alert("Đã thêm các câu hỏi được chọn vào đề thi");
+        return toast.success("Đã thêm các câu hỏi được chọn vào đề thi");
       }
     }
-    alert(
+    toast.error(
       "Không có câu hỏi nào được thêm vào đề thi. Vui lòng kiểm tra lại câu hỏi bạn chọn đã có trong đề thi hay chưa.",
     );
   };
@@ -250,7 +251,9 @@ const ExamAdd = ({ examId }) => {
         const responseContent = await responseThemCauTN.json();
         result.dataTN = responseContent.data;
       } catch (error) {
-        alert("Đã có lỗi xảy ra trong quá trình thêm câu hỏi trắc nghiệm mới.");
+        toast.error(
+          "Đã có lỗi xảy ra trong quá trình thêm câu hỏi trắc nghiệm mới.",
+        );
       }
     }
 
@@ -274,7 +277,9 @@ const ExamAdd = ({ examId }) => {
         const dataTL = await responseThemCauTL.json();
         result.dataTL = dataTL.data;
       } catch (error) {
-        alert("Đã có lỗi xảy ra trong quá trình thêm câu hỏi tự luận mới.");
+        toast.error(
+          "Đã có lỗi xảy ra trong quá trình thêm câu hỏi tự luận mới.",
+        );
       }
     }
 
@@ -284,31 +289,31 @@ const ExamAdd = ({ examId }) => {
 
   const validateForm = () => {
     if (tenDeThi === "") {
-      alert("Tên đề thi không được để trống");
+      toast.error("Tên đề thi không được để trống");
       return false;
     }
     if (maChuyenDe === "") {
-      alert("Môn học không được để trống");
+      toast.error("Môn học không được để trống");
       return false;
     }
     if (thoiGianLam === "" || thoiGianLam === 0) {
-      alert("Thời gian làm bài không được để trống");
+      toast.error("Thời gian làm bài không được để trống");
       return false;
     }
     if (moTaDeThi === "") {
-      alert("Ghi chú đề thi không được để trống");
+      toast.error("Ghi chú đề thi không được để trống");
       return false;
     }
     if (questionList?.length === 0) {
-      alert("Đề thi phải có ít nhất một câu hỏi");
+      toast.error("Đề thi phải có ít nhất một câu hỏi");
       return false;
     }
     if (soLuongTracNghiem !== 0 && diemTracNghiem === 0) {
-      alert("Điểm trắc nghiệm không được để trống");
+      toast.error("Điểm trắc nghiệm không được để trống");
       return false;
     }
     if (soLuongTuLuan !== 0 && diemTuLuan === 0) {
-      alert("Điểm tự luận không được để trống");
+      toast.error("Điểm tự luận không được để trống");
       return false;
     }
     return true;
@@ -352,9 +357,9 @@ const ExamAdd = ({ examId }) => {
       );
 
       if (responseCapNhat?.status === 200) {
-        alert("Cập nhật đề thi thành công.");
+        toast.success("Cập nhật đề thi thành công.");
       } else {
-        alert("Đã xảy ra lỗi. Cập nhật đề thi thất bại.");
+        toast.error("Đã xảy ra lỗi. Cập nhật đề thi thất bại.");
       }
     } else {
       const responseTaoDeThi = await postAPIWithToken(
@@ -380,10 +385,10 @@ const ExamAdd = ({ examId }) => {
       );
 
       if (responseTaoDeThi?.status === 200) {
-        alert("Tạo đề thi thành công.");
+        toast.success("Tạo đề thi thành công.");
         navigate("../");
       } else {
-        alert("Đã xảy ra lỗi. Tạo đề thi thất bại.");
+        toast.error("Đã xảy ra lỗi. Tạo đề thi thất bại.");
       }
     }
   };
@@ -487,6 +492,7 @@ const ExamAdd = ({ examId }) => {
   return (
     <>
       <div className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1">
+        <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
         {/* label */}
         <p className="uk-text-large uk-text-center uk-text-bold uk-text-success text-uppercase">
           {examId ? "Cập nhật đề thi" : "Tạo đề thi"}
