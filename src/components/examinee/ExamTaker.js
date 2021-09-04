@@ -5,13 +5,17 @@ import Countdown from "react-countdown";
 import useWebcamRecorder from "../../hooks/useWebcamRecorder";
 import useScreenRecorder from "../../hooks/useScreenRecorder";
 import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
-import { getUser } from "../../utils/auth";
+import { getUser, getToken } from "../../utils/auth";
 import { ToastContainer, toast } from "react-toastify";
 const token = getUser()?.tk ?? "";
-
+const dateCountDown = Date.now();
 const LoadableEditor = loadable(() => import("../../components/common/Editor"));
 
+// Data
+// import mockData from "../../mockData/examtest.json";
+
 const ExamTakerPage = ({ roomId }) => {
+  const [loading, setLoading] = useState(true);
   const [isPermissionApproved, setIsPermissionApproved] = useState(false);
   const { isPermissionApproved: webcamApproved, webcamRecorderObject } =
     useWebcamRecorder();
@@ -22,6 +26,9 @@ const ExamTakerPage = ({ roomId }) => {
   const [lstAnswer, setLstAnswer] = useState([]);
   const [notes, setNotes] = useState("");
   const [isDisabled, setIsDisabled] = useState(true);
+  const [isDisabledStartExam, setIsDisabledStartExam] = useState(true);
+  const [flag, setFlag] = useState(false);
+  const [roomName, setRoomName] = useState("");
   let timeExam = 0;
 
   useEffect(() => {
@@ -35,10 +42,13 @@ const ExamTakerPage = ({ roomId }) => {
       if (roomId) {
         // Set data by requesting questionaire with current test id from server
         getQuestion();
+        setIsDisabledStartExam(false);
       }
       if (!roomId) {
         navigate(`/examinee/exam-room`);
       }
+    } else {
+      getExamRoom();
     }
   }, [isPermissionApproved]);
 
@@ -51,6 +61,8 @@ const ExamTakerPage = ({ roomId }) => {
       setObjInfoRoom(tmp_objInfo?.data);
       setLstQuestion(tmp_objInfo?.data?.dsCauhoi);
     }
+    // setObjInfoRoom(mockData["data"]);
+    // setLstQuestion(mockData["data"].dsCauhoi);
   };
 
   const changeClassCSS = (idTag) => {
@@ -130,7 +142,7 @@ const ExamTakerPage = ({ roomId }) => {
       // Render a countdown
       return (
         <span className="countdown uk-width-1-2@m">
-          {hours}:{minutes}:{seconds}
+          {(hours < 10 ? "0" + hours : hours)}:{(minutes < 10 ? "0" + minutes : minutes)}:{(seconds < 10 ? "0" + seconds : seconds)}
         </span>
       );
     }
@@ -144,6 +156,25 @@ const ExamTakerPage = ({ roomId }) => {
     }
   };
 
+  //check permit
+  const getExamRoom = async () => {
+    setLoading(true);
+    const token = await getToken();
+    if (token) {
+      const tmp_lstExamRoom = await getAPIWithToken(
+        `/phongthi?id=${roomId}`,
+        token,
+      );
+      const objExamRoom = tmp_lstExamRoom?.data[0] ?? {};
+      if (objExamRoom) {
+        setRoomName(objExamRoom.maPhong);
+      }
+    }
+    setLoading(false);
+  };
+  const onClickStartExam = () => {
+    setFlag(true);
+  };
   const renderExamTaker = () => {
     return (
       <div
@@ -174,63 +205,63 @@ const ExamTakerPage = ({ roomId }) => {
             </div>
             {lstQuestion
               ? lstQuestion.map((element) => {
-                  return (
-                    <div key={element.id} id={element.id}>
-                      <div>
-                        <div className="uk-card-body uk-padding-remove-bottom">
-                          <div className="uk-form-label uk-card-title">
-                            <b>
-                              {element.viTri}. {element.noiDung}
-                            </b>
-                          </div>
-                          <div className="uk-form-controls uk-margin-small-top uk-margin-small-left">
-                            {element.loaiCauHoi === 1 ? (
-                              element.dsDapAn.map((item, key) => (
-                                <div key={item.id}>
-                                  <label>
-                                    <input
-                                      className="uk-radio"
-                                      type="radio"
-                                      name={`radio${element.id}`}
-                                      value={item.id}
-                                      onChange={handleChangeAnswer}
-                                      title={element.id}
-                                    />
-                                    {" " + item.noiDung}
-                                  </label>
-                                </div>
-                              ))
-                            ) : (
-                              <div style={{ border: "1px solid black" }}>
-                                <LoadableEditor
-                                  id={element.id}
-                                  onChange={(event, editor) => {
-                                    const objAnswer = {
-                                      maCauHoi: element.id,
-                                      maDapAn: null,
-                                      dapAnTL: editor.getData(),
-                                    };
-                                    const indexAnswer = lstAnswer.findIndex(
-                                      (el) =>
-                                        el.maCauHoi === objAnswer.maCauHoi,
-                                    );
-                                    if (indexAnswer !== -1) {
-                                      lstAnswer[indexAnswer].dapAnTL =
-                                        objAnswer.dapAnTL;
-                                    } else {
-                                      lstAnswer.push(objAnswer);
-                                    }
-                                    changeClassCSS("btn" + objAnswer.maCauHoi);
-                                  }}
-                                />
+                return (
+                  <div key={element.id} id={element.id}>
+                    <div>
+                      <div className="uk-card-body uk-padding-remove-bottom">
+                        <div className="uk-form-label uk-card-title">
+                          <b>
+                            {element.viTri}. {element.noiDung}
+                          </b>
+                        </div>
+                        <div className="uk-form-controls uk-margin-small-top uk-margin-small-left">
+                          {element.loaiCauHoi === 1 ? (
+                            element.dsDapAn.map((item, key) => (
+                              <div key={item.id}>
+                                <label>
+                                  <input
+                                    className="uk-radio"
+                                    type="radio"
+                                    name={`radio${element.id}`}
+                                    value={item.id}
+                                    onChange={handleChangeAnswer}
+                                    title={element.id}
+                                  />
+                                  {" " + item.noiDung}
+                                </label>
                               </div>
-                            )}
-                          </div>
+                            ))
+                          ) : (
+                            <div style={{ border: "1px solid black" }}>
+                              <LoadableEditor
+                                id={element.id}
+                                onChangeTitle={(event, editor) => {
+                                  const objAnswer = {
+                                    maCauHoi: element.id,
+                                    maDapAn: null,
+                                    dapAnTL: editor.getData(),
+                                  };
+                                  const indexAnswer = lstAnswer.findIndex(
+                                    (el) =>
+                                      el.maCauHoi === objAnswer.maCauHoi,
+                                  );
+                                  if (indexAnswer !== -1) {
+                                    lstAnswer[indexAnswer].dapAnTL =
+                                      objAnswer.dapAnTL;
+                                  } else {
+                                    lstAnswer.push(objAnswer);
+                                  }
+                                  changeClassCSS("btn" + objAnswer.maCauHoi);
+                                }}
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
-                  );
-                })
+                  </div>
+                );
+              })
               : ""}
             <p className="uk-card-title uk-width-1-1 uk-text-center uk-margin-medium-bottom">
               <button
@@ -252,7 +283,7 @@ const ExamTakerPage = ({ roomId }) => {
                     {objInfoRoom?.thoiGianLam ? (
                       <Countdown
                         date={
-                          Date.now() + parseInt(objInfoRoom.thoiGianLam) * 60000
+                          dateCountDown + parseInt(objInfoRoom.thoiGianLam) * 60000
                         }
                         intervalDelay={1000}
                         precision={3}
@@ -337,22 +368,22 @@ const ExamTakerPage = ({ roomId }) => {
                   <div className="uk-width-1-1 uk-flex uk-flex-row uk-flex-between">
                     {lstQuestion
                       ? lstQuestion.map((element) => {
-                          return (
-                            <div
-                              key={element.id}
-                              className="uk-width-1-5 uk-margin-small-bottom uk-scroll"
+                        return (
+                          <div
+                            key={element.id}
+                            className="uk-width-1-5 uk-margin-small-bottom uk-scroll"
+                          >
+                            <a
+                              id={"btn" + element.id}
+                              style={{ width: 40, height: 28 }}
+                              className="uk-flex uk-flex-center uk-button uk-button-default uk-button-small uk-scroll"
+                              href={"#" + element.id}
                             >
-                              <a
-                                id={"btn" + element.id}
-                                style={{ width: 40, height: 28 }}
-                                className="uk-flex uk-flex-center uk-button uk-button-default uk-button-small uk-scroll"
-                                href={"#" + element.id}
-                              >
-                                {element.viTri}
-                              </a>
-                            </div>
-                          );
-                        })
+                              {element.viTri}
+                            </a>
+                          </div>
+                        );
+                      })
                       : ""}
                   </div>
                 </div>
@@ -380,9 +411,66 @@ const ExamTakerPage = ({ roomId }) => {
     );
   };
 
+  const renderCheckPermit = () => {
+    return (
+      <div
+        className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
+        style={{ overflowY: "auto" }}
+      >
+        <ToastContainer
+          autoClose={3000}
+          position={toast.POSITION.TOP_RIGHT}
+        />
+        {!loading && (
+          <div>
+            <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
+              Phòng thi: {roomName}
+            </p>
+            <div
+              className="uk-margin-bottom uk-flex uk-flex-row uk-flex-center"
+              style={{ marginLeft: 150, marginRight: 150 }}
+            >
+              <div className="uk-grid uk-margin-small uk-width-1-1 uk-flex uk-flex-row uk-flex-center" uk-grid="true">
+                <div className="uk-width-1-1 uk-text-left">
+                  <label className="uk-form-label" style={{ fontSize: "large" }}>
+                    Để đảm bảo chất lượng thi và tránh các vấn đề gian lận thi cử. Các sinh viên vui lòng mở Micro và Camera để giảng viên kiểm tra trước khi thi. Các sinh viên tuân thử đúng quy tắc thì mới có thể làm bài thi.
+                  </label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}>Trong quá trình thi các thí sinh:</label><br />
+                  <label className="uk-form-label uk-margin-left" style={{ fontSize: "large" }}><b>Bắt buộc:</b></label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b></label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b></label><br />
+                  <label className="uk-form-label uk-margin-left" style={{ fontSize: "large" }}><b>Không được phép:</b></label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b></label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b></label><br />
+                </div>
+                <div className="uk-flex uk-flex-center examroom_permiss">
+                  <span className="icon uk-margin-right uk-width-1-3@m" uk-icon="microphone"></span>
+                  <span className="icon uk-width-1-3@m" uk-icon="video-camera"></span>
+                </div>
+                <div className="uk-flex uk-flex-center uk-width-1-1">
+                  <button
+                    className={`uk-button`}
+                    style={{ backgroundColor: "#32d296", color: "#FFF" }}
+                    onClick={onClickStartExam}
+                    disabled={isDisabledStartExam}
+                  >
+                    Bắt đầu làm bài
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {loading && (
+          <div className="uk-flex uk-flex-center" uk-spinner=""></div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="uk-height-1-1 uk-background-muted">
-      {objInfoRoom ? renderExamTaker() : <span uk-spinner="ratio: 4.5"></span>}
+      {isPermissionApproved && flag ? (objInfoRoom ? renderExamTaker() : <span uk-spinner="ratio: 4.5"></span>) : renderCheckPermit()}
     </div>
   );
 };

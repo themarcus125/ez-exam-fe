@@ -5,6 +5,7 @@ import { getAPIWithToken } from "../../utils/api";
 import { getToken } from "../../utils/auth";
 import useWebcamRecorder from "../../hooks/useWebcamRecorder";
 import useScreenRecorder from "../../hooks/useScreenRecorder";
+import { ToastContainer, toast } from "react-toastify";
 
 const CheckPermissRoom = ({ roomId }) => {
     const [isPermissionApproved, setIsPermissionApproved] = useState(false);
@@ -63,6 +64,10 @@ const CheckPermissRoom = ({ roomId }) => {
             className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
             style={{ overflowY: "auto" }}
         >
+            <ToastContainer
+                autoClose={3000}
+                position={toast.POSITION.TOP_RIGHT}
+            />
             {!loading && (
                 <div>
                     <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">

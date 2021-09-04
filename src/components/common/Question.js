@@ -1,11 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { questionLevel, questionType } from "../../utils/constants";
 import ControlBar from "./ControlBar";
 import QuestionTable from "./QuestionTable";
 
+import { getAPIWithToken } from "../../utils/api";
+import { getToken } from "../../utils/auth";
+
 const Question = () => {
   const [level, setLevel] = useState(questionLevel.EASY);
   const [type, setType] = useState(questionType.MULTIPLE_CHOICE);
+  const [currentCourse, setCurrentCourse] = useState(-1);
+  const [courses, setCourses] = useState([]);
+  const [searchString, setSearchString] = useState("");
+  const [search, setSearch] = useState("");
+
+  const loadData = async () => {
+    const token = await getToken();
+    const res = await getAPIWithToken(
+      "/chuyende/layDanhSachChuyenDe?trangThai=1&limit=9999",
+      token,
+    );
+    setCourses(res.data.dsChuyenDe);
+    setCurrentCourse(+res.data.dsChuyenDe[0]?.id);
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const onChangeLevel = (e) => {
     setLevel(e.target.value);
@@ -13,6 +34,18 @@ const Question = () => {
 
   const onChangeType = (e) => {
     setType(e.target.value);
+  };
+
+  const onChangeCourse = (e) => {
+    setCurrentCourse(e.target.value);
+  };
+
+  const onChangeSearch = (e) => {
+    setSearchString(e.target.value);
+  };
+
+  const onSearch = () => {
+    setSearch(searchString);
   };
 
   return (
@@ -29,8 +62,18 @@ const Question = () => {
                 Môn học
               </span>
               <div className="uk-display-inline-block uk-width-3-4">
-                <select className="uk-select uk-width-1-1 black-border">
-                  <option>Phần mềm</option>
+                <select
+                  className="uk-select uk-width-1-1 black-border"
+                  value={currentCourse}
+                  onChange={onChangeCourse}
+                >
+                  {courses?.map((course) => {
+                    return (
+                      <option key={course.id} value={course.id}>
+                        {course.tenChuyenDe}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
             </div>
@@ -73,9 +116,18 @@ const Question = () => {
             </div>
           </>
         )}
+        isSearchEnabled
+        searchString={searchString}
+        onSearchStringChanged={onChangeSearch}
+        onSearchButtonClicked={onSearch}
       />
 
-      <QuestionTable type={type} level={level} />
+      <QuestionTable
+        type={type}
+        level={level}
+        course={currentCourse}
+        searchString={search}
+      />
     </div>
   );
 };

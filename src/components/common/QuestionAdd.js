@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
+import { ToastContainer, toast } from "react-toastify";
 import EssayQuestionBlock from "./EssayQuestionBlock";
-
 import MultipleChoiceQuestionBlock from "./MultipleChoiceQuestionBlock";
 import { questionType, questionLevel } from "../../utils/constants";
 import { postAPIWithToken } from "../../utils/api";
@@ -78,7 +78,7 @@ const QuestionAdd = () => {
         const data = ref.getData();
         if (data.error) {
           hasError.current = true;
-          alert(data.error);
+          toast.error(data.error);
           return;
         }
 
@@ -103,7 +103,7 @@ const QuestionAdd = () => {
         token,
       );
       if (res.status === 200) {
-        alert(
+        toast.success(
           `Thêm câu hỏi ${
             type === questionType.ESSAY ? "tự luận" : "trắc nghiệm"
           } thành công`,
@@ -111,13 +111,14 @@ const QuestionAdd = () => {
         clearQuestions(type);
       }
     } catch (err) {
-      alert("Thêm câu hỏi thất bại.");
+      toast.error("Thêm câu hỏi thất bại.");
     }
   };
 
   return (
     <div className="uk-flex uk-flex-column uk-flex-1">
       <div className="uk-flex uk-flex-row uk-height-1-1">
+        <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
         <button
           className={buttonClass(questionType.MULTIPLE_CHOICE)}
           onClick={() => onToggle(questionType.MULTIPLE_CHOICE)}

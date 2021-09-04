@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { graphql, useStaticQuery, Link } from "gatsby";
+import { ToastContainer, toast } from "react-toastify";
 
 import { navigate } from "../../utils/common";
 
@@ -30,11 +31,11 @@ const AccountFromFile = () => {
           token,
         );
         if (request.status === 200) {
-          alert("Tập tin đã được tải lên.");
+          toast.success("Tập tin đã được tải lên.");
           navigate("../");
         }
       } catch (err) {
-        alert("Tải tập tin thất bại.");
+        toast.error("Tải tập tin thất bại.");
       }
     }
   };
@@ -47,6 +48,7 @@ const AccountFromFile = () => {
   return (
     <div className="uk-flex uk-margin-top uk-flex-center">
       <div className="uk-width-1-2@m uk-background-default uk-border-rounded uk-padding">
+        <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
         <form className="uk-form" onSubmit={onSubmit}>
           <p className="uk-text-large uk-text-bold uk-text-center uk-text-success">
             Tạo mới tài khoản từ tập tin

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import { Link } from "gatsby";
+import DatePicker from "react-datepicker";
 import {
   getAPIWithToken,
   postAPIWithToken,
@@ -38,8 +40,8 @@ const Exam = () => {
     const lstDeThi = await getAPIWithToken(
       `/dethi/layDanhSachBoDeThi?limit=${limit}&page=${crPage}&maChuyenDe=${
         maMonHoc && maMonHoc
-      }&tuNgay=${tuNgay && tuNgay}&denNgay=${
-        denNgay && denNgay
+      }&tuNgay=${tuNgay && moment(tuNgay).format("YYYY-MM-DD")}&denNgay=${
+        denNgay && moment(denNgay).format("YYYY-MM-DD")
       }&keywork=${key}`,
       token,
     );
@@ -100,10 +102,10 @@ const Exam = () => {
     );
 
     if (response?.status === 200) {
-      alert("Tạo bản sao thành công.");
+      toast.success("Tạo bản sao thành công.");
       await getDeThi(meta?.currentPage);
     } else {
-      alert("Đã xảy ra lỗi. Tạo bản sao thất bại.");
+      toast.error("Đã xảy ra lỗi. Tạo bản sao thất bại.");
     }
   };
 
@@ -116,10 +118,10 @@ const Exam = () => {
     );
 
     if (response?.status === 200) {
-      alert("Xóa đề thi thành công.");
+      toast.success("Xóa đề thi thành công.");
       await getDeThi(meta?.currentPage);
     } else {
-      alert("Đã xảy ra lỗi. Xóa đề thi thất bại.");
+      toast.error("Đã xảy ra lỗi. Xóa đề thi thất bại.");
     }
   };
 
@@ -134,6 +136,8 @@ const Exam = () => {
 
   return (
     <div className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1">
+      <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
+
       <ControlBar
         title="Danh sách đề thi"
         controlRow={() => (
@@ -167,13 +171,16 @@ const Exam = () => {
                 Từ ngày
               </span>
               <div className="uk-display-inline-block uk-width-3-4">
-                <input
-                  className="uk-input uk-width-1-1 black-border"
-                  type="date"
-                  format="YYYY-MM-DD"
-                  onChange={(e) => {
-                    setTuNgay(e.target.value);
+                <DatePicker
+                  className="uk-select uk-width-1-1 black-border"
+                  style={{
+                    border: "solid 0.5px #666",
                   }}
+                  selected={tuNgay}
+                  onChange={(date) => {
+                    setTuNgay(date);
+                  }}
+                  dateFormat="dd/MM/yyyy"
                 />
               </div>
             </div>
@@ -183,13 +190,16 @@ const Exam = () => {
                 Đến ngày
               </span>
               <div className="uk-display-inline-block uk-width-3-4">
-                <input
-                  className="uk-input uk-width-1-1 black-border"
-                  type="date"
-                  format="YYYY-MM-DD"
-                  onChange={(e) => {
-                    setDenNgay(e.target.value);
+                <DatePicker
+                  className="uk-select uk-width-1-1 black-border"
+                  style={{
+                    border: "solid 0.5px #666",
                   }}
+                  selected={denNgay}
+                  onChange={(date) => {
+                    setDenNgay(date);
+                  }}
+                  dateFormat="dd/MM/yyyy"
                 />
               </div>
             </div>

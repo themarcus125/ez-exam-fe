@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useState, useRef } from "react";
 import UIKit from "uikit/dist/js/uikit.min.js";
 import styled, { css } from "styled-components";
+import { ToastContainer, toast } from "react-toastify";
 
 import PaginationButtonGroup from "./PaginationButtonGroup";
 import { getUser } from "../../utils/auth";
@@ -11,9 +12,11 @@ const QUESTION_PER_PAGE = 10;
 const token = getUser()?.tk ?? "";
 
 const QuestionTable = ({
+  course,
   type,
   level,
   isSelectable,
+  searchString = "",
   onCheckQuestion = () => {},
   checkboxQuestionRef,
 }) => {
@@ -27,12 +30,12 @@ const QuestionTable = ({
   }, [currentPage]);
 
   useEffect(() => {
-    if (type && level) {
+    if (type && level && course) {
       setCurrentPage(1);
       numOfPage.current = 1;
       getData();
     }
-  }, [type, level]);
+  }, [type, level, course, searchString]);
 
   useEffect(() => {
     UIKit.modal("#modal-center");
@@ -42,13 +45,13 @@ const QuestionTable = ({
     setLoading(true);
     try {
       const response = await getAPIWithToken(
-        `/cauhoi/layDanhSachCauHoi?limit=${QUESTION_PER_PAGE}&page=${currentPage}&&loaiCauHoi=${type}&&doKho=${level}`,
+        `/cauhoi/layDanhSachCauHoi?limit=${QUESTION_PER_PAGE}&page=${currentPage}&&loaiCauHoi=${type}&&doKho=${level}&&maChuyenDe=${course}&&keyword=${searchString}`,
         token,
       );
-      setQuestionList(response?.data?.dsCauHoi);
       numOfPage.current = response?.data?.meta.to;
+      setQuestionList(response?.data?.dsCauHoi);
     } catch (error) {
-      alert("Đã có lỗi xảy ra, không thể lấy danh sách môn học");
+      toast.error("Đã có lỗi xảy ra, không thể lấy danh sách môn học");
     }
     setLoading(false);
   };
@@ -72,6 +75,7 @@ const QuestionTable = ({
   return (
     <Fragment>
       {loading && <div className="uk-flex uk-flex-center" uk-spinner=""></div>}
+      <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
       <div className="uk-margin-top" style={{ minHeight: 340 }}>
         {!loading && questionList?.length > 0 && (
           <table className="uk-table uk-table-divider">
@@ -146,7 +150,6 @@ const QuestionTable = ({
             </tbody>
           </table>
         )}
-        {console.log(loading, questionList)}
         {!loading && (!questionList || questionList?.length === 0) && (
           <p>
             Không có câu hỏi nào được tìm thấy cho môn học bạn đã chọn. Vui lòng

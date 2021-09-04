@@ -75,12 +75,12 @@ const AccountInfo = () => {
         return;
       }
 
-      alert("Đổi mật khẩu thành công");
+      toast.success("Đổi mật khẩu thành công");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (error) {
-      alert("Đã xảy ra lỗi không thể đổi mật khẩu");
+      toast.error("Đã xảy ra lỗi không thể đổi mật khẩu");
     }
   };
 

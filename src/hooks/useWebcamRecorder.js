@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { download, cleanUpStreamingRef } from "../utils/media";
+import { ToastContainer, toast } from "react-toastify";
 
 const useWebcamRecorder = () => {
   const [isPermissionApproved, setIsPermissionApproved] = useState(false);
@@ -38,9 +39,7 @@ const useWebcamRecorder = () => {
       }
     } catch (err) {
       /* handle the error */
-      alert(
-        "You're not approved to do the exam, please check your camera/microphone permission and try to reload.",
-      );
+      toast.warning("Vui lòng kiểm tra camera và microphone của bạn và thử tải lại !!!");
     }
   }, []);
 

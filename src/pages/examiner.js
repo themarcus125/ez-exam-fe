@@ -15,6 +15,7 @@ import QuestionList from "../components/common/QuestionList";
 import ExaminerHome from "../components/examiner/ExaminerHome";
 import ExamGrading from "../components/examiner/ExamGrading";
 import AccountInfo from "../components/common/AccountInfo";
+import ExamTests from "../components/examiner/ExamTests";
 
 const ExaminerDashboard = () => {
   const role = EXAMINER_ROLE;
@@ -83,7 +84,7 @@ const ExaminerDashboard = () => {
         />
         <PrivateRoute
           role={role}
-          path="/exam-grading"
+          path="/exam-grading/:id"
           component={ExamGrading}
           title="Chấm thi"
         />
@@ -92,6 +93,12 @@ const ExaminerDashboard = () => {
           path="/my-info"
           component={AccountInfo}
           title="Thông tin tài khoản"
+        />
+        <PrivateRoute
+          role={role}
+          path="/examroom/:examId/records"
+          component={ExamTests}
+          title="Danh sách bài thi"
         />
       </Router>
     </ExaminerLayout>

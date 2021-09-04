@@ -8,10 +8,10 @@ const EssayQuestionBlock = (props, ref) => {
     onRemove,
     publicButtonDisabled = false,
     readOnly,
-    defaultQuestionProp,
+    defaultQuestionProp = "",
+    hideHeader = false,
   } = props;
-  const defaultQuestion = defaultQuestionProp ? defaultQuestionProp : "";
-  const [title, setTitle] = useState(defaultQuestion);
+  const [title, setTitle] = useState(defaultQuestionProp);
 
   useImperativeHandle(ref, () => ({
     getData: () => {
@@ -32,26 +32,28 @@ const EssayQuestionBlock = (props, ref) => {
 
   return (
     <div className="uk-margin-bottom">
-      <div className="uk-flex uk-flex-between uk-margin-bottom">
-        <span>Nhập câu hỏi</span>
-        <div className="uk-inline-block uk-flex uk-flex-middle uk-flex-right">
-          {publicButtonDisabled ? null : (
-            <label>
-              <input
-                className="uk-radio"
-                type="radio"
-                style={{ borderColor: "black" }}
-              />{" "}
-              Công khai
-            </label>
-          )}
-          <a
-            className="uk-margin-left uk-text-danger"
-            uk-icon="icon: trash; ratio: 1.5"
-            onClick={onRemove}
-          ></a>
+      {!hideHeader && (
+        <div className="uk-flex uk-flex-between uk-margin-bottom">
+          <span>Nhập câu hỏi</span>
+          <div className="uk-inline-block uk-flex uk-flex-middle uk-flex-right">
+            {publicButtonDisabled ? null : (
+              <label>
+                <input
+                  className="uk-radio"
+                  type="radio"
+                  style={{ borderColor: "black" }}
+                />{" "}
+                Công khai
+              </label>
+            )}
+            <a
+              className="uk-margin-left uk-text-danger"
+              uk-icon="icon: trash; ratio: 1.5"
+              onClick={onRemove}
+            ></a>
+          </div>
         </div>
-      </div>
+      )}
       <div style={{ border: "1px solid black" }}>
         <LoadableEditor
           title={title}

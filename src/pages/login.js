@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { handleLogin, getUserRole } from "../utils/auth";
 import background_examinee from "../asset/images/background_examinee.jpg";
 import LoadingOverlay from "../components/common/LoadingOverlay";
+import { ToastContainer, toast } from "react-toastify";
 
 const LoginPageWrapper = styled.div`
   height: 100%;
@@ -40,9 +41,7 @@ const Login = () => {
         navigate(`${role}`);
       },
       () => {
-        alert(
-          "Đã có lỗi xảy ra, vui lòng kiểm tra lại thông tin đăng nhập của bạn và thử lại.",
-        );
+        toast.error("Vui lòng kiểm tra lại thông tin đăng nhập và thử lại. !!!");
       },
     );
   };
@@ -61,7 +60,10 @@ const Login = () => {
   return (
     <>
       <Helmet title="Đăng nhập - EzExam" defer={false} />
-
+      <ToastContainer
+        autoClose={3000}
+        position={toast.POSITION.TOP_RIGHT}
+      />
       <LoginPageWrapper
         id="login_page"
         className="uk-flex uk-flex-center uk-flex-middle uk-background-cover"
