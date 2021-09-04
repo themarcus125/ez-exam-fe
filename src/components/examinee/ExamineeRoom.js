@@ -20,7 +20,7 @@ const ExamRoom = () => {
       className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
       style={{ overflowY: "auto" }}
     >
-      <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
+      <p className="title uk-text-large uk-text-uppercase uk-text-center uk-text-bold uk-text-success">
         Danh sách phòng thi
       </p>
       <div

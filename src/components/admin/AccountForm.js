@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
 
 import { navigate } from "../../utils/common";
 import {
@@ -55,9 +56,9 @@ const AdminAccountForm = ({ userId }) => {
           },
           token,
         );
-        alert("Chỉnh sửa tài khoản thành công");
+        toast.success("Chỉnh sửa tài khoản thành công");
       } catch (error) {
-        alert("Đã xảy ra lỗi không thể chỉnh sửa tài khoản");
+        toast.error("Đã xảy ra lỗi không thể chỉnh sửa tài khoản");
       }
     } else {
       // Add
@@ -72,9 +73,9 @@ const AdminAccountForm = ({ userId }) => {
           },
           token,
         );
-        alert("Thêm tài khoản thành công");
+        toast.success("Thêm tài khoản thành công");
       } catch (error) {
-        alert("Đã xảy ra lỗi không thể thêm tài khoản");
+        toast.error("Đã xảy ra lỗi không thể thêm tài khoản");
       }
     }
     navigate("../");
@@ -90,15 +91,16 @@ const AdminAccountForm = ({ userId }) => {
         },
         token,
       );
-      alert("Reset mật khẩu thành công");
+      toast.success("Reset mật khẩu thành công");
     } catch (error) {
-      alert("Đã xảy ra lỗi không thể reset mật khẩu");
+      toast.error("Đã xảy ra lỗi không thể reset mật khẩu");
     }
   };
 
   return (
     <div className="uk-flex uk-margin-top uk-flex-center">
       <div className="uk-width-1-2@m uk-background-default uk-border-rounded uk-padding">
+        <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
         <form className="uk-form" onSubmit={onSubmit}>
           <p className="title uk-text-large uk-text-uppercase uk-text-bold uk-text-center uk-text-success">
             {`${userId ? "Sửa thông tin" : "Tạo"} tài khoản`}

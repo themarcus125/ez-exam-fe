@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { questionLevel, questionType } from "../../utils/constants";
 import ControlBar from "./ControlBar";
 import QuestionTable from "./QuestionTable";
@@ -9,8 +9,10 @@ import { getToken } from "../../utils/auth";
 const Question = () => {
   const [level, setLevel] = useState(questionLevel.EASY);
   const [type, setType] = useState(questionType.MULTIPLE_CHOICE);
-  const [currentCourse, setCurrentCourse] = useState(null);
+  const [currentCourse, setCurrentCourse] = useState(-1);
   const [courses, setCourses] = useState([]);
+  const [searchString, setSearchString] = useState("");
+  const [search, setSearch] = useState("");
 
   const loadData = async () => {
     const token = await getToken();
@@ -19,7 +21,7 @@ const Question = () => {
       token,
     );
     setCourses(res.data.dsChuyenDe);
-    setCurrentCourse(res.data.dsChuyenDe[0]);
+    setCurrentCourse(+res.data.dsChuyenDe[0]?.id);
   };
 
   useEffect(() => {
@@ -36,6 +38,14 @@ const Question = () => {
 
   const onChangeCourse = (e) => {
     setCurrentCourse(e.target.value);
+  };
+
+  const onChangeSearch = (e) => {
+    setSearchString(e.target.value);
+  };
+
+  const onSearch = () => {
+    setSearch(searchString);
   };
 
   return (
@@ -59,7 +69,9 @@ const Question = () => {
                 >
                   {courses?.map((course) => {
                     return (
-                      <option value={course.id}>{course.tenChuyenDe}</option>
+                      <option key={course.id} value={course.id}>
+                        {course.tenChuyenDe}
+                      </option>
                     );
                   })}
                 </select>
@@ -104,9 +116,18 @@ const Question = () => {
             </div>
           </>
         )}
+        isSearchEnabled
+        searchString={searchString}
+        onSearchStringChanged={onChangeSearch}
+        onSearchButtonClicked={onSearch}
       />
 
-      <QuestionTable type={type} level={level} course={currentCourse} />
+      <QuestionTable
+        type={type}
+        level={level}
+        course={currentCourse}
+        searchString={search}
+      />
     </div>
   );
 };
