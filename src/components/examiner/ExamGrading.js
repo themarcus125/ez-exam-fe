@@ -5,6 +5,7 @@ import moment from "moment";
 import { ToastContainer, toast } from "react-toastify";
 
 import LoadingOverlay from "../common/LoadingOverlay";
+import EssayQuestionBlock from "../common/EssayQuestionBlock";
 
 import { getAPIWithToken, putAPIWithToken } from "../../utils/api";
 import { getToken } from "../../utils/auth";
@@ -14,6 +15,8 @@ const ExamGrading = ({ id }) => {
   const [test, setTest] = useState({});
   const [loading, setloading] = useState(true);
   const [dsCauHoiTL, setDSCauHoiTL] = useState([]);
+  const [note, setNote] = useState("");
+  const [diemTL, setDiemTL] = useState(0);
   const tongDiemTL = useRef(0);
   const tongDiemTN = useRef(0);
 
@@ -24,7 +27,6 @@ const ExamGrading = ({ id }) => {
       `/baithi/layChiTietBaiThi?maCTPhong=${id}`,
       token,
     );
-    console.log(response);
     if (response.message === "error") {
       toast.error("Thí sinh chưa tham gia kì thi");
       return;
@@ -36,6 +38,7 @@ const ExamGrading = ({ id }) => {
       soLuongTracNghiem,
       soLuongTuLuan,
       dsCauhoi,
+      diemTuLuan,
     } = response.data;
     tongDiemTL.current = diemTungCauTuLuan * soLuongTuLuan;
     tongDiemTN.current = diemTungCauTracNghiem * soLuongTracNghiem;
@@ -46,10 +49,12 @@ const ExamGrading = ({ id }) => {
           return {
             idBaiThi: cauHoi.idBaiThi,
             diemDatDuoc: cauHoi.diemDatDuoc,
+            diemToiDa: cauHoi.diemTungCau,
           };
         }),
     );
     setTest(response.data);
+    setDiemTL(diemTuLuan);
     setloading(false);
   };
 
@@ -59,52 +64,78 @@ const ExamGrading = ({ id }) => {
       return;
     }
 
-    // const token = await getToken();
-    // const res = await putAPIWithToken(
-    //   `/baithi/suaKetQuaThi`,
-    //   {
-    //     // maCTPhong: 313,
-    //     // diemTracNghiem: test?.diemTracNghiem,
-    //     // diemTuLuan: 1,
-    //     // baiThi:[
-    //     //     {
-    //     //         idBaiThi: 2,
-    //     //         diemDatDuoc: 1
-    //     //     }
-    //     // ]
-    //   },
-    //   token,
-    // );
+    const token = await getToken();
+    // TODO: need to add note
+    const res = await putAPIWithToken(
+      `/baithi/suaKetQuaThi`,
+      {
+        maCTPhong: +id,
+        diemTracNghiem: test?.diemTracNghiem,
+        diemTuLuan: diemTL,
+        baiThi: dsCauHoiTL.map((question) => {
+          return {
+            idBaiThi: question.idBaiThi,
+            diemDatDuoc: question.diemDatDuoc,
+          };
+        }),
+      },
+      token,
+    );
+    const response = await res.json();
+    if (response.message === "successful") {
+      toast.success("Cập nhật điểm thi thành công");
+      return;
+    }
+    toast.error("Đã có lỗi xảy ra");
   };
 
   const gradeEssayQuestion = (e, idBaiThi) => {
     const index = dsCauHoiTL.findIndex(
       (cauHoi) => cauHoi.idBaiThi === idBaiThi,
     );
+    if (index === -1) {
+      return;
+    }
 
-    setDSCauHoiTL([
+    const question = dsCauHoiTL[index];
+    if (+e.target.value > question.diemToiDa) {
+      return;
+    }
+
+    const dsCauHoiTL_updated = [
       ...dsCauHoiTL.slice(0, index),
       {
         ...dsCauHoiTL[index],
         diemDatDuoc: +e.target.value,
       },
       ...dsCauHoiTL.slice(index + 1),
-    ]);
+    ];
+    setDSCauHoiTL(dsCauHoiTL_updated);
+    setDiemTL(
+      dsCauHoiTL_updated.reduce((prev, current) => {
+        return current.diemDatDuoc + prev;
+      }, 0),
+    );
   };
 
   useEffect(() => {
     loadData();
   }, []);
 
+  const onChangeNote = (e) => {
+    setNote(e.target.value);
+  };
+
   return (
     <div className="uk-padding">
-      <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
+      <p className="title uk-text-large uk-text-uppercase uk-text-bold uk-text-center uk-text-success">
         Bài thi của sinh viên
       </p>
       <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
       <div
         className="uk-flex uk-child-width-expand@s uk-margin-bottom"
         uk-grid="true"
+        style={{ marginTop: 0 }}
       >
         <span>
           <Title>MSSV</Title>
@@ -122,6 +153,7 @@ const ExamGrading = ({ id }) => {
       <div
         className="uk-flex uk-child-width-expand@s uk-margin-bottom"
         uk-grid="true"
+        style={{ marginTop: 0 }}
       >
         <span>
           <Title>Ngày thi</Title>
@@ -146,6 +178,8 @@ const ExamGrading = ({ id }) => {
           className="uk-textarea"
           rows="5"
           style={{ resize: "none", marginTop: 10 }}
+          value={note}
+          onChange={onChangeNote}
         ></textarea>
       </div>
 
@@ -203,32 +237,45 @@ const ExamGrading = ({ id }) => {
               </div>
             );
           case questionType.ESSAY:
-            const diem = dsCauHoiTL.find(
+            const cauHoi = dsCauHoiTL.find(
               (cauHoi) => cauHoi.idBaiThi === idBaiThi,
             );
+            const diem = cauHoi?.diemDatDuoc ?? 0;
+            const diemToiDa = cauHoi?.diemToiDa ?? 0;
             return (
               <div key={id} className="uk-margin-bottom">
-                <QuestionRow className="uk-flex">
-                  <span className="uk-flex uk-flex-1 uk-margin-right">
-                    {`${viTri}. ${noiDung}`}
+                <QuestionRow className="uk-flex uk-margin-small-bottom">
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: `${viTri}. ${noiDung}`,
+                    }}
+                    className="uk-flex uk-flex-1 uk-margin-right"
+                  >
+                    {/* {`${viTri}. ${noiDung}`} */}
                   </span>
                   <MarkContainer className="uk-flex uk-flex-middle">
                     <PointInput
-                      className="uk-input"
+                      className="uk-input input-no-arrow"
                       value={diem}
                       type="number"
                       onChange={(e) => gradeEssayQuestion(e, idBaiThi)}
                     />
                     <Line>/</Line>
-                    <span>1 điểm</span>
+                    <span>{`${diemToiDa} điểm`}</span>
                   </MarkContainer>
                 </QuestionRow>
-                <div
+                {/* <div
                   className="uk-panel uk-panel-scrollable"
                   style={{ resize: "none", height: 200 }}
                 >
                   <p>{dapAnTL}</p>
-                </div>
+                </div> */}
+                <EssayQuestionBlock
+                  publicButtonDisabled
+                  readOnly
+                  defaultQuestionProp={dapAnTL}
+                  hideHeader
+                />
               </div>
             );
           default:
@@ -254,9 +301,9 @@ const ExamGrading = ({ id }) => {
               <Title>Điểm tự luận</Title>
             </td>
             <td>
-              <Value>{`${test?.diemTuLuan?.toFixed(
+              <Value>{`${diemTL.toFixed(2)} / ${tongDiemTL.current.toFixed(
                 2,
-              )} / ${tongDiemTL.current.toFixed(2)} điểm`}</Value>
+              )} điểm`}</Value>
             </td>
           </tr>
           <tr>
@@ -264,7 +311,7 @@ const ExamGrading = ({ id }) => {
               <Title>Tổng điểm</Title>
             </td>
             <td>
-              <Value>{`${test?.diem} / ${(
+              <Value>{`${(test?.diemTracNghiem + diemTL).toFixed(2)} / ${(
                 tongDiemTN.current + tongDiemTL.current
               ).toFixed(2)} điểm`}</Value>
             </td>
