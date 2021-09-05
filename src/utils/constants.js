@@ -14,7 +14,7 @@ export const navBarCategories = {
         },
         {
           title: "Danh sách môn học",
-          path: "/",
+          path: "/course",
         },
         {
           title: "Danh sách đã lưu",
