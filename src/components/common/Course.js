@@ -72,17 +72,19 @@ const Course = () => {
                 </select>
               </div>
 
-              <button
-                className="uk-button"
-                style={{ backgroundColor: "#32d296", color: "#FFF" }}
-              >
-                <Link
-                  to="./add"
-                  style={{ color: "#FFFFFF", textDecoration: "none" }}
+              {role === "admin" && (
+                <button
+                  className="uk-button"
+                  style={{ backgroundColor: "#32d296", color: "#FFF" }}
                 >
-                  Thêm mới
-                </Link>
-              </button>
+                  <Link
+                    to="./add"
+                    style={{ color: "#FFFFFF", textDecoration: "none" }}
+                  >
+                    Thêm mới
+                  </Link>
+                </button>
+              )}
             </div>
           </>
         )}
@@ -100,7 +102,7 @@ const Course = () => {
               <th className="uk-width-large">Mã môn học</th>
               <th className="uk-width-large">Môn học</th>
               <th className="uk-width-large">Trạng thái</th>
-              <th className="uk-width-small"></th>
+              {role === "admin" && <th className="uk-width-small"></th>}
             </tr>
           </thead>
           <tbody>
@@ -113,26 +115,28 @@ const Course = () => {
                   <td data-label="Trạng thái">
                     {item.trangThai === 0 ? "Đang sử dụng" : "Không sử dụng"}
                   </td>
-                  <td data-label="Tùy chỉnh">
-                    <ul class="uk-subnav-pill">
-                      <a
-                        style={{
-                          color: "#FFF",
-                        }}
-                      >
-                        <span uk-icon="table"></span>
-                      </a>
-                      <div uk-dropdown="mode: click">
-                        <ul class="uk-nav uk-dropdown-nav">
-                          <li>
-                            <Link to={`${url}/course/${item.id}`}>
-                              Sửa thông tin
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-                    </ul>
-                  </td>
+                  {role === "admin" && (
+                    <td data-label="Tùy chỉnh">
+                      <ul class="uk-subnav-pill">
+                        <a
+                          style={{
+                            color: "#FFF",
+                          }}
+                        >
+                          <span uk-icon="table"></span>
+                        </a>
+                        <div uk-dropdown="mode: click">
+                          <ul class="uk-nav uk-dropdown-nav">
+                            <li>
+                              <Link to={`${url}/course/${item.id}`}>
+                                Sửa thông tin
+                              </Link>
+                            </li>
+                          </ul>
+                        </div>
+                      </ul>
+                    </td>
+                  )}
                 </tr>
               ))}
           </tbody>
