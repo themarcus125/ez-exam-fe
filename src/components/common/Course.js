@@ -117,7 +117,7 @@ const Course = () => {
                   </td>
                   {role === "admin" && (
                     <td data-label="Tùy chỉnh">
-                      <ul class="uk-subnav-pill">
+                      <ul className="uk-subnav-pill">
                         <a
                           style={{
                             color: "#FFF",
@@ -126,7 +126,7 @@ const Course = () => {
                           <span uk-icon="table"></span>
                         </a>
                         <div uk-dropdown="mode: click">
-                          <ul class="uk-nav uk-dropdown-nav">
+                          <ul className="uk-nav uk-dropdown-nav">
                             <li>
                               <Link to={`${url}/course/${item.id}`}>
                                 Sửa thông tin
@@ -146,7 +146,7 @@ const Course = () => {
         )}
       </div>
 
-      <ul className="uk-pagination uk-flex-center" uk-margin>
+      <ul className="uk-pagination uk-flex-center" uk-margin="">
         <li
           className={meta?.currentPage === 1 ? "uk-disabled" : ""}
           onClick={() => {

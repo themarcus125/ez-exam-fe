@@ -284,7 +284,9 @@ const ExamRoom = () => {
                         <div uk-dropdown="mode: click">
                           <ul className="uk-nav uk-dropdown-nav">
                             <li>
-                              <a>Báo cáo tổng hợp</a>
+                              <Link to={`${item.id}/stats`}>
+                                Báo cáo tổng hợp
+                              </Link>
                             </li>
                             <li>
                               <Link to={`${item.id}/records`}>

@@ -27,11 +27,11 @@ const QuestionList = () => {
       </div>
 
       <div className="uk-margin-top" style={{ minHeight: 400 }}>
-        <table class="uk-table uk-table-divider">
+        <table className="uk-table uk-table-divider">
           <thead>
             <tr>
               <th>Tên bộ câu hỏi</th>
-              <th class="uk-width-small"></th>
+              <th className="uk-width-small"></th>
             </tr>
           </thead>
           <tbody>

@@ -25,6 +25,7 @@ const LoadingOverlay = ({ isLoading }) => {
       id="loading-overlay"
       className="uk-animation-fade uk-position-cover uk-overlay uk-overlay-default uk-flex uk-flex-center uk-flex-middle"
       onAnimationEnd={onTransitionEnd}
+      style={{ zIndex: 10 }}
     >
       <span uk-spinner="ratio: 4.5"></span>
     </div>
