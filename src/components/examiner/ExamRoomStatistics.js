@@ -170,7 +170,7 @@ const ExamRoomStatistics = ({ examId }) => {
           <tbody>
             {leaderBoard.map((row) => {
               return (
-                <tr>
+                <tr key={row.maCTPhong}>
                   <td>{row.tenDangNhap}</td>
                   <td>{row.tenNguoiDung}</td>
                   <td>{row.maDe}</td>
