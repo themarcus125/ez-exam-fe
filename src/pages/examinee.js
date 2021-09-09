@@ -9,6 +9,7 @@ import ExamineeHome from "../components/examinee/ExamineeHome";
 import ExamineeRoom from "../components/examinee/ExamineeRoom";
 import CheckPermissionRoom from "../components/examinee/CheckPermissionRoom";
 import AccountInfo from "../components/common/AccountInfo";
+import ViewExamResult from "../components/examinee/ViewExamResult";
 
 const ExamineeDashboard = () => {
   const role = EXAMINEE_ROLE;
@@ -45,6 +46,13 @@ const ExamineeDashboard = () => {
           component={AccountInfo}
           title="Thông tin tài khoản"
         />
+        <PrivateRoute
+          role={role}
+          path="/view-exam-result"
+          component={ViewExamResult}
+          title="Xem kết quả kiểm tra"
+        />
+        
       </Router>
     </ExamineeLayout>
   );

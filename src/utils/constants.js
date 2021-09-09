@@ -62,7 +62,7 @@ export const navBarCategories = {
     },
     {
       title: "Xem kết quả kiểm tra",
-      path: "/",
+      path: "/view-exam-result",
     },
   ],
   admin: [
