@@ -50,10 +50,6 @@ export const navBarCategories = {
         },
       ],
     },
-    {
-      title: "Kiểm tra kết quả thi",
-      path: "/",
-    },
   ],
   sinhvien: [
     {
