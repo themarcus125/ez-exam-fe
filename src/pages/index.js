@@ -6,7 +6,7 @@ import { Helmet } from "react-helmet";
 import logo from "../asset/images/logo.png";
 import { getUser } from "../utils/auth";
 import { userRoleToPath } from "../utils/constants";
-import { ResponsiveFlexWrapper } from "../utils/ui";
+import { ResponsiveFlexWrapper, VideoWrapper } from "../utils/ui";
 
 const IndexPage = () => {
   useEffect(() => {
@@ -77,7 +77,7 @@ const IndexPage = () => {
                 </p>
               </div>
             </div>
-            <div style={{ flex: 3, height: "400px" }}>
+            <VideoWrapper>
               <iframe
                 title="video"
                 src="https://www.youtube.com/embed/dQw4w9WgXcQ"
@@ -90,7 +90,7 @@ const IndexPage = () => {
                   flexGrow: 1,
                 }}
               ></iframe>
-            </div>
+            </VideoWrapper>
           </ResponsiveFlexWrapper>
         </div>
       </div>

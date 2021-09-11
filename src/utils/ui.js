@@ -36,3 +36,10 @@ export const ResponsiveGradingQuestionsWrapper = styled.div`
     }
   }
 `;
+
+export const VideoWrapper = styled.div`
+  flex: 3;
+  @media only screen and (max-width: 640px) {
+    height: 400px;
+  }
+`;
