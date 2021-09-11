@@ -1,5 +1,5 @@
 import React from "react";
-import { ResponsiveFlexWrapper } from "../../utils/ui";
+import { ResponsiveFlexWrapper, VideoWrapper } from "../../utils/ui";
 
 const ExaminerHome = () => {
   return (
@@ -9,23 +9,19 @@ const ExaminerHome = () => {
           className="uk-padding uk-padding-remove-vertical"
           style={{ flex: 2 }}
         >
-          <h2 className="uk-text-success">Hướng dẫn sử dụng phần mềm</h2>
-          <p>
-            Ứng dụng thi trắc nghiệm online là một hệ thống phần mềm tổ chức thi
-            trắc nghiệm, thực hiện việc biên tập ngân hàng câu hỏi, tạo đề thi
-            và kể cả chấm điểm
+          <h2 className="uk-text-success">Tổng quan phần mềm</h2>
+          <p className="uk-margin-remove-bottom uk-text-large">
+            Là giáo viên bạn có thể:
           </p>
-          <div className="uk-padding uk-padding-remove-vertical uk-padding-remove-right">
-            <p>
-              Bước 1: Thông thường những phần mềm tạo đề thi trắc nghiệm trực
-              tuyến có thể triển khai
-            </p>
-            <p>Bước 2: Những phần mềm được áp dụng đa dạng từ các trường học</p>
-            <p>
-              Bước 3: Hệ thống thi trắc nghiệm online đã giúp đỡ không ít cho
-              việc tổ chức thi hiện nay, đem lại những hiệu quả ưu việt
-            </p>
-          </div>
+          <ul className="uk-margin-remove-top uk-text-large">
+            <li>Tạo/Xem danh sách câu hỏi</li>
+            <li>Tạo/Xem danh sách đề thi</li>
+            <li>Tạo/Xem danh sách phòng thi</li>
+            <li>Xem và chấm điểm các bài thi của sinh viên</li>
+          </ul>
+          <small>
+            Nếu có trục trặc xin vui lòng liện hệ someone.something@gmail.com
+          </small>
         </div>
         <div style={{ flex: 3, height: "400px" }}>
           <iframe
