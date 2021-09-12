@@ -73,6 +73,10 @@ const ViewExamResult = () => {
     getData();
   };
 
+  for (let i = 1; i <= meta?.lastPage; i++) {
+    lstPage.push(i);
+  }
+  
   return (
     <div
       className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
