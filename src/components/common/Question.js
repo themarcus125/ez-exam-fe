@@ -8,7 +8,7 @@ import { getToken } from "../../utils/auth";
 
 const Question = () => {
   const [level, setLevel] = useState(questionLevel.EASY);
-  const [type, setType] = useState(questionType.MULTIPLE_CHOICE);
+  const [type, setType] = useState(questionType.ALL);
   const [currentCourse, setCurrentCourse] = useState(-1);
   const [courses, setCourses] = useState([]);
   const [searchString, setSearchString] = useState("");
@@ -20,8 +20,7 @@ const Question = () => {
       "/chuyende/layDanhSachChuyenDe?trangThai=1&limit=9999",
       token,
     );
-    setCourses(res.data.dsChuyenDe);
-    setCurrentCourse(+res.data.dsChuyenDe[0]?.id);
+    setCourses([{ id: -1, tenChuyenDe: "Tất cả" }, ...res.data.dsChuyenDe]);
   };
 
   useEffect(() => {
@@ -33,11 +32,11 @@ const Question = () => {
   };
 
   const onChangeType = (e) => {
-    setType(e.target.value);
+    setType(+e.target.value);
   };
 
   const onChangeCourse = (e) => {
-    setCurrentCourse(e.target.value);
+    setCurrentCourse(+e.target.value);
   };
 
   const onChangeSearch = (e) => {
@@ -89,6 +88,7 @@ const Question = () => {
                   onChange={onChangeType}
                   onBlur={() => {}}
                 >
+                  <option value={questionType.ALL}>Tất cả</option>
                   <option value={questionType.MULTIPLE_CHOICE}>
                     Trắc nghiệm
                   </option>
