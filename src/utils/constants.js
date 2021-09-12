@@ -94,6 +94,7 @@ export const questionType = {
   essay: "ESSAY",
   MULTIPLE_CHOICE: 1,
   ESSAY: 2,
+  ALL: -1,
 };
 
 export const userType = {
