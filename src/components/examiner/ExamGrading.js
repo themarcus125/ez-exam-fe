@@ -39,6 +39,7 @@ const ExamGrading = ({ id }) => {
       soLuongTuLuan,
       dsCauhoi,
       diemTuLuan,
+      ghiChuKetQua,
     } = response.data;
     tongDiemTL.current = diemTungCauTuLuan * soLuongTuLuan;
     tongDiemTN.current = diemTungCauTracNghiem * soLuongTracNghiem;
@@ -55,11 +56,12 @@ const ExamGrading = ({ id }) => {
     );
     setTest(response.data);
     setDiemTL(diemTuLuan);
+    setNote(ghiChuKetQua ?? "");
     setloading(false);
   };
 
   const onSubmit = async () => {
-    if (!test?.soLuongTuLuan) {
+    if (!test?.soLuongTuLuan && !note) {
       toast.info("Không có câu hỏi tự luận");
       return;
     }
@@ -72,6 +74,7 @@ const ExamGrading = ({ id }) => {
         maCTPhong: +id,
         diemTracNghiem: test?.diemTracNghiem,
         diemTuLuan: diemTL,
+        ghiChuKetQua: note,
         baiThi: dsCauHoiTL.map((question) => {
           return {
             idBaiThi: question.idBaiThi,

@@ -243,10 +243,11 @@ const ExamRoom = () => {
           <thead>
             <tr>
               <th className="uk-width-small">Mã phòng</th>
-              <th className="uk-width-large">Môn học</th>
+              <th className="uk-width-medium">Tên phòng thi</th>
+              <th className="uk-width-medium">Môn học</th>
               <th className="uk-width-small">Mã bộ đề</th>
               <th className="uk-width-small">Số lượng</th>
-              <th className="uk-width-medium">Ngày thi</th>
+              <th className="uk-width-small">Ngày thi</th>
               <th className="uk-width-medium">Thời gian bắt đầu phòng</th>
               <th className="uk-width-medium">Thời gian bắt đầu thi</th>
               <th className="uk-width-small"></th>
@@ -258,6 +259,9 @@ const ExamRoom = () => {
                 return (
                   <tr key={item.id}>
                     <td data-label="Mã phòng" value={item.maPhong}>
+                      {item.maPhong}
+                    </td>
+                    <td data-label="Tên phòng thi" value={item.tenPhong}>
                       {item.tenPhong}
                     </td>
                     <td data-label="Môn học" value={item.maMonHoc}>
@@ -284,7 +288,9 @@ const ExamRoom = () => {
                         <div uk-dropdown="mode: click">
                           <ul className="uk-nav uk-dropdown-nav">
                             <li>
-                              <a>Báo cáo tổng hợp</a>
+                              <Link to={`${item.id}/stats`}>
+                                Báo cáo tổng hợp
+                              </Link>
                             </li>
                             <li>
                               <Link to={`${item.id}/records`}>

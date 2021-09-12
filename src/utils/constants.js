@@ -14,7 +14,7 @@ export const navBarCategories = {
         },
         {
           title: "Danh sách môn học",
-          path: "/",
+          path: "/course",
         },
         {
           title: "Danh sách đã lưu",
@@ -50,10 +50,6 @@ export const navBarCategories = {
         },
       ],
     },
-    {
-      title: "Kiểm tra kết quả thi",
-      path: "/",
-    },
   ],
   sinhvien: [
     {
@@ -62,7 +58,7 @@ export const navBarCategories = {
     },
     {
       title: "Xem kết quả kiểm tra",
-      path: "/",
+      path: "/view-exam-result",
     },
   ],
   admin: [
