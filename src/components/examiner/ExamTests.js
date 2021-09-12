@@ -63,7 +63,7 @@ const ExamTests = ({ examId }) => {
   };
 
   return (
-    <div className="uk-padding">
+    <div className="uk-padding uk-padding-remove-top uk-padding-remove-bottom">
       <ControlBar
         title="Danh sách bài thi"
         controlRow={() => (
