@@ -27,9 +27,8 @@ const ViewExamResult = () => {
       setLoading(true);
       if (token) {
         const response = await getAPIWithToken(
-          `/sinhvien/traCuuKetQua?idChuyenDe=${subject}
-          &tuNgay=${moment(startDate).format("YYYY-MM-DD")}
-          &denNgay=${moment(endDate).format("YYYY-MM-DD")}`,
+          // eslint-disable-next-line prettier/prettier
+          `/sinhvien/traCuuKetQua?idChuyenDe=${subject}&tuNgay=${moment(startDate).format("YYYY-MM-DD")}&denNgay=${moment(endDate).format("YYYY-MM-DD")}`,
           token,
         );
         setLstExamResult(response.data?.dsKetQua);
@@ -95,18 +94,15 @@ const ViewExamResult = () => {
                   }}
                   onChange={handleChangeSubject}
                   value={subject}
-                  onBlur={() => { }}
+                  onBlur={() => {}}
                 >
                   {/* <option disabled></option> */}
                   {lstSubject
                     ? lstSubject.map((item, key) => (
-                      <option
-                        key={key}
-                        value={item.id}
-                      >
-                        {item.tenChuyenDe}
-                      </option>
-                    ))
+                        <option key={key} value={item.id}>
+                          {item.tenChuyenDe}
+                        </option>
+                      ))
                     : null}
                 </select>
               </div>
@@ -192,12 +188,8 @@ const ViewExamResult = () => {
                     <td data-label="Ngày thi">
                       {moment(item.ngayThi).format("DD/MM/YYYY")}
                     </td>
-                    <td data-label="Giờ thi">
-                      {item.thoiGianBatDauThi}
-                    </td>
-                    <td data-label="Điểm">
-                      {item.diem}
-                    </td>
+                    <td data-label="Giờ thi">{item.thoiGianBatDauThi}</td>
+                    <td data-label="Điểm">{item.diem}</td>
                   </tr>
                 );
               })}
@@ -229,10 +221,10 @@ const ViewExamResult = () => {
               style={
                 item === meta?.currentPage
                   ? {
-                    width: 40,
-                    color: "#FFF",
-                    backgroundColor: "#32d296",
-                  }
+                      width: 40,
+                      color: "#FFF",
+                      backgroundColor: "#32d296",
+                    }
                   : { width: 40 }
               }
             >
