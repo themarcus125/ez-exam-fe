@@ -153,9 +153,8 @@ const Exam = () => {
                   onChange={(e) => {
                     setMaMonHoc(e.target.value);
                   }}
-                  onBlur={() => {}}
                 >
-                  <option disabled></option>
+                  <option value="">Tất cả môn học</option>
                   {monHocs &&
                     monHocs.map((item, index) => (
                       <option value={item.id} key={index}>
