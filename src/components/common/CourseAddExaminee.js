@@ -14,11 +14,14 @@ const CourseAddExaminee = () => {
   const [users, setUsers] = useState([]);
   const [searchString, setSearchString] = useState("");
   const [userCourse, setUserCourse] = useState([]);
+  const [tblUserCourse, setTblUserCourse] = useState([]);
   const [allCourse, setAllCourse] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const numOfPage = useRef(1);
   const [currentPageCrs, setCurrentPageCrs] = useState(1);
   const numOfPageCrs = useRef(1);
+  const [currentPageUserCrs, setCurrentPageUserCrs] = useState(1);
+  const numOfPageUserCrs = useRef(1);
   const [stdId, setStdId] = useState(null);
   const [stdName, setStdName] = useState("");
   const [addCourse, setAddCourse] = useState([]);
@@ -82,6 +85,16 @@ const CourseAddExaminee = () => {
         setLoadingMd(true);
         const response = await getAPIWithToken(`/users/${id}/monhoc`, token);
         setUserCourse(response.data.mon_hoc);
+        numOfPageUserCrs.current =
+          Math.ceil(response.data.mon_hoc.length / COURSE_PER_PAGE) || 1;
+        const chunks = Array(numOfPageUserCrs.current)
+          .fill()
+          .map((_, index) => index * COURSE_PER_PAGE)
+          .map((begin) =>
+            response.data.mon_hoc.slice(begin, begin + COURSE_PER_PAGE),
+          );
+        setTblUserCourse(chunks);
+        setCurrentPageUserCrs(1);
         setLoadingMd(false);
       }
     } catch (error) {
@@ -124,6 +137,22 @@ const CourseAddExaminee = () => {
   const onPrevCrs = () => {
     if (currentPageCrs > 1) {
       setCurrentPageCrs(currentPageCrs - 1);
+    }
+  };
+
+  const onChangePageUserCrs = (pageNumber) => {
+    setCurrentPageUserCrs(pageNumber);
+  };
+
+  const onNextUserCrs = () => {
+    if (currentPageUserCrs < numOfPageUserCrs.current) {
+      setCurrentPageUserCrs(currentPageUserCrs + 1);
+    }
+  };
+
+  const onPrevUserCrs = () => {
+    if (currentPageUserCrs > 1) {
+      setCurrentPageUserCrs(currentPageUserCrs - 1);
     }
   };
 
@@ -238,60 +267,100 @@ const CourseAddExaminee = () => {
         description={`Sinh viên: ${stdName}`}
         onSave={onSave}
       >
-        <div className="uk-margin-top">
-          <table className="uk-table uk-table-striped uk-table-middle">
-            <thead>
-              <tr>
-                <th className="uk-width-small">Mã môn học</th>
-                <th className="uk-width-large">Tên môn học</th>
-                <th className="uk-width-small"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {!loadingMd &&
-                allCourse[currentPageCrs - 1]?.map((item) => {
-                  return (
-                    <tr key={item.id}>
-                      <td data-label="Mã môn học">{item.maChuyenDe}</td>
-                      <td data-label="Tên môn học">{item.tenChuyenDe}</td>
-                      <td data-label="Tùy chỉnh">
-                        <input
-                          className="uk-checkbox"
-                          type="checkbox"
-                          disabled={
-                            userCourse.some((x) => x.id === item.id)
-                              ? true
-                              : false
-                          }
-                          defaultChecked={
-                            userCourse.some((x) => x.id === item.id) ||
-                            addCourse.includes(item.id)
-                              ? true
-                              : false
-                          }
-                          onChange={() => {
-                            onChangeCkb(item.id);
-                          }}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table>
-          {loadingMd && (
-            <div className="uk-flex uk-flex-center" uk-spinner=""></div>
-          )}
+        <div>
+          <span style={{ fontWeight: "bold" }}>Danh sách môn học đã chọn</span>
+          <div className="uk-margin-top">
+            <table className="uk-table uk-table-striped uk-table-middle">
+              <thead>
+                <tr>
+                  <th className="uk-width-small">Mã môn học</th>
+                  <th className="uk-width-large">Tên môn học</th>
+                </tr>
+              </thead>
+              <tbody>
+                {!loadingMd &&
+                  tblUserCourse[currentPageUserCrs - 1]?.map((item) => {
+                    return (
+                      <tr key={item.id}>
+                        <td data-label="Mã môn học">{item.maChuyenDe}</td>
+                        <td data-label="Tên môn học">{item.tenChuyenDe}</td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+            {loadingMd && (
+              <div className="uk-flex uk-flex-center" uk-spinner=""></div>
+            )}
+          </div>
+          <ul className="uk-pagination uk-flex-center" uk-margin="">
+            <PaginationButtonGroup
+              onChangePage={onChangePageUserCrs}
+              onNext={onNextUserCrs}
+              onPrev={onPrevUserCrs}
+              numOfPage={numOfPageUserCrs.current}
+              currentPage={currentPageUserCrs}
+            />
+          </ul>
         </div>
-        <ul className="uk-pagination uk-flex-center" uk-margin="">
-          <PaginationButtonGroup
-            onChangePage={onChangePageCrs}
-            onNext={onNextCrs}
-            onPrev={onPrevCrs}
-            numOfPage={numOfPageCrs.current}
-            currentPage={currentPageCrs}
-          />
-        </ul>
+
+        <div>
+          <span style={{ fontWeight: "bold" }}>Chọn môn học</span>
+          <div className="uk-margin-top">
+            <table className="uk-table uk-table-striped uk-table-middle">
+              <thead>
+                <tr>
+                  <th className="uk-width-small">Mã môn học</th>
+                  <th className="uk-width-large">Tên môn học</th>
+                  <th className="uk-width-small"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {!loadingMd &&
+                  allCourse[currentPageCrs - 1]?.map((item) => {
+                    return (
+                      <tr key={item.id}>
+                        <td data-label="Mã môn học">{item.maChuyenDe}</td>
+                        <td data-label="Tên môn học">{item.tenChuyenDe}</td>
+                        <td data-label="Tùy chỉnh">
+                          <input
+                            className="uk-checkbox"
+                            type="checkbox"
+                            disabled={
+                              userCourse.some((x) => x.id === item.id)
+                                ? true
+                                : false
+                            }
+                            defaultChecked={
+                              userCourse.some((x) => x.id === item.id) ||
+                              addCourse.includes(item.id)
+                                ? true
+                                : false
+                            }
+                            onChange={() => {
+                              onChangeCkb(item.id);
+                            }}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+            {loadingMd && (
+              <div className="uk-flex uk-flex-center" uk-spinner=""></div>
+            )}
+          </div>
+          <ul className="uk-pagination uk-flex-center" uk-margin="">
+            <PaginationButtonGroup
+              onChangePage={onChangePageCrs}
+              onNext={onNextCrs}
+              onPrev={onPrevCrs}
+              numOfPage={numOfPageCrs.current}
+              currentPage={currentPageCrs}
+            />
+          </ul>
+        </div>
       </Modal>
     </div>
   );
