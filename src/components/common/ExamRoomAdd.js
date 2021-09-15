@@ -9,6 +9,7 @@ import { ToastContainer, toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import moment from "moment";
 import LoadingOverlay from "./LoadingOverlay";
+const token = getUser()?.tk ?? "";
 
 const ExamRoomAdd = ({ roomId }) => {
   const role = getUser()?.role ?? "";
@@ -26,7 +27,6 @@ const ExamRoomAdd = ({ roomId }) => {
   let _lstSubject = [];
 
   const getSubject = async () => {
-    const token = await getToken();
     const tmp_lstSubject = await getAPIWithToken(
       "/chuyende/monhocnguoidung",
       token,
@@ -35,19 +35,20 @@ const ExamRoomAdd = ({ roomId }) => {
     _lstSubject = tmp_lstSubject.data;
   };
 
-  const getCodeExam = async () => {
-    const token = await getToken();
-    const tmp_lstCodeExam = await getAPIWithToken(
-      "/dethi/layDanhSachBoDeThi",
-      token,
-    );
-    setLstCodeExam(tmp_lstCodeExam.data.dsDeThi);
+  const getCodeExam = async (tmp_subject) => {
+    if (tmp_subject) {
+      const tmp_lstCodeExam = await getAPIWithToken(
+        `/dethi/layDanhSachBoDeThi?maChuyenDe=${tmp_subject}`,
+        token,
+      );
+      setLstCodeExam(tmp_lstCodeExam.data.dsDeThi);
+    }
   };
 
   useEffect(() => {
     setLoading(true);
     getSubject();
-    getCodeExam();
+    // getCodeExam();
     //load update
     if (roomId) {
       getExamRoom();
@@ -57,7 +58,6 @@ const ExamRoomAdd = ({ roomId }) => {
 
   const getExamRoom = async () => {
     setLoading(true);
-    const token = await getToken();
     if (token) {
       const tmp_lstExamRoom = await getAPIWithToken(
         `/phongthi?id=${roomId}`,
@@ -72,11 +72,6 @@ const ExamRoomAdd = ({ roomId }) => {
         setHourStartExam(objExamRoom.thoiGianBatDauThi);
         setCodeExam(objExamRoom.maBoDe);
 
-        console.log("sdf",Date.parse(new Date(objExamRoom.gioHeThong)));
-        console.log("1222",Date.parse(
-          moment(moment(objExamRoom.ngayThi).format("DD/MM/YYYY") + " " +
-            objExamRoom.thoiGianBatDauPhong, "DD/MM/YYYY hh:mm"),
-        ));
         if (objExamRoom.trangThai !== 0 ||
           Date.parse(
             moment(moment(objExamRoom.ngayThi).format("DD/MM/YYYY") + " " +
@@ -97,6 +92,7 @@ const ExamRoomAdd = ({ roomId }) => {
     let objSubject = lstSubject.find(element => element.id == e.target.value);
     setLstStudent(objSubject?.nguoi_dung);
     setSubject(e.target.value);
+    getCodeExam(e.target.value);
   };
 
   const handleChangeRoomName = (e) => {
@@ -126,7 +122,6 @@ const ExamRoomAdd = ({ roomId }) => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const token = await getToken();
     if (roomId) {
       try {
         const res = await putAPIWithToken(

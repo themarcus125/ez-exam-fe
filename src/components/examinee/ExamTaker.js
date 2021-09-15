@@ -433,15 +433,25 @@ const ExamTakerPage = ({ roomId }) => {
               <div className="uk-grid uk-margin-small uk-width-1-1 uk-flex uk-flex-row uk-flex-center" uk-grid="true">
                 <div className="uk-width-1-1 uk-text-left">
                   <label className="uk-form-label" style={{ fontSize: "large" }}>
-                    Để đảm bảo chất lượng thi và tránh các vấn đề gian lận thi cử. Các sinh viên vui lòng mở Micro và Camera để giảng viên kiểm tra trước khi thi. Các sinh viên tuân thử đúng quy tắc thì mới có thể làm bài thi.
+                    Để đảm bảo chất lượng thi và tránh các vấn đề gian lận thi cử. Các sinh viên vui lòng mở Micro và Camera để giảng viên kiểm tra trước khi thi, phải chuẩn bị thẻ sinh viên hoặc CMND/CCCD. Các sinh viên tuân thử đúng quy tắc thì mới có thể làm bài thi.
                   </label><br />
                   <label className="uk-form-label" style={{ fontSize: "large" }}>Trong quá trình thi các thí sinh:</label><br />
                   <label className="uk-form-label uk-margin-left" style={{ fontSize: "large" }}><b>Bắt buộc:</b></label><br />
-                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b></label><br />
-                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b></label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b> Mở Micro vs Webcam trong suốt quá trinh làm bài thi, Webcam phải chiếu õ toàn bộ khuôn mặt, không gian rộng.</label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b> Yêu cầu sinh viên nghiêm túc làm bài, không gian lận.</label><br />
+                  <label className="uk-form-label uk-margin-left" style={{ fontSize: "large" }}><b>Được phép:</b></label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b> Sử dụng tài liệu giảng viên cho phép.</label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b> Sử dụng các thiết bị như máy tính bỏ túi,... nếu giảng vien cho phép.</label><br />
                   <label className="uk-form-label uk-margin-left" style={{ fontSize: "large" }}><b>Không được phép:</b></label><br />
-                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b></label><br />
-                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b></label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b> Chụp hình, sao chép, hoặc gửi đề thi ra bên ngoài.</label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b> Không được tra cứu trên internet.</label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b> Không được thoả luận trao đổi.</label><br />
+                  <br />
+                  <br />
+                  <label className="uk-form-label" style={{ fontSize: "large", color: "#0f6ecd", "text-decoration": "underline" }}>Hướng dẫn địa chỉ liên lạc khi gặp sự cố:</label><br />
+                  <label className="uk-form-label" style={{ fontSize: "large" }}>
+                    Trong đợt thi online, không ít các bạn đã gặp phải những sự cố không mong muốn làm ảnh hưởng đến quá trình làm bài thi và kết quả thi. Khi gặp sự cố các bạn hãy bình tĩnh, chụp màn hình ngày khi các bạn gặp sự cố và soạn mail gửi về địa chỉ <label style={{ fontSize: "large", color: "#0f6ecd", "text-decoration": "underline" }}>qlqtpm.20hcb@gmail.com</label>. Trường hợp các bạn sẽ được xem xét và giải quyết sau khi kỳ thi kết thúc.
+                  </label><br />
                 </div>
                 <div className="uk-flex uk-flex-center examroom_permiss">
                   <span className="icon uk-margin-right uk-width-1-3@m" uk-icon="microphone"></span>
