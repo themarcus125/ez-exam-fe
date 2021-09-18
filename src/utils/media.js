@@ -1,18 +1,31 @@
 import { isBrowser } from "../utils/common";
+import { postFileAPIWithToken } from "./api";
+import { getUser } from "./auth";
 
-export const download = (chunk, filename) => {
+const token = getUser()?.tk ?? "";
+const username = getUser()?.username ?? "";
+
+export const upload = async (chunk, filename) => {
   if (isBrowser()) {
     const blob = new Blob(chunk, {
       type: "video/webm",
     });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    document.body.appendChild(a);
-    a.style = "display: none";
-    a.href = url;
-    a.download = `${filename}.webm`;
-    a.click();
-    window.URL.revokeObjectURL(url);
+    let phongThi = "";
+    const splitURL = window.location.pathname.split("/");
+    if (splitURL.length === 4 && splitURL[2] === "exam-taker") {
+      phongThi = splitURL[3];
+    }
+    try {
+      const formData = new FormData();
+      formData.append("file", blob, `${username}_${phongThi}_${filename}.webm`);
+      formData.append("name", `${username}_${phongThi}_${filename}.webm`);
+      const request = await postFileAPIWithToken("/videos", formData, token);
+      if (request.status === 200) {
+        console.log("Video file has uploaded successfully.");
+      }
+    } catch (error) {
+      console.log("Video file has failed to upload successfully !!!", error);
+    }
   }
 };
 

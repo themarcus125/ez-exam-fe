@@ -18,6 +18,7 @@ import AccountInfo from "../components/common/AccountInfo";
 import ExamTests from "../components/examiner/ExamTests";
 import Course from "../components/common/Course";
 import ExamRoomStatistics from "../components/examiner/ExamRoomStatistics";
+import ExamGradingVideo from "../components/examiner/ExamGradingVideo";
 
 const ExaminerDashboard = () => {
   const role = EXAMINER_ROLE;
@@ -112,6 +113,12 @@ const ExaminerDashboard = () => {
           role={role}
           path="/examroom/:examId/stats"
           component={ExamRoomStatistics}
+          title="Báo cáo tổng hợp"
+        />
+        <PrivateRoute
+          role={role}
+          path="/exam-grading/:id/video"
+          component={ExamGradingVideo}
           title="Báo cáo tổng hợp"
         />
       </Router>

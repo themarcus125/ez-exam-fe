@@ -267,12 +267,6 @@ const ExamGrading = ({ id }) => {
                     <span>{`${diemToiDa} điểm`}</span>
                   </MarkContainer>
                 </QuestionRow>
-                {/* <div
-                  className="uk-panel uk-panel-scrollable"
-                  style={{ resize: "none", height: 200 }}
-                >
-                  <p>{dapAnTL}</p>
-                </div> */}
                 <EssayQuestionBlock
                   publicButtonDisabled
                   readOnly
@@ -321,8 +315,7 @@ const ExamGrading = ({ id }) => {
           </tr>
           <tr>
             <td colSpan={2}>
-              {/* <Link>Kiểm tra video</Link> */}
-              <span>Kiểm tra video</span>
+              <Link to="video">Kiểm tra video</Link>
             </td>
           </tr>
         </tbody>

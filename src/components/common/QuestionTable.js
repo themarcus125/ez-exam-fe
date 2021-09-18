@@ -45,7 +45,11 @@ const QuestionTable = ({
     setLoading(true);
     try {
       const response = await getAPIWithToken(
-        `/cauhoi/layDanhSachCauHoi?limit=${QUESTION_PER_PAGE}&page=${currentPage}&&loaiCauHoi=${type}&&doKho=${level}&&maChuyenDe=${course}&&keyword=${searchString}`,
+        `/cauhoi/layDanhSachCauHoi?limit=${QUESTION_PER_PAGE}&page=${currentPage}${
+          type === questionType.ALL ? "" : `&&loaiCauHoi=${type}`
+        }&&doKho=${level}${
+          course === -1 ? "" : `&&maChuyenDe=${course}`
+        }&&keyword=${searchString}`,
         token,
       );
       numOfPage.current = response?.data?.meta.to;

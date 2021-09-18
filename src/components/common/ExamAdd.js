@@ -300,6 +300,10 @@ const ExamAdd = ({ examId }) => {
       toast.error("Thời gian làm bài không được để trống");
       return false;
     }
+    if (thoiGianLam < 15 || thoiGianLam > 999) {
+      toast.error("Thời gian phải là số nguyên, từ 15 đến 999");
+      return false;
+    }
     if (moTaDeThi === "") {
       toast.error("Ghi chú đề thi không được để trống");
       return false;

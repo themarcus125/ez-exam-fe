@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { download, cleanUpStreamingRef } from "../utils/media";
+import { upload, cleanUpStreamingRef } from "../utils/media";
 import { ToastContainer, toast } from "react-toastify";
 
 const useWebcamRecorder = () => {
@@ -18,7 +18,7 @@ const useWebcamRecorder = () => {
     const handleWebcamDataAvailable = (e) => {
       if (e.data.size > 0) {
         webcamRecordedChunkRef.current.push(e.data);
-        download(webcamRecordedChunkRef.current, "webcam-rec");
+        upload(webcamRecordedChunkRef.current, "webcam-rec");
         cleanUpStreamingRef(webcamStreamRef.current);
       }
     };

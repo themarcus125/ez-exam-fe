@@ -16,10 +16,6 @@ export const navBarCategories = {
           title: "Danh sách môn học",
           path: "/course",
         },
-        {
-          title: "Danh sách đã lưu",
-          path: "/",
-        },
       ],
     },
     {
@@ -94,6 +90,7 @@ export const questionType = {
   essay: "ESSAY",
   MULTIPLE_CHOICE: 1,
   ESSAY: 2,
+  ALL: -1,
 };
 
 export const userType = {

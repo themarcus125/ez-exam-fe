@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { download, cleanUpStreamingRef } from "../utils/media";
+import { upload, cleanUpStreamingRef } from "../utils/media";
 import { ToastContainer, toast } from "react-toastify";
 
 const useScreenRecorder = () => {
@@ -20,7 +20,7 @@ const useScreenRecorder = () => {
     const handleScreenDataAvailable = (e) => {
       if (e.data.size > 0) {
         screenRecordedChunkRef.current.push(e.data);
-        download(screenRecordedChunkRef.current, "screen-rec");
+        upload(screenRecordedChunkRef.current, "screen-rec");
         cleanUpStreamingRef(screenStreamRef.current, false);
       }
     };
