@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
+import moment from "moment";
 
 import ControlBar from "../common/ControlBar";
 import LoadingOverlay from "../common/LoadingOverlay";
@@ -174,8 +175,14 @@ const ExamRoomStatistics = ({ examId }) => {
                   <td>{row.tenDangNhap}</td>
                   <td>{row.tenNguoiDung}</td>
                   <td>{row.maDe}</td>
-                  <td>{row.thoiGianBatDauLamBai}</td>
-                  <td>{row.thoiGianNopBai}</td>
+                  <td>
+                    {moment(row.thoiGianBatDauLamBai).format(
+                      "DD/MM/YYYY - HH:mm",
+                    )}
+                  </td>
+                  <td>
+                    {moment(row.thoiGianNopBai).format("DD/MM/YYYY - HH:mm")}
+                  </td>
                   <td>{row.diem}</td>
                   <td>{row.rank}</td>
                 </tr>
