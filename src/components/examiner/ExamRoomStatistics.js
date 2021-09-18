@@ -95,7 +95,7 @@ const ExamRoomStatistics = ({ examId }) => {
         return -(Number(firstObj.diem) - Number(secondObj.diem));
       })
       .slice(0, 5);
-    let prevNumber = Number(sortedTests[0].diem);
+    let prevNumber = Number(sortedTests[0]?.diem);
     let rank = 1;
     sortedTests = sortedTests.map((test) => {
       const point = Number(test.diem);
