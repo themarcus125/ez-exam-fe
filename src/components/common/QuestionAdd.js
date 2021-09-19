@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { ToastContainer, toast } from "react-toastify";
 import EssayQuestionBlock from "./EssayQuestionBlock";
@@ -8,6 +8,10 @@ import { postAPIWithToken } from "../../utils/api";
 import { getUser } from "../../utils/auth";
 import ControlBar from "./ControlBar";
 
+import { getAPIWithToken } from "../../utils/api";
+import { getToken } from "../../utils/auth";
+import LoadingOverlay from "../common/LoadingOverlay";
+
 const token = getUser()?.tk ?? "";
 
 const QuestionAdd = () => {
@@ -15,6 +19,9 @@ const QuestionAdd = () => {
   const [level, setLevel] = useState(questionLevel.EASY);
   const [essayQuestions, setEssayQuestions] = useState([]);
   const [multipleChoiceQuestions, setMultipleChoiceQuestions] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState(-1);
+  const [loading, setLoading] = useState(false);
   const multipleChoiceRefs = useRef([]);
   const essayRefs = useRef([]);
   const count = useRef(0);
@@ -24,6 +31,22 @@ const QuestionAdd = () => {
     `uk-button uk-padding uk-padding-remove-vertical ${
       type === t ? "uk-button-primary" : "uk-button-link"
     }`;
+
+  const loadCourses = async () => {
+    setLoading(true);
+    const token = await getToken();
+    const res = await getAPIWithToken(
+      "/chuyende/layDanhSachChuyenDe?trangThai=1&limit=9999",
+      token,
+    );
+    setCourses(res.data.dsChuyenDe);
+    setSelectedCourse(res.data.dsChuyenDe?.[0] ?? -1);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadCourses();
+  }, []);
 
   const onToggle = (passedType) => {
     if (passedType !== type) {
@@ -91,11 +114,16 @@ const QuestionAdd = () => {
       return;
     }
 
+    if (selectedCourse === -1) {
+      toast.error("Không có môn học");
+      return;
+    }
+
     try {
       const res = await postAPIWithToken(
         "/cauhoi/themDanhSachCauHoi",
         {
-          maChuyenDe: 1,
+          maChuyenDe: selectedCourse,
           loaiCauHoi: type,
           doKho: level,
           dsCauHoi: questionList,
@@ -116,117 +144,131 @@ const QuestionAdd = () => {
   };
 
   return (
-    <div className="uk-flex uk-flex-column uk-flex-1">
-      <div className="uk-flex uk-flex-row uk-height-1-1">
-        <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
-        <button
-          className={buttonClass(questionType.MULTIPLE_CHOICE)}
-          onClick={() => onToggle(questionType.MULTIPLE_CHOICE)}
+    <>
+      <div className="uk-flex uk-flex-column uk-flex-1">
+        <div className="uk-flex uk-flex-row uk-height-1-1">
+          <ToastContainer
+            autoClose={3000}
+            position={toast.POSITION.TOP_RIGHT}
+          />
+          <button
+            className={buttonClass(questionType.MULTIPLE_CHOICE)}
+            onClick={() => onToggle(questionType.MULTIPLE_CHOICE)}
+          >
+            Trắc nghiệm
+          </button>
+          <button
+            className={buttonClass(questionType.ESSAY)}
+            onClick={() => onToggle(questionType.ESSAY)}
+          >
+            Tự luận
+          </button>
+        </div>
+        <div
+          className="uk-padding uk-height-1-1 uk-flex-1"
+          style={{ overflowY: "auto" }}
         >
-          Trắc nghiệm
-        </button>
-        <button
-          className={buttonClass(questionType.ESSAY)}
-          onClick={() => onToggle(questionType.ESSAY)}
-        >
-          Tự luận
-        </button>
-      </div>
-      <div
-        className="uk-padding uk-height-1-1 uk-flex-1"
-        style={{ overflowY: "auto" }}
-      >
-        <ControlBar
-          title="Thêm câu hỏi"
-          controlRow={() => (
-            <>
-              <div className="uk-text">
-                <FilterLabel>Môn học</FilterLabel>
-                <div className="uk-display-inline-block">
-                  <FilterSelector
-                    className="uk-select uk-width-1-1"
-                    style={{
-                      border: "solid 0.5px #666",
-                    }}
-                  >
-                    <option>Phần mềm</option>
-                  </FilterSelector>
+          <ControlBar
+            title="Thêm câu hỏi"
+            controlRow={() => (
+              <>
+                <div className="uk-text">
+                  <FilterLabel>Môn học</FilterLabel>
+                  <div className="uk-display-inline-block">
+                    <FilterSelector
+                      className="uk-select uk-width-1-1"
+                      style={{
+                        border: "solid 0.5px #666",
+                      }}
+                      value={selectedCourse}
+                    >
+                      {/* <option>Phần mềm</option> */}
+                      {courses?.map((course) => {
+                        return (
+                          <option key={course.id} value={course.id}>
+                            {course.tenChuyenDe}
+                          </option>
+                        );
+                      })}
+                    </FilterSelector>
+                  </div>
                 </div>
-              </div>
-              <div className="uk-text-right">
-                <FilterLabel>Mức độ</FilterLabel>
-                <div className="uk-display-inline-block">
-                  <FilterSelector
-                    className="uk-select uk-width-1-1"
-                    style={{
-                      border: "solid 0.5px #666",
-                    }}
-                    value={level}
-                    onChange={onChangeLevel}
-                  >
-                    <option value={questionLevel.EASY}>Dễ</option>
-                    <option value={questionLevel.MEDIUM}>Trung bình</option>
-                    <option value={questionLevel.HARD}>Khó</option>
-                  </FilterSelector>
+                <div className="uk-text-right">
+                  <FilterLabel>Mức độ</FilterLabel>
+                  <div className="uk-display-inline-block">
+                    <FilterSelector
+                      className="uk-select uk-width-1-1"
+                      style={{
+                        border: "solid 0.5px #666",
+                      }}
+                      value={level}
+                      onChange={onChangeLevel}
+                    >
+                      <option value={questionLevel.EASY}>Dễ</option>
+                      <option value={questionLevel.MEDIUM}>Trung bình</option>
+                      <option value={questionLevel.HARD}>Khó</option>
+                    </FilterSelector>
+                  </div>
                 </div>
-              </div>
-            </>
+              </>
+            )}
+          />
+
+          {type === questionType.MULTIPLE_CHOICE ? (
+            <div>
+              {multipleChoiceQuestions.map((question, index) => {
+                return (
+                  <MultipleChoiceQuestionBlock
+                    key={question}
+                    ref={(element) =>
+                      (multipleChoiceRefs.current[index] = element)
+                    }
+                    onRemove={() =>
+                      onRemoveQuestion(question, questionType.MULTIPLE_CHOICE)
+                    }
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            <div>
+              {essayQuestions.map((question, index) => {
+                return (
+                  <EssayQuestionBlock
+                    key={question}
+                    ref={(element) => (essayRefs.current[index] = element)}
+                    onRemove={() =>
+                      onRemoveQuestion(question, questionType.ESSAY)
+                    }
+                  />
+                );
+              })}
+            </div>
           )}
-        />
 
-        {type === questionType.MULTIPLE_CHOICE ? (
-          <div>
-            {multipleChoiceQuestions.map((question, index) => {
-              return (
-                <MultipleChoiceQuestionBlock
-                  key={question}
-                  ref={(element) =>
-                    (multipleChoiceRefs.current[index] = element)
-                  }
-                  onRemove={() =>
-                    onRemoveQuestion(question, questionType.MULTIPLE_CHOICE)
-                  }
-                />
-              );
-            })}
+          <div className="uk-text-right uk-padding">
+            <button
+              className="uk-button"
+              style={{ backgroundColor: "#32d296", color: "#FFFFFF" }}
+              onClick={onAddNewQuestion}
+            >
+              Thêm mới
+            </button>
           </div>
-        ) : (
-          <div>
-            {essayQuestions.map((question, index) => {
-              return (
-                <EssayQuestionBlock
-                  key={question}
-                  ref={(element) => (essayRefs.current[index] = element)}
-                  onRemove={() =>
-                    onRemoveQuestion(question, questionType.ESSAY)
-                  }
-                />
-              );
-            })}
+
+          <div className="uk-text-center uk-padding">
+            <button
+              className="uk-button"
+              style={{ backgroundColor: "#32d296", color: "#FFFFFF" }}
+              onClick={onSave}
+            >
+              Lưu
+            </button>
           </div>
-        )}
-
-        <div className="uk-text-right uk-padding">
-          <button
-            className="uk-button"
-            style={{ backgroundColor: "#32d296", color: "#FFFFFF" }}
-            onClick={onAddNewQuestion}
-          >
-            Thêm mới
-          </button>
-        </div>
-
-        <div className="uk-text-center uk-padding">
-          <button
-            className="uk-button"
-            style={{ backgroundColor: "#32d296", color: "#FFFFFF" }}
-            onClick={onSave}
-          >
-            Lưu
-          </button>
         </div>
       </div>
-    </div>
+      <LoadingOverlay isLoading={loading} />
+    </>
   );
 };
 
