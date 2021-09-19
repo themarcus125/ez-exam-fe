@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
+import moment from "moment";
 
 import ControlBar from "../common/ControlBar";
 import LoadingOverlay from "../common/LoadingOverlay";
@@ -95,7 +96,7 @@ const ExamRoomStatistics = ({ examId }) => {
         return -(Number(firstObj.diem) - Number(secondObj.diem));
       })
       .slice(0, 5);
-    let prevNumber = Number(sortedTests[0].diem);
+    let prevNumber = Number(sortedTests[0]?.diem);
     let rank = 1;
     sortedTests = sortedTests.map((test) => {
       const point = Number(test.diem);
@@ -133,19 +134,19 @@ const ExamRoomStatistics = ({ examId }) => {
               style={{ marginTop: 0 }}
             >
               <span>
-                <Title>Tổng số sinh viên</Title>
+                <Title>Tổng số sinh viên:</Title>
                 <Value>{data?.tongSinhVien}</Value>
               </span>
               <span>
-                <Title>Số sinh viên vào phòng</Title>
+                <Title>Số sinh viên vào phòng:</Title>
                 <Value>{data?.soSinhVienVaoPhong}</Value>
               </span>
               <span>
-                <Title>Số bài thi</Title>
+                <Title>Số bài thi:</Title>
                 <Value>{data?.soBaiThi}</Value>
               </span>
               <span>
-                <Title>Phòng thi</Title>
+                <Title>Phòng thi:</Title>
                 <Value>{data?.maPhong}</Value>
               </span>
               <span className="uk-width-auto@m">
@@ -174,8 +175,14 @@ const ExamRoomStatistics = ({ examId }) => {
                   <td>{row.tenDangNhap}</td>
                   <td>{row.tenNguoiDung}</td>
                   <td>{row.maDe}</td>
-                  <td>{row.thoiGianBatDauLamBai}</td>
-                  <td>{row.thoiGianNopBai}</td>
+                  <td>
+                    {moment(row.thoiGianBatDauLamBai).format(
+                      "DD/MM/YYYY - HH:mm",
+                    )}
+                  </td>
+                  <td>
+                    {moment(row.thoiGianNopBai).format("DD/MM/YYYY - HH:mm")}
+                  </td>
                   <td>{row.diem}</td>
                   <td>{row.rank}</td>
                 </tr>
@@ -217,7 +224,6 @@ export default ExamRoomStatistics;
 const Title = styled.span`
   color: #000;
   margin-right: 5px;
-  font-weight: bold;
   @media (max-width: 1024px) {
     display: block;
   }

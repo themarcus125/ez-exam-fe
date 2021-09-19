@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { questionLevel, questionType } from "../../utils/constants";
 import ControlBar from "./ControlBar";
 import QuestionTable from "./QuestionTable";
