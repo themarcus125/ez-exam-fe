@@ -141,14 +141,14 @@ const ExamTakerPage = ({ roomId }) => {
       const maCTPhong = objInfoRoom.maCTPhong;
       await uploadVideoFile(
         webcamBlob,
-        `${maCTPhong}_webcam-rec`,
+        `${maCTPhong}_webcam-rec.webm`,
         maCTPhong,
         0,
         token,
       );
       await uploadVideoFile(
         screenRecBlob,
-        `${maCTPhong}_screen-rec`,
+        `${maCTPhong}_screen-rec.webm`,
         maCTPhong,
         1,
         token,
