@@ -9,17 +9,37 @@ const AdminHome = () => {
           className="uk-padding uk-padding-remove-vertical"
           style={{ flex: 2 }}
         >
-          <h2 className="uk-text-success">Tổng quan phần mềm</h2>
-          <p className="uk-margin-remove-bottom uk-text-large">
-            Là quản trị viên bạn có thể:
+          <h3 className="uk-text-success uk-text-bold uk-text-uppercase uk-flex uk-flex-center">
+            Hướng dẫn sử dụng phần mềm
+          </h3>
+          <p>
+            Phần mềm EzExam là một ứng dụng thi online, hỗ trợ tổ chức thi trắc
+            nghiệm, thực hiện việc biên tập ngân hàng câu hỏi, tạo đề thi, chấm
+            thi, quản lý tài khoản, ...
           </p>
-          <ul className="uk-margin-remove-top uk-text-large">
-            <li>Tạo/Xem danh sách môn học</li>
-            <li>Tạo/Xem danh sách tài khoản</li>
-            <li>Thay đổi thông tin tài khoản</li>
-          </ul>
+          <p className="uk-margin-remove-bottom">
+            Các chức năng trong phân hệ admin:
+          </p>
+          <div className="uk-margin-left">
+            <p className="uk-margin-remove-bottom uk-text-bold">- Môn học</p>
+            <ul className="uk-margin-remove-top">
+              <li>
+                Danh sách môn học: Xem danh sách môn học, cho phép thêm mới và
+                sửa thông tin môn học
+              </li>
+              <li>
+                Thêm môn học cho sinh viên: Cho phép thêm các môn học mà sinh
+                viên đã đăng kí
+              </li>
+            </ul>
+            <p>
+              - <b>Tài khoản</b>: Xem danh sách tài khoản, thêm mới tài khoản
+              bằng cách import từ file excel, cho phép sửa thông tin tài khoản
+              và reset mật khẩu
+            </p>
+          </div>
           <small>
-            Nếu có trục trặc xin vui lòng liện hệ someone.something@gmail.com
+            Nếu có trục trặc xin vui lòng liện hệ qlqtpm.20hcb@gmail.com
           </small>
         </div>
         <div style={{ flex: 3, height: "400px" }}>
