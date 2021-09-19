@@ -71,7 +71,6 @@ const ExamTakerPage = ({ roomId }) => {
         `/sinhvien/layBaiThi?idPhongThi=${roomId}`,
         token,
       );
-      tmp_objInfo.data.thoiGianLam = 2;
       setObjInfoRoom(tmp_objInfo?.data);
       setLstQuestion(tmp_objInfo?.data?.dsCauhoi);
     }
