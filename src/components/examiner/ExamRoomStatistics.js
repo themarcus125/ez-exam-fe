@@ -134,19 +134,19 @@ const ExamRoomStatistics = ({ examId }) => {
               style={{ marginTop: 0 }}
             >
               <span>
-                <Title>Tổng số sinh viên</Title>
+                <Title>Tổng số sinh viên:</Title>
                 <Value>{data?.tongSinhVien}</Value>
               </span>
               <span>
-                <Title>Số sinh viên vào phòng</Title>
+                <Title>Số sinh viên vào phòng:</Title>
                 <Value>{data?.soSinhVienVaoPhong}</Value>
               </span>
               <span>
-                <Title>Số bài thi</Title>
+                <Title>Số bài thi:</Title>
                 <Value>{data?.soBaiThi}</Value>
               </span>
               <span>
-                <Title>Phòng thi</Title>
+                <Title>Phòng thi:</Title>
                 <Value>{data?.maPhong}</Value>
               </span>
               <span className="uk-width-auto@m">
@@ -224,7 +224,6 @@ export default ExamRoomStatistics;
 const Title = styled.span`
   color: #000;
   margin-right: 5px;
-  font-weight: bold;
   @media (max-width: 1024px) {
     display: block;
   }
