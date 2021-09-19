@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react";
-import { upload, cleanUpStreamingRef } from "../utils/media";
-import { ToastContainer, toast } from "react-toastify";
+import { cleanUpStreamingRef } from "../utils/media";
+import { toast } from "react-toastify";
 
-const useScreenRecorder = () => {
+const useScreenRecorder = (onGetStreamingBlob) => {
   const [isPermissionApproved, setIsPermissionApproved] = useState(false);
 
   const screenConstraints = {
@@ -20,7 +20,12 @@ const useScreenRecorder = () => {
     const handleScreenDataAvailable = (e) => {
       if (e.data.size > 0) {
         screenRecordedChunkRef.current.push(e.data);
-        upload(screenRecordedChunkRef.current, "screen-rec");
+        const blob = new Blob(screenRecordedChunkRef.current, {
+          type: "video/webm",
+        });
+        if (onGetStreamingBlob) {
+          onGetStreamingBlob(blob);
+        }
         cleanUpStreamingRef(screenStreamRef.current, false);
       }
     };
@@ -41,7 +46,9 @@ const useScreenRecorder = () => {
       }
     } catch (err) {
       /* handle the error */
-      toast.warning("Vui lòng kiểm tra quyền ghi màn hình của bạn và thử tải lại !!!");
+      toast.warning(
+        "Vui lòng kiểm tra quyền ghi màn hình của bạn và thử tải lại !!!",
+      );
     }
   }, []);
 

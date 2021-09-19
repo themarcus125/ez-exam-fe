@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import loadable from "@loadable/component";
 import { navigate } from "../../utils/common";
 import Countdown from "react-countdown";
 import useWebcamRecorder from "../../hooks/useWebcamRecorder";
 import useScreenRecorder from "../../hooks/useScreenRecorder";
-import { getAPIWithToken, postAPIWithToken } from "../../utils/api";
+import {
+  getAPIWithToken,
+  postAPIWithToken,
+  uploadVideoFile,
+} from "../../utils/api";
 import { getUser, getToken } from "../../utils/auth";
 import { ToastContainer, toast } from "react-toastify";
 const token = getUser()?.tk ?? "";
@@ -15,12 +19,9 @@ const LoadableEditor = loadable(() => import("../../components/common/Editor"));
 // import mockData from "../../mockData/examtest.json";
 
 const ExamTakerPage = ({ roomId }) => {
+  const countdownRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [isPermissionApproved, setIsPermissionApproved] = useState(false);
-  const { isPermissionApproved: webcamApproved, webcamRecorderObject } =
-    useWebcamRecorder();
-  const { isPermissionApproved: screenRecApproved, screenRecorderObject } =
-    useScreenRecorder();
   const [objInfoRoom, setObjInfoRoom] = useState({});
   const [lstQuestion, setLstQuestion] = useState([]);
   const [lstAnswer, setLstAnswer] = useState([]);
@@ -29,6 +30,18 @@ const ExamTakerPage = ({ roomId }) => {
   const [isDisabledStartExam, setIsDisabledStartExam] = useState(true);
   const [flag, setFlag] = useState(false);
   const [roomName, setRoomName] = useState("");
+  const [webcamBlob, setWebcamBlob] = useState(null);
+  const [screenRecBlob, setScreenRecBlob] = useState(null);
+  const onGetStreamingBlobWebcam = (blob) => {
+    setWebcamBlob(blob);
+  };
+  const onGetStreamingBlobScreenRec = (blob) => {
+    setScreenRecBlob(blob);
+  };
+  const { isPermissionApproved: webcamApproved, webcamRecorderObject } =
+    useWebcamRecorder(onGetStreamingBlobWebcam);
+  const { isPermissionApproved: screenRecApproved, screenRecorderObject } =
+    useScreenRecorder(onGetStreamingBlobScreenRec);
   let timeExam = 0;
 
   useEffect(() => {
@@ -58,6 +71,7 @@ const ExamTakerPage = ({ roomId }) => {
         `/sinhvien/layBaiThi?idPhongThi=${roomId}`,
         token,
       );
+      tmp_objInfo.data.thoiGianLam = 2;
       setObjInfoRoom(tmp_objInfo?.data);
       setLstQuestion(tmp_objInfo?.data?.dsCauhoi);
     }
@@ -95,9 +109,6 @@ const ExamTakerPage = ({ roomId }) => {
 
   const onSendExam = async () => {
     if (token && roomId) {
-      //stop webcam, screen
-      webcamRecorderObject.stop();
-      screenRecorderObject.stop();
       try {
         const res = await postAPIWithToken(
           "/sinhvien/nopbai",
@@ -121,11 +132,38 @@ const ExamTakerPage = ({ roomId }) => {
     }
   };
 
+  useEffect(async () => {
+    if (webcamBlob && screenRecBlob) {
+      toast.info("Đang nộp bài...");
+      if (countdownRef.current) {
+        countdownRef.current.pause();
+      }
+      const maCTPhong = objInfoRoom.maCTPhong;
+      await uploadVideoFile(
+        webcamBlob,
+        `${maCTPhong}_webcam-rec`,
+        maCTPhong,
+        0,
+        token,
+      );
+      await uploadVideoFile(
+        screenRecBlob,
+        `${maCTPhong}_screen-rec`,
+        maCTPhong,
+        1,
+        token,
+      );
+      await onSendExam();
+    }
+  }, [webcamBlob, screenRecBlob]);
+
   const onSubmit = async (e) => {
     e.preventDefault();
     if (confirm("Bạn chắc chắn nộp bài ?")) {
       if (parseInt(timeExam) <= parseInt(objInfoRoom.thoiGianLam / 2)) {
-        onSendExam();
+        // stop webcam, screen rec
+        webcamRecorderObject.stop();
+        screenRecorderObject.stop();
       } else {
         toast.warning("Chưa đến thời gian nộp bài !!!");
       }
@@ -142,7 +180,9 @@ const ExamTakerPage = ({ roomId }) => {
       // Render a countdown
       return (
         <span className="countdown uk-width-1-2@m">
-          {(hours < 10 ? "0" + hours : hours)}:{(minutes < 10 ? "0" + minutes : minutes)}:{(seconds < 10 ? "0" + seconds : seconds)}
+          {hours < 10 ? "0" + hours : hours}:
+          {minutes < 10 ? "0" + minutes : minutes}:
+          {seconds < 10 ? "0" + seconds : seconds}
         </span>
       );
     }
@@ -205,63 +245,63 @@ const ExamTakerPage = ({ roomId }) => {
             </div>
             {lstQuestion
               ? lstQuestion.map((element) => {
-                return (
-                  <div key={element.id} id={element.id}>
-                    <div>
-                      <div className="uk-card-body uk-padding-remove-bottom">
-                        <div className="uk-form-label uk-card-title">
-                          <b>
-                            {element.viTri}. {element.noiDung}
-                          </b>
-                        </div>
-                        <div className="uk-form-controls uk-margin-small-top uk-margin-small-left">
-                          {element.loaiCauHoi === 1 ? (
-                            element.dsDapAn.map((item, key) => (
-                              <div key={item.id}>
-                                <label>
-                                  <input
-                                    className="uk-radio"
-                                    type="radio"
-                                    name={`radio${element.id}`}
-                                    value={item.id}
-                                    onChange={handleChangeAnswer}
-                                    title={element.id}
-                                  />
-                                  {" " + item.noiDung}
-                                </label>
+                  return (
+                    <div key={element.id} id={element.id}>
+                      <div>
+                        <div className="uk-card-body uk-padding-remove-bottom">
+                          <div className="uk-form-label uk-card-title">
+                            <b>
+                              {element.viTri}. {element.noiDung}
+                            </b>
+                          </div>
+                          <div className="uk-form-controls uk-margin-small-top uk-margin-small-left">
+                            {element.loaiCauHoi === 1 ? (
+                              element.dsDapAn.map((item, key) => (
+                                <div key={item.id}>
+                                  <label>
+                                    <input
+                                      className="uk-radio"
+                                      type="radio"
+                                      name={`radio${element.id}`}
+                                      value={item.id}
+                                      onChange={handleChangeAnswer}
+                                      title={element.id}
+                                    />
+                                    {" " + item.noiDung}
+                                  </label>
+                                </div>
+                              ))
+                            ) : (
+                              <div style={{ border: "1px solid black" }}>
+                                <LoadableEditor
+                                  id={element.id}
+                                  onChangeTitle={(event, editor) => {
+                                    const objAnswer = {
+                                      maCauHoi: element.id,
+                                      maDapAn: null,
+                                      dapAnTL: editor.getData(),
+                                    };
+                                    const indexAnswer = lstAnswer.findIndex(
+                                      (el) =>
+                                        el.maCauHoi === objAnswer.maCauHoi,
+                                    );
+                                    if (indexAnswer !== -1) {
+                                      lstAnswer[indexAnswer].dapAnTL =
+                                        objAnswer.dapAnTL;
+                                    } else {
+                                      lstAnswer.push(objAnswer);
+                                    }
+                                    changeClassCSS("btn" + objAnswer.maCauHoi);
+                                  }}
+                                />
                               </div>
-                            ))
-                          ) : (
-                            <div style={{ border: "1px solid black" }}>
-                              <LoadableEditor
-                                id={element.id}
-                                onChangeTitle={(event, editor) => {
-                                  const objAnswer = {
-                                    maCauHoi: element.id,
-                                    maDapAn: null,
-                                    dapAnTL: editor.getData(),
-                                  };
-                                  const indexAnswer = lstAnswer.findIndex(
-                                    (el) =>
-                                      el.maCauHoi === objAnswer.maCauHoi,
-                                  );
-                                  if (indexAnswer !== -1) {
-                                    lstAnswer[indexAnswer].dapAnTL =
-                                      objAnswer.dapAnTL;
-                                  } else {
-                                    lstAnswer.push(objAnswer);
-                                  }
-                                  changeClassCSS("btn" + objAnswer.maCauHoi);
-                                }}
-                              />
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })
+                  );
+                })
               : ""}
             <p className="uk-card-title uk-width-1-1 uk-text-center uk-margin-medium-bottom">
               <button
@@ -282,8 +322,10 @@ const ExamTakerPage = ({ roomId }) => {
                     <span className="icon" uk-icon="clock"></span>
                     {objInfoRoom?.thoiGianLam ? (
                       <Countdown
+                        ref={countdownRef}
                         date={
-                          dateCountDown + parseInt(objInfoRoom.thoiGianLam) * 60000
+                          dateCountDown +
+                          parseInt(objInfoRoom.thoiGianLam) * 60000
                         }
                         intervalDelay={1000}
                         precision={3}
@@ -368,22 +410,22 @@ const ExamTakerPage = ({ roomId }) => {
                   <div className="uk-width-1-1 uk-flex uk-flex-row uk-flex-between">
                     {lstQuestion
                       ? lstQuestion.map((element) => {
-                        return (
-                          <div
-                            key={element.id}
-                            className="uk-width-1-5 uk-margin-small-bottom uk-scroll"
-                          >
-                            <a
-                              id={"btn" + element.id}
-                              style={{ width: 40, height: 28 }}
-                              className="uk-flex uk-flex-center uk-button uk-button-default uk-button-small uk-scroll"
-                              href={"#" + element.id}
+                          return (
+                            <div
+                              key={element.id}
+                              className="uk-width-1-5 uk-margin-small-bottom uk-scroll"
                             >
-                              {element.viTri}
-                            </a>
-                          </div>
-                        );
-                      })
+                              <a
+                                id={"btn" + element.id}
+                                style={{ width: 40, height: 28 }}
+                                className="uk-flex uk-flex-center uk-button uk-button-default uk-button-small uk-scroll"
+                                href={"#" + element.id}
+                              >
+                                {element.viTri}
+                              </a>
+                            </div>
+                          );
+                        })
                       : ""}
                   </div>
                 </div>
@@ -417,10 +459,7 @@ const ExamTakerPage = ({ roomId }) => {
         className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
         style={{ overflowY: "auto" }}
       >
-        <ToastContainer
-          autoClose={3000}
-          position={toast.POSITION.TOP_RIGHT}
-        />
+        <ToastContainer autoClose={3000} position={toast.POSITION.TOP_RIGHT} />
         {!loading && (
           <div>
             <p className="uk-text-large uk-text-center uk-text-bold uk-text-success">
@@ -430,32 +469,147 @@ const ExamTakerPage = ({ roomId }) => {
               className="uk-margin-bottom uk-flex uk-flex-row uk-flex-center"
               style={{ marginLeft: 150, marginRight: 150 }}
             >
-              <div className="uk-grid uk-margin-small uk-width-1-1 uk-flex uk-flex-row uk-flex-center" uk-grid="true">
+              <div
+                className="uk-grid uk-margin-small uk-width-1-1 uk-flex uk-flex-row uk-flex-center"
+                uk-grid="true"
+              >
                 <div className="uk-width-1-1 uk-text-left">
-                  <label className="uk-form-label" style={{ fontSize: "large" }}>
-                    Để đảm bảo chất lượng thi và tránh các vấn đề gian lận thi cử. Các sinh viên vui lòng mở Micro và Camera để giảng viên kiểm tra trước khi thi, phải chuẩn bị thẻ sinh viên hoặc CMND/CCCD. Các sinh viên tuân thử đúng quy tắc thì mới có thể làm bài thi.
-                  </label><br />
-                  <label className="uk-form-label" style={{ fontSize: "large" }}>Trong quá trình thi các thí sinh:</label><br />
-                  <label className="uk-form-label uk-margin-left" style={{ fontSize: "large" }}><b>Bắt buộc:</b></label><br />
-                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b> Mở Micro vs Webcam trong suốt quá trinh làm bài thi, Webcam phải chiếu õ toàn bộ khuôn mặt, không gian rộng.</label><br />
-                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b> Yêu cầu sinh viên nghiêm túc làm bài, không gian lận.</label><br />
-                  <label className="uk-form-label uk-margin-left" style={{ fontSize: "large" }}><b>Được phép:</b></label><br />
-                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b> Sử dụng tài liệu giảng viên cho phép.</label><br />
-                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b> Sử dụng các thiết bị như máy tính bỏ túi,... nếu giảng vien cho phép.</label><br />
-                  <label className="uk-form-label uk-margin-left" style={{ fontSize: "large" }}><b>Không được phép:</b></label><br />
-                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b> Chụp hình, sao chép, hoặc gửi đề thi ra bên ngoài.</label><br />
-                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b> Không được tra cứu trên internet.</label><br />
-                  <label className="uk-form-label" style={{ fontSize: "large" }}><b>+</b> Không được thoả luận trao đổi.</label><br />
+                  <label
+                    className="uk-form-label"
+                    style={{ fontSize: "large" }}
+                  >
+                    Để đảm bảo chất lượng thi và tránh các vấn đề gian lận thi
+                    cử. Các sinh viên vui lòng mở Micro và Camera để giảng viên
+                    kiểm tra trước khi thi, phải chuẩn bị thẻ sinh viên hoặc
+                    CMND/CCCD. Các sinh viên tuân thử đúng quy tắc thì mới có
+                    thể làm bài thi.
+                  </label>
+                  <br />
+                  <label
+                    className="uk-form-label"
+                    style={{ fontSize: "large" }}
+                  >
+                    Trong quá trình thi các thí sinh:
+                  </label>
+                  <br />
+                  <label
+                    className="uk-form-label uk-margin-left"
+                    style={{ fontSize: "large" }}
+                  >
+                    <b>Bắt buộc:</b>
+                  </label>
+                  <br />
+                  <label
+                    className="uk-form-label"
+                    style={{ fontSize: "large" }}
+                  >
+                    <b>+</b> Mở Micro vs Webcam trong suốt quá trinh làm bài
+                    thi, Webcam phải chiếu õ toàn bộ khuôn mặt, không gian rộng.
+                  </label>
+                  <br />
+                  <label
+                    className="uk-form-label"
+                    style={{ fontSize: "large" }}
+                  >
+                    <b>+</b> Yêu cầu sinh viên nghiêm túc làm bài, không gian
+                    lận.
+                  </label>
+                  <br />
+                  <label
+                    className="uk-form-label uk-margin-left"
+                    style={{ fontSize: "large" }}
+                  >
+                    <b>Được phép:</b>
+                  </label>
+                  <br />
+                  <label
+                    className="uk-form-label"
+                    style={{ fontSize: "large" }}
+                  >
+                    <b>+</b> Sử dụng tài liệu giảng viên cho phép.
+                  </label>
+                  <br />
+                  <label
+                    className="uk-form-label"
+                    style={{ fontSize: "large" }}
+                  >
+                    <b>+</b> Sử dụng các thiết bị như máy tính bỏ túi,... nếu
+                    giảng vien cho phép.
+                  </label>
+                  <br />
+                  <label
+                    className="uk-form-label uk-margin-left"
+                    style={{ fontSize: "large" }}
+                  >
+                    <b>Không được phép:</b>
+                  </label>
+                  <br />
+                  <label
+                    className="uk-form-label"
+                    style={{ fontSize: "large" }}
+                  >
+                    <b>+</b> Chụp hình, sao chép, hoặc gửi đề thi ra bên ngoài.
+                  </label>
+                  <br />
+                  <label
+                    className="uk-form-label"
+                    style={{ fontSize: "large" }}
+                  >
+                    <b>+</b> Không được tra cứu trên internet.
+                  </label>
+                  <br />
+                  <label
+                    className="uk-form-label"
+                    style={{ fontSize: "large" }}
+                  >
+                    <b>+</b> Không được thoả luận trao đổi.
+                  </label>
                   <br />
                   <br />
-                  <label className="uk-form-label" style={{ fontSize: "large", color: "#0f6ecd", "text-decoration": "underline" }}>Hướng dẫn địa chỉ liên lạc khi gặp sự cố:</label><br />
-                  <label className="uk-form-label" style={{ fontSize: "large" }}>
-                    Trong đợt thi online, không ít các bạn đã gặp phải những sự cố không mong muốn làm ảnh hưởng đến quá trình làm bài thi và kết quả thi. Khi gặp sự cố các bạn hãy bình tĩnh, chụp màn hình ngày khi các bạn gặp sự cố và soạn mail gửi về địa chỉ <label style={{ fontSize: "large", color: "#0f6ecd", "text-decoration": "underline" }}>qlqtpm.20hcb@gmail.com</label>. Trường hợp các bạn sẽ được xem xét và giải quyết sau khi kỳ thi kết thúc.
-                  </label><br />
+                  <br />
+                  <label
+                    className="uk-form-label"
+                    style={{
+                      fontSize: "large",
+                      color: "#0f6ecd",
+                      "text-decoration": "underline",
+                    }}
+                  >
+                    Hướng dẫn địa chỉ liên lạc khi gặp sự cố:
+                  </label>
+                  <br />
+                  <label
+                    className="uk-form-label"
+                    style={{ fontSize: "large" }}
+                  >
+                    Trong đợt thi online, không ít các bạn đã gặp phải những sự
+                    cố không mong muốn làm ảnh hưởng đến quá trình làm bài thi
+                    và kết quả thi. Khi gặp sự cố các bạn hãy bình tĩnh, chụp
+                    màn hình ngày khi các bạn gặp sự cố và soạn mail gửi về địa
+                    chỉ{" "}
+                    <label
+                      style={{
+                        fontSize: "large",
+                        color: "#0f6ecd",
+                        "text-decoration": "underline",
+                      }}
+                    >
+                      qlqtpm.20hcb@gmail.com
+                    </label>
+                    . Trường hợp các bạn sẽ được xem xét và giải quyết sau khi
+                    kỳ thi kết thúc.
+                  </label>
+                  <br />
                 </div>
                 <div className="uk-flex uk-flex-center examroom_permiss">
-                  <span className="icon uk-margin-right uk-width-1-3@m" uk-icon="microphone"></span>
-                  <span className="icon uk-width-1-3@m" uk-icon="video-camera"></span>
+                  <span
+                    className="icon uk-margin-right uk-width-1-3@m"
+                    uk-icon="microphone"
+                  ></span>
+                  <span
+                    className="icon uk-width-1-3@m"
+                    uk-icon="video-camera"
+                  ></span>
                 </div>
                 <div className="uk-flex uk-flex-center uk-width-1-1">
                   <button
@@ -480,7 +634,15 @@ const ExamTakerPage = ({ roomId }) => {
 
   return (
     <div className="uk-height-1-1 uk-background-muted">
-      {isPermissionApproved && flag ? (objInfoRoom ? renderExamTaker() : <span uk-spinner="ratio: 4.5"></span>) : renderCheckPermit()}
+      {isPermissionApproved && flag ? (
+        objInfoRoom ? (
+          renderExamTaker()
+        ) : (
+          <span uk-spinner="ratio: 4.5"></span>
+        )
+      ) : (
+        renderCheckPermit()
+      )}
     </div>
   );
 };

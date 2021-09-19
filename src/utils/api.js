@@ -3,6 +3,28 @@ const API_URL = process.env.GATSBY_API_URL;
 export const getAPI = (endpoint, options = {}) =>
   fetch(`${API_URL}${endpoint}`, options);
 
+export const uploadVideoFile = async (
+  fileBlob,
+  filename,
+  maCTPhong,
+  type,
+  token,
+) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", fileBlob, filename);
+    formData.append("name", filename);
+    formData.append("maCTPhong", maCTPhong);
+    formData.append("type", type);
+    const response = await postFileAPIWithToken("/videos", formData, token);
+    if (response.status === 200) {
+      console.log("Video file has uploaded successfully.");
+    }
+  } catch (error) {
+    console.log("Video file has failed to upload successfully !!!", error);
+  }
+};
+
 export const getAPIWithToken = (endpoint, token, options = {}) =>
   fetch(`${API_URL}${endpoint}`, {
     headers: {

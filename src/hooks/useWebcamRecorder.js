@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react";
-import { upload, cleanUpStreamingRef } from "../utils/media";
-import { ToastContainer, toast } from "react-toastify";
+import { cleanUpStreamingRef } from "../utils/media";
+import { toast } from "react-toastify";
 
-const useWebcamRecorder = () => {
+const useWebcamRecorder = (onGetStreamingBlob) => {
   const [isPermissionApproved, setIsPermissionApproved] = useState(false);
 
   const webcamConstraints = {
@@ -18,7 +18,12 @@ const useWebcamRecorder = () => {
     const handleWebcamDataAvailable = (e) => {
       if (e.data.size > 0) {
         webcamRecordedChunkRef.current.push(e.data);
-        upload(webcamRecordedChunkRef.current, "webcam-rec");
+        const blob = new Blob(webcamRecordedChunkRef.current, {
+          type: "video/webm",
+        });
+        if (onGetStreamingBlob) {
+          onGetStreamingBlob(blob);
+        }
         cleanUpStreamingRef(webcamStreamRef.current);
       }
     };
@@ -39,7 +44,9 @@ const useWebcamRecorder = () => {
       }
     } catch (err) {
       /* handle the error */
-      toast.warning("Vui lòng kiểm tra camera và microphone của bạn và thử tải lại !!!");
+      toast.warning(
+        "Vui lòng kiểm tra camera và microphone của bạn và thử tải lại !!!",
+      );
     }
   }, []);
 
