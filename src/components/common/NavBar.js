@@ -58,9 +58,9 @@ const NavBar = () => {
                 <NavBarItem key={index} className="uk-flex uk-flex-middle">
                   <Link
                     to={
-                      category?.subCategories
-                        ? `/${rootPath}${category?.subCategories[0]?.path}`
-                        : `/${rootPath}${category.path}`
+                      !!category.path
+                        ? `/${rootPath}${category.path}`
+                        : `/${rootPath}${category?.subCategories[0]?.path}`
                     }
                   >
                     {category.title}
