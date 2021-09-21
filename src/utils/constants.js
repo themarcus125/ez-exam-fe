@@ -2,15 +2,15 @@ export const navBarCategories = {
   giaovien: [
     {
       title: "Ngân hàng câu hỏi",
-      path: "/questionaire",
+      path: "",
       subCategories: [
-        {
-          title: "Thêm câu hỏi",
-          path: "/questionaire/add",
-        },
         {
           title: "Danh sách câu hỏi",
           path: "/questionaire",
+        },
+        {
+          title: "Thêm câu hỏi",
+          path: "/questionaire/add",
         },
         {
           title: "Danh sách môn học",
