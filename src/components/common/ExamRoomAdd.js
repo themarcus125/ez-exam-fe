@@ -70,8 +70,8 @@ const ExamRoomAdd = ({ roomId }) => {
         setSubject(objExamRoom.maMonHoc);
         setHourExamRoom(objExamRoom.thoiGianBatDauPhong);
         setHourStartExam(objExamRoom.thoiGianBatDauThi);
+        getCodeExam(objExamRoom.maMonHoc);
         setCodeExam(objExamRoom.maBoDe);
-
         if (objExamRoom.trangThai !== 0 ||
           Date.parse(
             moment(moment(objExamRoom.ngayThi).format("DD/MM/YYYY") + " " +
@@ -137,7 +137,7 @@ const ExamRoomAdd = ({ roomId }) => {
           token,
         );
         const { data } = await res.json();
-        if ((res.status === 200) & (data !== undefined)) {
+        if ((res.status === 200) & (data !== undefined && data !== null)) {
           toast.success("Cập nhật phòng thành công !!!");
         } else {
           toast.error("Cập nhật phòng thất bại !!!");

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import loadable from "@loadable/component";
 import { navigate } from "../../utils/common";
+import moment from "moment";
 import Countdown from "react-countdown";
 import useWebcamRecorder from "../../hooks/useWebcamRecorder";
 import useScreenRecorder from "../../hooks/useScreenRecorder";
@@ -11,7 +12,6 @@ import {
 } from "../../utils/api";
 import { getUser, getToken } from "../../utils/auth";
 import { ToastContainer, toast } from "react-toastify";
-const token = getUser()?.tk ?? "";
 const dateCountDown = Date.now();
 const LoadableEditor = loadable(() => import("../../components/common/Editor"));
 
@@ -30,6 +30,8 @@ const ExamTakerPage = ({ roomId }) => {
   const [isDisabledStartExam, setIsDisabledStartExam] = useState(true);
   const [flag, setFlag] = useState(false);
   const [roomName, setRoomName] = useState("");
+  const [ngayThi, setNgayThi] = useState("");
+  const [gioThi, setGioThi] = useState("");
   const [webcamBlob, setWebcamBlob] = useState(null);
   const [screenRecBlob, setScreenRecBlob] = useState(null);
   const onGetStreamingBlobWebcam = (blob) => {
@@ -66,6 +68,7 @@ const ExamTakerPage = ({ roomId }) => {
   }, [isPermissionApproved]);
 
   const getQuestion = async () => {
+    const token = await getToken();
     if (token && roomId) {
       const tmp_objInfo = await getAPIWithToken(
         `/sinhvien/layBaiThi?idPhongThi=${roomId}`,
@@ -107,6 +110,7 @@ const ExamTakerPage = ({ roomId }) => {
   };
 
   const onSendExam = async () => {
+    const token = await getToken();
     if (token && roomId) {
       try {
         const res = await postAPIWithToken(
@@ -132,6 +136,7 @@ const ExamTakerPage = ({ roomId }) => {
   };
 
   useEffect(async () => {
+    const token = await getToken();
     if (webcamBlob && screenRecBlob) {
       toast.info("Đang nộp bài...");
       if (countdownRef.current) {
@@ -207,12 +212,26 @@ const ExamTakerPage = ({ roomId }) => {
       const objExamRoom = tmp_lstExamRoom?.data[0] ?? {};
       if (objExamRoom) {
         setRoomName(objExamRoom.maPhong);
+        setNgayThi(objExamRoom.ngayThi);
+        setGioThi(objExamRoom.thoiGianBatDauThi);
       }
     }
     setLoading(false);
   };
-  const onClickStartExam = () => {
-    setFlag(true);
+  const onClickStartExam = async () => {
+    const token = await getToken();
+    const timeSystem = await getAPIWithToken("/hethong/thoigian", token);
+    if (Date.parse(new Date(timeSystem?.data?.ngayGio)) >=
+      Date.parse(
+        moment(moment(ngayThi).format("DD/MM/YYYY") + " " +
+          gioThi, "DD/MM/YYYY hh:mm"),
+      )) {
+      setFlag(true);
+    }
+    else {
+      toast.warning("Chưa đến thời gian làm bài !!!");
+    }
+    
   };
   const renderExamTaker = () => {
     return (
@@ -571,7 +590,7 @@ const ExamTakerPage = ({ roomId }) => {
                     style={{
                       fontSize: "large",
                       color: "#0f6ecd",
-                      "text-decoration": "underline",
+                      "textDecoration": "underline",
                     }}
                   >
                     Hướng dẫn địa chỉ liên lạc khi gặp sự cố:
@@ -590,7 +609,7 @@ const ExamTakerPage = ({ roomId }) => {
                       style={{
                         fontSize: "large",
                         color: "#0f6ecd",
-                        "text-decoration": "underline",
+                        "textDecoration": "underline",
                       }}
                     >
                       qlqtpm.20hcb@gmail.com
