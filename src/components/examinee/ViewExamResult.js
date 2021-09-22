@@ -22,13 +22,13 @@ const ViewExamResult = () => {
   const lstPage = [];
   const token = getUser()?.tk ?? "";
 
-  const getData = async () => {
+  const getData = async (crPage,tmpSub) => {
     try {
       setLoading(true);
       if (token) {
         const response = await getAPIWithToken(
           // eslint-disable-next-line prettier/prettier
-          `/sinhvien/traCuuKetQua?idChuyenDe=${subject}&tuNgay=${moment(startDate).format("YYYY-MM-DD")}&denNgay=${moment(endDate).format("YYYY-MM-DD")}`,
+          `/sinhvien/traCuuKetQua?limit=${USER_PER_PAGE}&page=${crPage}&idChuyenDe=${subject === "" ? tmpSub : subject}&tuNgay=${moment(startDate).format("YYYY-MM-DD")}&denNgay=${moment(endDate).format("YYYY-MM-DD")}`,
           token,
         );
         setLstExamResult(response.data?.dsKetQua);
@@ -45,12 +45,13 @@ const ViewExamResult = () => {
       "/chuyende/monhocnguoidung",
       token,
     );
-    setLstSubject(tmp_lstSubject.data);
+    setLstSubject(tmp_lstSubject?.data);
+    setSubject(tmp_lstSubject?.data[0].id);
+    getData(1,tmp_lstSubject?.data[0].id);
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     getSubject();
-    getData();
   }, []);
 
   const handleChangeSubject = (e) => {
@@ -69,13 +70,13 @@ const ViewExamResult = () => {
   const onSearch = async (e) => {
     e.preventDefault();
     setLoading(true);
-    getData();
+    getData(1,"");
   };
 
   for (let i = 1; i <= meta?.lastPage; i++) {
     lstPage.push(i);
   }
-  
+
   return (
     <div
       className="uk-padding uk-padding-remove-top uk-padding-remove-bottom uk-height-1-1"
@@ -98,15 +99,15 @@ const ViewExamResult = () => {
                   }}
                   onChange={handleChangeSubject}
                   value={subject}
-                  onBlur={() => {}}
+                  onBlur={() => { }}
                 >
                   {/* <option disabled></option> */}
                   {lstSubject
                     ? lstSubject.map((item, key) => (
-                        <option key={key} value={item.id}>
-                          {item.tenChuyenDe}
-                        </option>
-                      ))
+                      <option key={key} value={item.id}>
+                        {item.tenChuyenDe}
+                      </option>
+                    ))
                     : null}
                 </select>
               </div>
@@ -205,7 +206,7 @@ const ViewExamResult = () => {
           className={meta?.currentPage === 1 ? "uk-disabled" : ""}
           onClick={() => {
             const page = meta?.currentPage - 1;
-            getData(page);
+            getData(page,"");
           }}
         >
           <button className="uk-button uk-button-default uk-button-small">
@@ -217,7 +218,7 @@ const ViewExamResult = () => {
             key={index}
             className={item === meta?.currentPage ? "uk-disabled" : ""}
             onClick={() => {
-              getData(item);
+              getData(item,"");
             }}
           >
             <button
@@ -225,10 +226,10 @@ const ViewExamResult = () => {
               style={
                 item === meta?.currentPage
                   ? {
-                      width: 40,
-                      color: "#FFF",
-                      backgroundColor: "#32d296",
-                    }
+                    width: 40,
+                    color: "#FFF",
+                    backgroundColor: "#32d296",
+                  }
                   : { width: 40 }
               }
             >
@@ -240,7 +241,7 @@ const ViewExamResult = () => {
           className={meta?.currentPage === meta?.lastPage ? "uk-disabled" : ""}
           onClick={() => {
             const page = meta?.currentPage + 1;
-            getData(page);
+            getData(page,"");
           }}
         >
           <button className="uk-button uk-button-default uk-button-small">

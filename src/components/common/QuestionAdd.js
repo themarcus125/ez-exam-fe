@@ -40,7 +40,7 @@ const QuestionAdd = () => {
       token,
     );
     setCourses(res.data.dsChuyenDe);
-    setSelectedCourse(res.data.dsChuyenDe?.[0] ?? -1);
+    setSelectedCourse(res.data.dsChuyenDe?.[0].id ?? -1);
     setLoading(false);
   };
 
@@ -56,6 +56,10 @@ const QuestionAdd = () => {
 
   const onChangeLevel = (e) => {
     setLevel(e.target.value);
+  };
+
+  const onChangeCourse = (e) => {
+    setSelectedCourse(e.target.value);
   };
 
   const clearQuestions = (type) => {
@@ -116,6 +120,11 @@ const QuestionAdd = () => {
 
     if (selectedCourse === -1) {
       toast.error("Không có môn học");
+      return;
+    }
+
+    if (questionList.length === 0) {
+      toast.error("Không có câu hỏi");
       return;
     }
 
@@ -181,6 +190,7 @@ const QuestionAdd = () => {
                         border: "solid 0.5px #666",
                       }}
                       value={selectedCourse}
+                      onChange={onChangeCourse}
                     >
                       {/* <option>Phần mềm</option> */}
                       {courses?.map((course) => {
